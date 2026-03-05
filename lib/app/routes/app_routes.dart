@@ -1,0 +1,33 @@
+abstract class AppRoutes {
+  static const String signIn = "/signin";
+  static const String signUp = "/signup";
+  static const String numbileVerification = "/numbileVerification";
+  static const String verification = "/verification";
+  static const String bottomNav = "/bottomNav";
+  static const String jobList = "/jobList";
+  static const String newJobRequest = "/newJobRequest";
+  static const String navigation = "/navigation";
+  static const String jobID = "/jobID";
+  static const String selectItem = "/select_item";
+  static const String identityApproved = "/identity_approved";
+  static const String identityPending = "/identity_pending";
+  static const String identityRejected = "/identity_rejected";
+  static const String notifications = "/notifications";
+  static const String allJobs = "/allJobs";
+  static const String startJobOtp = "/startJobOtp";
+  static const String startJob = "/startJob";
+  static const String completeJob = "/completeJob";
+  static const String progressJob = "/progressJob";
+  static const String customerReview = "/customerReview";
+  static const String selectPart = "/selectParts";
+  static const String componentFitting = "/selectComponents";
+  static const String approval = "/approval";
+  static const String wallet = "/wallet";
+  static const String editProfile = "/editProfile";
+  static const String referAndEarn = "/referAndEarn";
+  static const String salarySlip = "/salarySlip";
+  static const String leaveAttendance = "/leaveAttendance";
+  static const String helpSupport = "/helpSupport";
+  static const String profile = "/profile";
+  static const String updateNumberVerification = "/updateNumberVerification";
+}

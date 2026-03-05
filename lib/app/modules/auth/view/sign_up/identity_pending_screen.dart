@@ -1,0 +1,104 @@
+import 'dart:developer';
+
+import 'package:bicycle_app_technician/app/modules/auth/controller/sign_up_controller.dart';
+import 'package:bicycle_app_technician/app/routes/app_routes.dart';
+import 'package:bicycle_app_technician/view/Colors/app_colors.dart';
+import 'package:bicycle_app_technician/view/widgets/custom_button.dart';
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+
+class IdentityPendingScreen extends StatefulWidget {
+  const IdentityPendingScreen({super.key});
+
+  @override
+  State<IdentityPendingScreen> createState() => _IdentityPendingScreenState();
+}
+
+class _IdentityPendingScreenState extends State<IdentityPendingScreen> {
+  late final SignUpController controller;
+
+  @override
+  void initState() {
+    super.initState();
+    controller = Get.find<SignUpController>();
+    controller.getOtp();
+    ever(controller.isVerified, (value) {
+      log("called ever");
+      if (value == true) {
+        Get.offAllNamed(AppRoutes.identityApproved);
+      }
+    });
+  }
+
+  // void checkIfVerified() {
+  //   if (controller.isVerified.value) {
+  //     log("isVerified:${controller.isVerified.value}");
+  //     Get.toNamed(AppRoutes.identityApproved);
+  //   }
+  // }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: AppColors.appBg,
+
+      /// MAIN CONTENT
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 24),
+          child: Center(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                /// Pending Image
+                SizedBox(
+                  height: 120,
+                  width: 120,
+                  child: Image.asset("assets/pending.png", fit: BoxFit.cover),
+                ),
+
+                const SizedBox(height: 24),
+
+                /// Title
+                const Text(
+                  "Verification is still pending",
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
+                ),
+
+                const SizedBox(height: 8),
+
+                /// Subtitle
+                const Text(
+                  "Our admin team is reviewing your Document details.",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w400),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+
+      /// FIXED BOTTOM BUTTON
+      // bottomNavigationBar: SafeArea(
+      //   child: Padding(
+      //     padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
+      //     child: InkWell(
+      //       onTap: () {
+      //         Get.toNamed(AppRoutes.uploadDocuments);
+      //       },
+      //       child: CustomButton(
+      //         text: "Re-upload",
+      //         textSize: 16,
+      //         textWeight: FontWeight.w600,
+      //         textColor: Colors.white,
+      //         bgColor: AppColors.blue,
+      //         radius: 12,
+      //         height: 52,
+      //       ),
+      //     ),
+      //   ),
+      // ),
+    );
+  }
+}
