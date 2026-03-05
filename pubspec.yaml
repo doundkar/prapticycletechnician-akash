@@ -18,6 +18,7 @@ dependencies:
   http: ^1.6.0
   shared_preferences: ^2.5.4
   intl: ^0.20.2
+  number_to_words: ^1.0.0
   
 
 dev_dependencies:

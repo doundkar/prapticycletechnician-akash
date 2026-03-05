@@ -28,6 +28,7 @@ import 'package:bicycle_app_technician/app/modules/profile/view/edit_profile_scr
 import 'package:bicycle_app_technician/app/modules/profile/view/number_update_verification_screen.dart';
 import 'package:bicycle_app_technician/app/modules/profile/view/profile_screen.dart';
 import 'package:bicycle_app_technician/app/modules/refer_earn/refer_and_earn_screen.dart';
+import 'package:bicycle_app_technician/app/modules/salary_slip/salary_slip_binding.dart';
 import 'package:bicycle_app_technician/app/modules/salary_slip/salary_slip_view.dart';
 import 'package:bicycle_app_technician/app/modules/select_item/select_item_binding.dart';
 import 'package:bicycle_app_technician/app/modules/select_item/select_items_screen.dart';
@@ -186,7 +187,7 @@ class AppPages {
     GetPage(
       name:AppRoutes.salarySlip,
       page: () => EarnIncomeScreen(),
-      // binding: NotificationBinding()
+      binding: SalarySlipBinding()
     ),
     GetPage(
       name:AppRoutes.leaveAttendance,

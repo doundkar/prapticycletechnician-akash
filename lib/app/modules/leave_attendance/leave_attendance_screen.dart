@@ -119,7 +119,6 @@ class _LeavesAttendanceScreenState extends State<LeavesAttendanceScreen> {
                         ),
                       );
                     }
-
                     return TableCalendar(
                       firstDay: DateTime(2020),
                       lastDay: DateTime(2030),
