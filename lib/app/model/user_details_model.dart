@@ -1,9 +1,9 @@
 class UserDetailsModel {
   int? id;
-  Null? name;
+  String? name;
   String? firstName;
   String? lastName;
-  Null? dateOfBirth;
+  String? dateOfBirth;
   String? email;
   String? phone;
   String? token;

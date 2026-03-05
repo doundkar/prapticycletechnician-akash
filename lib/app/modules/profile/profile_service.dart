@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'dart:io';
 import 'package:bicycle_app_technician/app/model/api_response_model.dart';
 import 'package:bicycle_app_technician/app/model/profile_details_model.dart';
+import 'package:bicycle_app_technician/app/model/user_details_model.dart';
 import 'package:bicycle_app_technician/app/model/work_location_model.dart';
 import 'package:http/http.dart' as http;
 import 'package:bicycle_app_technician/utils/api_constants.dart';
@@ -11,36 +12,40 @@ import 'package:bicycle_app_technician/utils/shared_prefs.dart';
 class ProfileService {
   static final baseUrl = ApiConstants.baseUrl;
 
-  static Future<ApiResponseModel<ProfileDetailsModel>> updateProfile(
-    String firstName,
-    String lastName,
-    String email,
-    File image,
-  ) async {
+  static Future<ApiResponseModel<Map<String, dynamic>>> updateProfile(
+    String phone, {
+    String? email,
+    File? image,
+  }) async {
     String token = SharedPrefs.getString("token");
     log("token: $token");
 
-    final payload = {
-      "first_name": firstName,
-      "last_name": lastName,
-      "email": email,
-    };
+    Map<String, String> payload = {};
+
+    if (email == null) {
+      payload = {"phone": phone};
+    } else {
+      payload = {"phone": phone, "email": email};
+    }
 
     log("update payload: ${payload.toString()}");
 
     try {
       var request = http.MultipartRequest(
         "POST",
-        Uri.parse("${baseUrl}profile/update"),
+        Uri.parse("${baseUrl}profile/update-request"),
       );
       request.headers["Accept"] = 'application/json';
       request.headers["Authorization"] = "Bearer $token";
       request.fields.addAll(payload);
-      var multipartFile = await http.MultipartFile.fromPath(
-        "image",
-        image.path,
-      );
-      request.files.add(multipartFile);
+      if (image != null) {
+        var multipartFile = await http.MultipartFile.fromPath(
+          "image",
+          image.path,
+        );
+        request.files.add(multipartFile);
+      }
+
       var streamedResp = await request.send();
       var response = await http.Response.fromStream(streamedResp);
       log("updateProfile resp: ${response.body}");
@@ -48,6 +53,44 @@ class ProfileService {
         final jsonBody = jsonDecode(response.body);
         return ApiResponseModel(
           status: true,
+          message: jsonBody["message"],
+          data: jsonBody["data"],
+        );
+      } else {
+        return ApiResponseModel(
+          status: false,
+          message: "Statuscode ${response.statusCode}",
+        );
+      }
+    } catch (e) {
+      return ApiResponseModel(status: false, message: "Error $e occurred");
+    }
+  }
+
+  static Future<ApiResponseModel<ProfileDetailsModel>> verifyUpdateOtp(
+    int reqId,
+    String otp,
+  ) async {
+    String token = SharedPrefs.getString("token");
+    log("token: $token");
+
+    try {
+      final body = {"request_id": reqId, "otp": otp};
+      final response = await http.post(
+        Uri.parse("${baseUrl}profile/update-verify"),
+        headers: {
+          "Accept": "application/json",
+          "Content-Type": "application/json",
+          "Authorization": "Bearer $token",
+        },
+        body: jsonEncode(body),
+      );
+      log("updateVerify resp: ${response.body}");
+      if (response.statusCode == 200) {
+        final jsonBody = jsonDecode(response.body);
+
+        return ApiResponseModel(
+          status: jsonBody["success"],
           message: jsonBody["message"],
           data: ProfileDetailsModel.fromJson(jsonBody["data"]),
         );
@@ -58,7 +101,7 @@ class ProfileService {
         );
       }
     } catch (e) {
-      return ApiResponseModel(status: false, message: "Error $e occurred");
+      return ApiResponseModel(status: false, message: "error $e occurred");
     }
   }
 
@@ -99,7 +142,7 @@ class ProfileService {
     }
   }
 
-  static Future<ApiResponseModel> addLocation(Map<String,dynamic> body) async {
+  static Future<ApiResponseModel> addLocation(Map<String, dynamic> body) async {
     String token = SharedPrefs.getString("token");
     log("token: $token");
 
@@ -111,7 +154,7 @@ class ProfileService {
           "Content-Type": "application/json",
           "Authorization": "Bearer $token",
         },
-        body: jsonEncode(body)
+        body: jsonEncode(body),
       );
       log("addLocation resp: ${response.body}");
       if (response.statusCode == 200 || response.statusCode == 201) {
@@ -163,5 +206,4 @@ class ProfileService {
       return ApiResponseModel(status: false, message: "error $e occurred");
     }
   }
-
 }

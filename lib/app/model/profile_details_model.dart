@@ -3,6 +3,7 @@ class ProfileDetailsModel {
   String? firstName;
   String? lastName;
   String? email;
+  String? phone;
   String? image;
 
   ProfileDetailsModel(
@@ -14,6 +15,7 @@ class ProfileDetailsModel {
     lastName = json['last_name'];
     email = json['email'];
     image = json['image'];
+    phone = json["phone"];
   }
 
   Map<String, dynamic> toJson() {

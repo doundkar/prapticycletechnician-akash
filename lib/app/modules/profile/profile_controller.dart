@@ -12,6 +12,8 @@ class ProfileController extends GetxController {
   var hasError = false.obs;
   var errorMessage = ''.obs;
 
+  var reqId = 0.obs;
+
   RxList<WorkLocationModel> workLocations = <WorkLocationModel>[].obs;
 
 
@@ -25,21 +27,46 @@ class ProfileController extends GetxController {
     await getWorkLocations();
   }
 
-  Future<bool> updateProfile (
-    String firstName,
-    String lastName,
-    String email,
-    File image,
+  Future<bool> updateProfileReq (
+    String phone,
+    {String? email,
+    File? image,}
   ) async {
     isLoading.value = true;
 
     try{
-      final response = await ProfileService.updateProfile(firstName, lastName, email, image);
+      final response = await ProfileService.updateProfile(phone, email:email,image: image);
+      if(response.status && response.data!=null){
+        reqId.value = response.data!["request_id"];
+        return true;
+      }
+      hasError.value = true;
+      errorMessage.value = response.message!;
+      return false;
+    }
+    catch(e){
+      hasError.value = true;
+      errorMessage.value = "Error $e occurred";
+      return false;
+    }
+    finally{
+      isLoading.value = false;
+    }
+  }
+
+  Future<bool> verifyUpdateProfile (
+    String otp
+  ) async {
+    isLoading.value = true;
+
+    try{
+      final response = await ProfileService.verifyUpdateOtp(reqId.value, otp);
       if(response.status && response.data!=null){
         await SharedPrefs.setString("first_name", response.data!.firstName!);
         await SharedPrefs.setString("last_name", response.data!.lastName!);
         await SharedPrefs.setString("email", response.data!.email!);
         await SharedPrefs.setString("image", response.data!.image!);
+        await SharedPrefs.setString("phone", response.data!.phone!);
         return true;
       }
       hasError.value = true;

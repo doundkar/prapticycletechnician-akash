@@ -225,19 +225,10 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
             padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
             child: InkWell(
               onTap: () async {
-                // if(phone != phoneController.text.trim()){
-                //   Get.toNamed(AppRoutes.updateNumberVerification);
-                // }
-                // else{
-                //   //controller call directly
-                // }
-                // if(resp){
-                //   ScaffoldMessenger.of(context).showSnackBar(CustomSnackbar.show(title: "Profile updated successfully", color: Colors.green[300]!));
-                //   Get.back(result: true);
-                // }
-                // else{
-                //   ScaffoldMessenger.of(context).showSnackBar(CustomSnackbar.show(title: "Profile couldn't be updated", color: Colors.red[300]!));
-                // }
+                bool resp = await controller.updateProfileReq(phoneController.text.trim(), email:emailController.text.trim(),image: _image);
+                if(resp){
+                  Get.toNamed(AppRoutes.updateNumberVerification,arguments: phoneController.text.trim());
+                }
               },
               child: CustomButton(
                 text: "Update Profile",

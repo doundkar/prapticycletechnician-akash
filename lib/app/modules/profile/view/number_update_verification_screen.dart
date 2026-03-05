@@ -51,7 +51,7 @@ class _NumberUpdateVerificationScreenState extends State<NumberUpdateVerificatio
   @override
   Widget build(BuildContext context) {
 
-    String phone  = SharedPrefs.getString("phone");
+    String? phone  = Get.arguments;
 
     return Scaffold(
       resizeToAvoidBottomInset: true,
@@ -110,7 +110,7 @@ class _NumberUpdateVerificationScreenState extends State<NumberUpdateVerificatio
                             const SizedBox(width: 10),
                             InkWell(
                               onTap: () {
-                                Get.toNamed(AppRoutes.signIn);
+                                Get.back();
                               },
                               child: const Icon(Icons.edit, size: 14),
                             ),
@@ -174,65 +174,64 @@ class _NumberUpdateVerificationScreenState extends State<NumberUpdateVerificatio
                         SizedBox(height: maxWidth * 0.06),
               
                         /// Resend Row
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            const Text(
-                              "Didn't receive the code?",
-                              style: TextStyle(
-                                  fontSize: 13,
-                                  fontWeight: FontWeight.w700),
-                            ),
-                            const SizedBox(width: 5),
-                            InkWell(
-                              onTap:() async {
-                                // if(remainingSeconds==0){
-                                //   await controller.getOtp(phone);
-                                // }
-                              },
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  borderRadius:
-                                      BorderRadius.circular(16),
-                                  color: Colors.black,
-                                ),
-                                child: const Padding(
-                                  padding: EdgeInsets.symmetric(
-                                      horizontal: 12,
-                                      vertical: 8),
-                                  child: Text(
-                                    "Resend",
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.w700,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            )
-                          ],
-                        ),
+                        // Row(
+                        //   mainAxisAlignment: MainAxisAlignment.center,
+                        //   children: [
+                        //     const Text(
+                        //       "Didn't receive the code?",
+                        //       style: TextStyle(
+                        //           fontSize: 13,
+                        //           fontWeight: FontWeight.w700),
+                        //     ),
+                        //     const SizedBox(width: 5),
+                        //     InkWell(
+                        //       onTap:() async {
+                        //         // if(remainingSeconds==0){
+                        //         //   await controller.getOtp(phone);
+                        //         // }
+                        //       },
+                        //       child: Container(
+                        //         decoration: BoxDecoration(
+                        //           borderRadius:
+                        //               BorderRadius.circular(16),
+                        //           color: Colors.black,
+                        //         ),
+                        //         child: const Padding(
+                        //           padding: EdgeInsets.symmetric(
+                        //               horizontal: 12,
+                        //               vertical: 8),
+                        //           child: Text(
+                        //             "Resend",
+                        //             style: TextStyle(
+                        //               color: Colors.white,
+                        //               fontSize: 12,
+                        //               fontWeight: FontWeight.w700,
+                        //             ),
+                        //           ),
+                        //         ),
+                        //       ),
+                        //     )
+                        //   ],
+                        // ),
               
-                        SizedBox(height: maxWidth * 0.15),
+                        // SizedBox(height: maxWidth * 0.15),
               
                         /// Submit Button
                         InkWell(
                           onTap: () async {
-                            // if(otpController.text.trim().isEmpty || otpController.text.trim().length<6){
-                            //   ScaffoldMessenger.of(context).showSnackBar(CustomSnackbar.show(title: "Please enter complete OTP", color: Colors.red[300]!));
-                            // }
-                            // else{
-                            //   await controller.verifyOtp(otpController.text.trim());
-                            //   if(controller.hasError.value){
-                            //     ScaffoldMessenger.of(context).showSnackBar(CustomSnackbar.show(title: "Wrong or Expired OTP", color: Colors.red[300]!));
-                            //     otpController.clear();
-                            //   }
-                            //   else{
-                            //     ScaffoldMessenger.of(context).showSnackBar(CustomSnackbar.show(title: "Logged in successfully", color: Colors.green[300]!));
-                            //      Get.toNamed(AppRoutes.bottomNav);
-                            //   }
-                            // }
+                            if(otpController.text.trim().isEmpty || otpController.text.trim().length<6){
+                              ScaffoldMessenger.of(context).showSnackBar(CustomSnackbar.show(title: "Please enter complete OTP", color: Colors.red[300]!));
+                            }
+                            else{
+                              final resp = await controller.verifyUpdateProfile(otpController.text.trim());
+                              if(resp){
+                                ScaffoldMessenger.of(context).showSnackBar(CustomSnackbar.show(title: "Profile updated successfully", color: Colors.green[300]!));
+                                Get.toNamed(AppRoutes.bottomNav);
+                              }
+                              else{
+                                ScaffoldMessenger.of(context).showSnackBar(CustomSnackbar.show(title: "Profile couldn't be updated", color: Colors.red[300]!));
+                              }
+                            }
                           },
                           child: CustomButton(
                             text: "Submit",
