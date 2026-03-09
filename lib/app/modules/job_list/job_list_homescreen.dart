@@ -4,6 +4,7 @@ import 'package:bicycle_app_technician/app/routes/app_routes.dart';
 import 'package:bicycle_app_technician/utils/api_constants.dart';
 import 'package:bicycle_app_technician/utils/shared_prefs.dart';
 import 'package:bicycle_app_technician/view/Colors/app_colors.dart';
+import 'package:bicycle_app_technician/view/widgets/custom_snackbar.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -60,16 +61,16 @@ class _JobListHomeScreenState extends State<JobListHomeScreen> {
                   radius: avatarRadius,
                   backgroundColor: Colors.grey[300],
                   child: image.isEmpty
-                            ? Icon(Icons.person, size: 40, color: Colors.white)
-                            : ClipRRect(
-                              borderRadius: BorderRadiusGeometry.circular(40),
-                              child: Image.network(
-                                  "${ApiConstants.imageBaseUrl}$image",
-                                  fit: BoxFit.cover,
-                                  height: avatarRadius*2,
-                                  width: avatarRadius*2,
-                                ),
-                            ),
+                      ? Icon(Icons.person, size: 40, color: Colors.white)
+                      : ClipRRect(
+                          borderRadius: BorderRadiusGeometry.circular(40),
+                          child: Image.network(
+                            "${ApiConstants.imageBaseUrl}$image",
+                            fit: BoxFit.cover,
+                            height: avatarRadius * 2,
+                            width: avatarRadius * 2,
+                          ),
+                        ),
                 ),
 
                 SizedBox(width: maxWidth > 600 ? 14 : 10),
@@ -117,9 +118,7 @@ class _JobListHomeScreenState extends State<JobListHomeScreen> {
                           Color.fromRGBO(166, 166, 166, 1),
                         ),
                         onChanged: (value) {
-                          setState(() {
-                            _showOnlineModeSheet(value);
-                          });
+                          _showOnlineModeSheet(value);
                         },
                       ),
                     ),
@@ -190,18 +189,21 @@ class _JobListHomeScreenState extends State<JobListHomeScreen> {
                 child: SizedBox(
                   height: 30,
                   width: 30,
-                  child: CircularProgressIndicator(strokeWidth: 2,color: AppColors.blue,),
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2,
+                    color: AppColors.blue,
+                  ),
                 ),
               );
             }
-            if (controller.hasError.value) {
-              return Center(
-                child: Text(
-                  controller.errorMessage.value,
-                  style: TextStyle(color: Colors.red),
-                ),
-              );
-            }
+            // if (controller.hasError.value) {
+            //   return Center(
+            //     child: Text(
+            //       controller.errorMessage.value,
+            //       style: TextStyle(color: Colors.red),
+            //     ),
+            //   );
+            // }
             return Align(
               alignment: Alignment.topCenter,
               child: SizedBox(
@@ -417,105 +419,134 @@ class _JobListHomeScreenState extends State<JobListHomeScreen> {
             color: Colors.white,
             borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
           ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              /// HEADER ROW
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    "Online Mode",
-                    style: TextStyle(
-                      fontSize: isTablet ? 22 : 18,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                  GestureDetector(
-                    onTap: () => Navigator.pop(context),
-                    child: Icon(Icons.close, size: isTablet ? 28 : 24),
-                  ),
-                ],
-              ),
-        
-              SizedBox(height: isTablet ? 20 : 16),
-        
-              /// DESCRIPTION
-              Text(
-                newValue
-                    ? "You have logged in online mode for you receive any orders"
-                    : "You are going offline. You will not receive new orders.",
-                style: TextStyle(
-                  fontSize: isTablet ? 16 : 14,
-                  color: Colors.black87,
+          child: Obx(() {
+            if(controller.isLoginLoading.value){
+              return SizedBox(
+                height: isTablet ? 40 : 30,
+                width: double.infinity,
+                child: CircularProgressIndicator(
+                  strokeWidth: 2,
+                  color: AppColors.blue,
                 ),
-              ),
-        
-              SizedBox(height: isTablet ? 28 : 20),
-        
-              /// BUTTONS
-              Row(
-                children: [
-                  Expanded(
-                    child: OutlinedButton(
-                      style: OutlinedButton.styleFrom(
-                        side: const BorderSide(color: Colors.black),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        padding: EdgeInsets.symmetric(
-                          vertical: isTablet ? 18 : 14,
-                        ),
+              );
+            }
+            return Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                /// HEADER ROW
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      "Online Mode",
+                      style: TextStyle(
+                        fontSize: isTablet ? 22 : 18,
+                        fontWeight: FontWeight.w600,
                       ),
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                      child: Text(
-                        newValue ? "Log Out" : "Cancel",
-                        style: TextStyle(
-                          color: Colors.black,
-                          fontSize: isTablet ? 16 : 14,
+                    ),
+                    GestureDetector(
+                      onTap: () => Navigator.pop(context),
+                      child: Icon(Icons.close, size: isTablet ? 28 : 24),
+                    ),
+                  ],
+                ),
+
+                SizedBox(height: isTablet ? 20 : 16),
+
+                /// DESCRIPTION
+                Text(
+                  newValue
+                      ? "You have logged in online mode for you receive any orders"
+                      : "You are going offline. You will not receive new orders.",
+                  style: TextStyle(
+                    fontSize: isTablet ? 16 : 14,
+                    color: Colors.black87,
+                  ),
+                ),
+
+                SizedBox(height: isTablet ? 28 : 20),
+
+                /// BUTTONS
+                Row(
+                  children: [
+                    Expanded(
+                      child: OutlinedButton(
+                        style: OutlinedButton.styleFrom(
+                          side: const BorderSide(color: Colors.black),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          padding: EdgeInsets.symmetric(
+                            vertical: isTablet ? 18 : 14,
+                          ),
+                        ),
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                        child: Text(
+                          newValue ? "Log Out" : "Cancel",
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontSize: isTablet ? 16 : 14,
+                          ),
                         ),
                       ),
                     ),
-                  ),
-        
-                  SizedBox(width: isTablet ? 16 : 12),
-        
-                  Expanded(
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.blue,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
+
+                    SizedBox(width: isTablet ? 16 : 12),
+
+                    Expanded(
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: AppColors.blue,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          padding: EdgeInsets.symmetric(
+                            vertical: isTablet ? 18 : 14,
+                          ),
                         ),
-                        padding: EdgeInsets.symmetric(
-                          vertical: isTablet ? 18 : 14,
-                        ),
-                      ),
-                      onPressed: () {
-                        setState(() {
-                          isOnline = newValue;
-                        });
-                        controller.toggleActivity(isOnline);
-                        Navigator.pop(context);
-                      },
-                      child: Text(
-                        newValue ? "Log In" : "Go Offline",
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: isTablet ? 16 : 14,
+                        onPressed: () async {
+                          final resp = await controller.toggleActivity(
+                            isOnline,
+                          );
+                          if (resp) {
+                            setState(() {
+                              isOnline = newValue;
+                            });
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              CustomSnackbar.show(
+                                title: controller.loginMessage.value,
+                                color: Colors.green[300]!,
+                              ),
+                            );
+                          } else {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              CustomSnackbar.show(
+                                title: controller.loginMessage.value,
+                                color: Colors.red[300]!,
+                              ),
+                            );
+                          }
+                          Navigator.pop(context);
+                        },
+                        child: Text(
+                          newValue ? "Log In" : "Go Offline",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: isTablet ? 16 : 14,
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                ],
-              ),
-        
-              SizedBox(height: isTablet ? 40 : 30),
-            ],
-          ),
+                  ],
+                ),
+
+                SizedBox(height: isTablet ? 40 : 30),
+              ],
+            );
+          }),
         );
       },
     );

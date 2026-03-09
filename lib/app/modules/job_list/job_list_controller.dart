@@ -12,6 +12,9 @@ class JobListController extends GetxController {
   var hasError = false.obs;
   var errorMessage = ''.obs;
 
+  var isLoginLoading = false.obs;
+  var loginMessage = ''.obs;
+
   var isAcceptClicked = false.obs;
   var isRejectClicked = true.obs;
 
@@ -156,8 +159,8 @@ class JobListController extends GetxController {
     }
   }
 
-  Future<void> toggleActivity(bool activity) async {
-    isLoading.value = true;
+  Future<bool> toggleActivity(bool activity) async {
+    isLoginLoading.value = true;
     hasError.value = false;
     errorMessage.value = "";
     try {
@@ -165,15 +168,20 @@ class JobListController extends GetxController {
       if (response.status && response.data != null) {
         isOnline.value = response.data!;
         await SharedPrefs.setBool("is_online", isOnline.value);
+        loginMessage.value = response.message!;
+        return true;
       } else {
         hasError.value = true;
         errorMessage.value = response.message!;
+        loginMessage.value = response.message!;
+        return false;
       }
     } catch (e) {
       hasError.value = true;
       errorMessage.value = "Some error $e occurred";
+      return false;
     } finally {
-      isLoading.value = false;
+      isLoginLoading.value = false;
     }
   }
 }

@@ -179,8 +179,8 @@ class JobListService {
         body: jsonEncode(payload)
       );
       log("toogleActivity resp: ${response.body}");
+      final jsonBody = jsonDecode(response.body);
       if (response.statusCode == 200) {
-        final jsonBody = jsonDecode(response.body);
         final data = jsonBody["data"];
         return ApiResponseModel(
           status: jsonBody["success"],
@@ -190,7 +190,7 @@ class JobListService {
       } else {
         return ApiResponseModel(
           status: false,
-          message: "Statuscode ${response.statusCode}",
+          message: jsonBody["message"],
           data: false
         );
       }
