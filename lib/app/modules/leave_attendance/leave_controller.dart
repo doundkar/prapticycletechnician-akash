@@ -52,8 +52,8 @@ class LeaveController extends GetxController {
         }
       }
     }
-    // log("anbsent days: ${absentDays.value.toString()}");
-    // log("present days: ${presentDays.value.toString()}");
+    log("anbsent days: ${absentDays.value.toString()}");
+    log("present days: ${presentDays.value.toString()}");
   }
 
   void getSetLeaves(){
@@ -76,10 +76,12 @@ class LeaveController extends GetxController {
       }
       hasError.value = true;
       errorMessage.value = response.message!;
+      log("error from report : ${errorMessage.value}");
       return;
     } catch (e) {
       hasError.value = true;
       errorMessage.value = "Error $e occurred";
+      log("error from report : ${errorMessage.value}");
       return;
     } finally {
       isLoading.value = false;
@@ -101,10 +103,12 @@ class LeaveController extends GetxController {
       }
       hasError.value = true;
       errorMessage.value = response.message!;
+      log("error from leaves : ${errorMessage.value}");
       return;
     } catch (e) {
       hasError.value = true;
       errorMessage.value = "Error $e occurred";
+      log("error from leaves : ${errorMessage.value}");
       return;
     } finally {
       isLoading.value = false;

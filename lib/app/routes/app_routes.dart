@@ -30,4 +30,5 @@ abstract class AppRoutes {
   static const String helpSupport = "/helpSupport";
   static const String profile = "/profile";
   static const String updateNumberVerification = "/updateNumberVerification";
+  static const String approvalPending = "/approvalPending";
 }

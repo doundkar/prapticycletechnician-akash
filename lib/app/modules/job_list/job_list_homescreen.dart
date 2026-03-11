@@ -251,6 +251,12 @@ class _JobListHomeScreenState extends State<JobListHomeScreen> {
 
                           SizedBox(height: maxWidth * 0.05),
 
+                          if (controller.pendingJobRequests.isEmpty &&
+                              controller.acceptedJobRequests.isEmpty)
+                            ...[
+                              noJobsCard(maxWidth: maxWidth)
+                            ],
+
                           if (controller.acceptedJobRequests.isNotEmpty) ...[
                             /// ACCEPTED HEADER
                             Row(
@@ -420,7 +426,7 @@ class _JobListHomeScreenState extends State<JobListHomeScreen> {
             borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
           ),
           child: Obx(() {
-            if(controller.isLoginLoading.value){
+            if (controller.isLoginLoading.value) {
               return SizedBox(
                 height: isTablet ? 40 : 30,
                 width: double.infinity,
@@ -626,6 +632,44 @@ Widget _buildStatusCard(
             fontSize: isTablet ? 14 : 12,
             color: Colors.grey,
             fontWeight: FontWeight.w400,
+          ),
+        ),
+      ],
+    ),
+  );
+}
+
+Widget noJobsCard({required double maxWidth}) {
+  bool isTablet = maxWidth > 600;
+  return Container(
+    padding: EdgeInsets.all(isTablet ? 20 : 16),
+    decoration: BoxDecoration(
+      color: Colors.white,
+      borderRadius: BorderRadius.circular(16),
+      boxShadow: [
+        BoxShadow(
+          color: Colors.black.withOpacity(0.15),
+          blurRadius: isTablet ? 20 : 15,
+          offset: const Offset(0, 4),
+        ),
+      ],
+    ),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Text(
+          "No jobs available yet..",
+          style: TextStyle(
+            fontWeight: FontWeight.w600,
+            fontSize: isTablet ? 18 : 16,
+          ),
+        ),
+        Text(
+          "Please wait while admin assigns you new jobs.",
+          style: TextStyle(
+            fontWeight: FontWeight.w600,
+            fontSize: isTablet ? 18 : 16,
           ),
         ),
       ],

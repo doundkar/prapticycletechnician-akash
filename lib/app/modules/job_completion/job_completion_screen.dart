@@ -105,6 +105,10 @@ class _CompleteJobScreenState extends State<CompleteJobScreen> {
         ],
       ),
     );
+    
+    final size = MediaQuery.of(context).size;
+    final width = size.width;
+    final photoBoxSize = width * 0.22;
 
     return Scaffold(
       appBar: CustomAppBar(title: "Complete Job"),
@@ -325,17 +329,60 @@ class _CompleteJobScreenState extends State<CompleteJobScreen> {
                         ),
 
                         /// Show Selected Photos
-                        ..._photos.map(
-                          (file) => ClipRRect(
-                            borderRadius: BorderRadius.circular(12),
-                            child: Image.file(
-                              file,
-                              width: 90,
-                              height: 90,
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-                        ),
+                        // ..._photos.map(
+                        //   (file) => ClipRRect(
+                        //     borderRadius: BorderRadius.circular(12),
+                        //     child: Image.file(
+                        //       file,
+                        //       width: 90,
+                        //       height: 90,
+                        //       fit: BoxFit.cover,
+                        //     ),
+                        //   ),
+                        // ),
+                        ..._photos.asMap().entries.map((entry) {
+                              int index = entry.key;
+                              File file = entry.value;
+
+                              return Stack(
+                                children: [
+                                  ClipRRect(
+                                    borderRadius: BorderRadius.circular(12),
+                                    child: Image.file(
+                                      file,
+                                      width: photoBoxSize,
+                                      height: photoBoxSize,
+                                      fit: BoxFit.cover,
+                                    ),
+                                  ),
+
+                                  /// Cancel Icon
+                                  Positioned(
+                                    top: 4,
+                                    right: 4,
+                                    child: GestureDetector(
+                                      onTap: () {
+                                        setState(() {
+                                          _photos.removeAt(index);
+                                        });
+                                      },
+                                      child: Container(
+                                        decoration: BoxDecoration(
+                                          color: Colors.black.withOpacity(0.6),
+                                          shape: BoxShape.circle,
+                                        ),
+                                        padding: const EdgeInsets.all(4),
+                                        child: const Icon(
+                                          Icons.close,
+                                          color: Colors.white,
+                                          size: 16,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              );
+                            }),
                       ],
                     ),
 

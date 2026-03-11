@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:bicycle_app_technician/app/model/component_items_model.dart';
 import 'package:bicycle_app_technician/app/model/components_model.dart';
 import 'package:bicycle_app_technician/app/modules/add_parts/service/add_parts_service.dart';
@@ -11,13 +13,15 @@ class AddPartsController extends GetxController{
 
   RxList<ComponentsModel> components = <ComponentsModel>[].obs;
   RxList<ComponentItemsModel> componentItems = <ComponentItemsModel>[].obs;
-
   RxList<ComponentItemsModel> extraItems = <ComponentItemsModel>[].obs;
+
+  var approvalStatus = false.obs;
 
   @override
   void onInit(){
     super.onInit();
     loadInit();
+    
   }
 
   void loadInit() async {
@@ -136,6 +140,32 @@ class AddPartsController extends GetxController{
       isLoading.value = false;
     }
 
+  }
+
+  Future<void> getApprovalStatus(int jobId) async {
+    isLoading.value = true;
+    hasError.value = false;
+    errorMessage.value = '';
+    approvalStatus.value = false;
+    try{
+      final response = await  AddPartsService.getApprovalStatus(jobId);
+      if(response.status && response.data!=null){
+        approvalStatus.value = response.data!;
+      }
+      else{
+        hasError.value = true;
+        errorMessage.value = response.message!;
+        approvalStatus.value = response.data!;
+      }
+    }
+    catch(e){
+      hasError.value = true;
+      errorMessage.value = "Erro $e occurred";
+      approvalStatus.value = false;
+    }
+    finally{
+      isLoading.value = false;
+    }
   }
 
 }

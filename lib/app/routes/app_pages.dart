@@ -1,4 +1,5 @@
 import 'package:bicycle_app_technician/app/modules/add_parts/binding/add_parts_binding.dart';
+import 'package:bicycle_app_technician/app/modules/add_parts/view/approval_pending_screen.dart';
 import 'package:bicycle_app_technician/app/modules/add_parts/view/approval_screen.dart';
 import 'package:bicycle_app_technician/app/modules/add_parts/view/component_fitting_screen.dart';
 import 'package:bicycle_app_technician/app/modules/add_parts/view/select_parts_screen.dart';
@@ -198,6 +199,11 @@ class AppPages {
       name:AppRoutes.helpSupport,
       page: () => HelpSupportScreen(),
       // binding: NotificationBinding()
+    ),
+    GetPage(
+      name:AppRoutes.approvalPending,
+      page: () => ApprovalPendingScreen(),
+      binding: AddPartsBinding()
     ),
     GetPage(
       name:AppRoutes.bottomNav,

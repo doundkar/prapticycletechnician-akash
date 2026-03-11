@@ -159,4 +159,37 @@ class AddPartsService {
     }
   }
 
+  static Future<ApiResponseModel<bool>> getApprovalStatus(int jobId) async {
+    String token = SharedPrefs.getString("token");
+    log("token: $token");
+    log("jobId: $jobId");
+    final payload = {
+      "job_id": "$jobId",
+      };
+
+    try {
+      final response = await http.post(
+        Uri.parse("${baseUrl}extra-part/payment-status"),
+        headers: {
+          "Accept": "application/json",
+          "Content-Type": "application/json",
+          "Authorization": "Bearer $token"
+        },
+        body: jsonEncode(payload)
+      );
+      log("approval status resp: ${response.body}");
+      if(response.statusCode == 200){
+        final jsonBody = jsonDecode(response.body);
+        final data = jsonBody["data"];
+        bool val = data["extra_part_payment_status"] == "paid" ? true : false;
+        return ApiResponseModel(status: true,message: jsonBody["message"],data: val);
+      }
+      else{ 
+        return ApiResponseModel(status: false,message: "Statuscode ${response.statusCode}");
+      }
+    } catch (e) {
+      return ApiResponseModel(status: false,message: "Error $e occurred");
+    }
+  }
+
 }
