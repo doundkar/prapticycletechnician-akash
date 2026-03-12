@@ -67,6 +67,8 @@ class SignInController extends GetxController {
         await SharedPrefs.setString("email",response.data!.email!);
         await SharedPrefs.setString("phone",response.data!.phone!);
         await SharedPrefs.setString("token",response.data!.token!);
+        await SharedPrefs.setString("jobs_completed",response.data!.jobsCompleted!.toString());
+        await SharedPrefs.setString("ratings",response.data!.ratings.toString());
         log("${response.data}");
       }
       else{

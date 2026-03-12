@@ -31,6 +31,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
   late String image;
   late String userIdStr;
   late String phone;
+  late String ratings;
+  late String jobsCompleted;
+  late int jobs;
+  late String tier;
 
   ProfileController controller = Get.put(ProfileController());
 
@@ -46,6 +50,26 @@ class _ProfileScreenState extends State<ProfileScreen> {
     image = SharedPrefs.getString("image");
     userIdStr = SharedPrefs.getString("user_id");
     phone = SharedPrefs.getString("phone");
+    ratings = SharedPrefs.getString("ratings");
+    jobsCompleted = SharedPrefs.getString("jobs_completed");
+    jobs = int.parse(jobsCompleted);
+
+    if(jobs<=20){
+      tier = "BRONZE";
+    }
+    else if(jobs>20 && jobs<=50){
+      tier = "SILVER";
+    }
+    else if(jobs>50 && jobs<=100){
+      tier = "GOLD";
+    }
+    else if(jobs>100 && jobs<=200){
+      tier = "DIAMOND";
+    }
+    else{
+      tier = "PLATINUM";
+    }
+
     setState(() {});
   }
 
@@ -105,20 +129,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               ),
                       ),
 
-                      Positioned(
-                        bottom: 0,
-                        right: 0,
-                        child: Container(
-                          padding: const EdgeInsets.all(4),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            shape: BoxShape.circle,
-                            border: Border.all(color: Colors.grey.shade300),
-                          ),
-                          child: Icon(Icons.camera_alt,
-                              size: iconSize * 0.7),
-                        ),
-                      ),
+                      // Positioned(
+                      //   bottom: 0,
+                      //   right: 0,
+                      //   child: Container(
+                      //     padding: const EdgeInsets.all(4),
+                      //     decoration: BoxDecoration(
+                      //       color: Colors.white,
+                      //       shape: BoxShape.circle,
+                      //       border: Border.all(color: Colors.grey.shade300),
+                      //     ),
+                      //     child: Icon(Icons.camera_alt,
+                      //         size: iconSize * 0.7),
+                      //   ),
+                      // ),
                     ],
                   ),
 
@@ -172,12 +196,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
                         Row(
                           children: [
-                            const Text("4.0"),
+                            Text(ratings),
                             const SizedBox(width: 4),
                             const Icon(Icons.star,
                                 color: Colors.amber, size: 18),
                             const SizedBox(width: 8),
-                            const Text("(2) BRONZE"),
+                            Text("($jobsCompleted) $tier"),
                           ],
                         ),
                       ],

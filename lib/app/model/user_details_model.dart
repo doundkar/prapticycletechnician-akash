@@ -7,6 +7,8 @@ class UserDetailsModel {
   String? email;
   String? phone;
   String? token;
+  double? ratings;
+  int? jobsCompleted;
 
   UserDetailsModel(
       {this.id,
@@ -20,6 +22,7 @@ class UserDetailsModel {
 
   UserDetailsModel.fromJson(Map<String, dynamic> json) {
     final user = json["user"];
+    final ratingSummary = json['rating_summary'];
     id = user['id'];
     firstName = user['first_name'];
     lastName = user['last_name'];
@@ -27,6 +30,8 @@ class UserDetailsModel {
     email = user['email'];
     phone = user['phone'];
     token = json['token'];
+    jobsCompleted = json['completed_jobs'];
+    ratings = ratingSummary['average_rating'];
   }
 
   Map<String, dynamic> toJson() {
