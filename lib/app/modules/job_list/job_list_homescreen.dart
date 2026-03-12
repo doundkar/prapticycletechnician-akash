@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:bicycle_app_technician/app/model/service_item_model.dart';
 import 'package:bicycle_app_technician/app/modules/job_list/job_list_controller.dart';
 import 'package:bicycle_app_technician/app/routes/app_routes.dart';
@@ -23,6 +25,18 @@ class _JobListHomeScreenState extends State<JobListHomeScreen> {
   String userIdStr = SharedPrefs.getString("user_id");
 
   JobListController controller = Get.find();
+
+  @override
+  void initState() {
+    super.initState();
+    log("""
+      User Details
+      Is Online: $isOnline
+      Name: $name
+      Image: $image
+      User ID: $userIdStr
+      """);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -251,11 +265,14 @@ class _JobListHomeScreenState extends State<JobListHomeScreen> {
 
                           SizedBox(height: maxWidth * 0.05),
 
-                          if (controller.pendingJobRequests.isEmpty &&
-                              controller.acceptedJobRequests.isEmpty)
-                            ...[
-                              noJobsCard(maxWidth: maxWidth)
-                            ],
+                          if(!isOnline)...[
+                            noDataCard(maxWidth: maxWidth, title: "You are offline", subtitle: "Please log in to start receiving jobs!")
+                          ],
+
+                          if (isOnline && controller.pendingJobRequests.isEmpty &&
+                              controller.acceptedJobRequests.isEmpty) ...[
+                            noDataCard(maxWidth: maxWidth,title: "No jobs available yet...",subtitle: "Please wait while admin assigns you new jobs."),
+                          ],
 
                           if (controller.acceptedJobRequests.isNotEmpty) ...[
                             /// ACCEPTED HEADER
@@ -639,7 +656,7 @@ Widget _buildStatusCard(
   );
 }
 
-Widget noJobsCard({required double maxWidth}) {
+Widget noDataCard({required double maxWidth,required String title,required String subtitle}) {
   bool isTablet = maxWidth > 600;
   return Container(
     padding: EdgeInsets.all(isTablet ? 20 : 16),
@@ -659,14 +676,14 @@ Widget noJobsCard({required double maxWidth}) {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Text(
-          "No jobs available yet..",
+          title,
           style: TextStyle(
             fontWeight: FontWeight.w600,
             fontSize: isTablet ? 18 : 16,
           ),
         ),
         Text(
-          "Please wait while admin assigns you new jobs.",
+          subtitle,
           style: TextStyle(
             fontWeight: FontWeight.w600,
             fontSize: isTablet ? 18 : 16,

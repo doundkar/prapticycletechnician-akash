@@ -6,6 +6,7 @@ class UserDetailsModel {
   String? dateOfBirth;
   String? email;
   String? phone;
+  String? image;
   String? token;
   double? ratings;
   int? jobsCompleted;
@@ -29,6 +30,7 @@ class UserDetailsModel {
     dateOfBirth = user['date_of_birth'];
     email = user['email'];
     phone = user['phone'];
+    image = user['image'] ?? "";
     token = json['token'];
     jobsCompleted = json['completed_jobs'];
     ratings = ratingSummary['average_rating'];
