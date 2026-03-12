@@ -38,6 +38,7 @@ import 'package:bicycle_app_technician/app/modules/navigation.dart/navigation_bi
 import 'package:bicycle_app_technician/app/modules/navigation.dart/navigation_screen.dart';
 import 'package:bicycle_app_technician/app/modules/auth/view/sign_up/identity_approved_screen.dart';
 import 'package:bicycle_app_technician/app/modules/auth/view/sign_up/verification_screen.dart';
+import 'package:bicycle_app_technician/app/modules/suppport/support_binding.dart';
 import 'package:bicycle_app_technician/app/routes/app_routes.dart';
 import 'package:bicycle_app_technician/app/modules/auth/view/sign_up/signup_view.dart';
 import 'package:bicycle_app_technician/app/modules/auth/view/sign_in/signin_screen.dart';
@@ -148,7 +149,7 @@ class AppPages {
     GetPage(
       name:AppRoutes.selectPart,
       page: () => SelectPartsScreen(),
-      // binding: AddPartsBinding()
+      binding: AddPartsBinding()
     ),
     GetPage(
       name:AppRoutes.componentFitting,
@@ -158,7 +159,7 @@ class AppPages {
     GetPage(
       name:AppRoutes.approval,
       page: () => ApprovalScreen(),
-      binding: AddPartsBinding()
+      // binding: AddPartsBinding()
     ),
     GetPage(
       name:AppRoutes.wallet,
@@ -198,12 +199,12 @@ class AppPages {
     GetPage(
       name:AppRoutes.helpSupport,
       page: () => HelpSupportScreen(),
-      // binding: NotificationBinding()
+      binding: SupportBinding()
     ),
     GetPage(
       name:AppRoutes.approvalPending,
       page: () => ApprovalPendingScreen(),
-      binding: AddPartsBinding()
+      // binding: AddPartsBinding()
     ),
     GetPage(
       name:AppRoutes.bottomNav,

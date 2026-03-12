@@ -26,7 +26,7 @@ class _ApprovalScreenState extends State<ApprovalScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar(title: "Component Fitting"),
+      appBar: CustomAppBar(title: "Approval"),
 
       body: SingleChildScrollView(
         child: Column(

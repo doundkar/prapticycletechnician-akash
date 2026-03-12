@@ -10,14 +10,21 @@ class NotificationScreen extends StatefulWidget {
 }
 
 class _NotificationScreenState extends State<NotificationScreen> {
+  late bool isTablet;
+  late bool isSmallPhone;
+
   @override
   Widget build(BuildContext context) {
+    double width = MediaQuery.of(context).size.width;
+
+    isTablet = width >= 768;
+    isSmallPhone = width < 360;
+
     return Scaffold(
       appBar: CustomAppBar(title: "Notifications"),
       body: ListView(
-        padding: const EdgeInsets.all(16),
+        padding: EdgeInsets.all(isTablet ? 24 : isSmallPhone ? 12 : 16),
         children: [
-
           _buildNotificationCard(
             title: "New Job Assigned",
             description:
@@ -25,25 +32,23 @@ class _NotificationScreenState extends State<NotificationScreen> {
             actionText: "Mark as read",
           ),
 
-          SizedBox(height: 16),
+          SizedBox(height: isTablet ? 20 : 16),
 
           _buildNotificationCard(
             title: "Job Reminder",
-            description:
-                "Job-1234 is scheduled to start in 1 hour",
+            description: "Job-1234 is scheduled to start in 1 hour",
             actionText: "Mark as read",
           ),
 
-          SizedBox(height: 16),
+          SizedBox(height: isTablet ? 20 : 16),
 
           _buildNotificationCard(
             title: "Customer Review",
-            description:
-                "Sneha P gave you 5 stars for JOB-12333",
+            description: "Sneha P gave you 5 stars for JOB-12333",
             timeText: "2 hrs",
           ),
 
-          SizedBox(height: 16),
+          SizedBox(height: isTablet ? 20 : 16),
 
           _buildNotificationCard(
             title: "Payment Received",
@@ -63,10 +68,10 @@ class _NotificationScreenState extends State<NotificationScreen> {
     String? timeText,
   }) {
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: EdgeInsets.all(isTablet ? 20 : isSmallPhone ? 12 : 16),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(isTablet ? 20 : 16),
         boxShadow: const [
           BoxShadow(
             color: Color.fromRGBO(0, 0, 0, 0.08),
@@ -78,17 +83,16 @@ class _NotificationScreenState extends State<NotificationScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-
           /// TITLE
           Text(
             title,
-            style: const TextStyle(
+            style: TextStyle(
               fontWeight: FontWeight.w600,
-              fontSize: 14,
+              fontSize: isTablet ? 16 : isSmallPhone ? 13 : 14,
             ),
           ),
 
-          const SizedBox(height: 6),
+          SizedBox(height: isTablet ? 8 : 6),
 
           /// DESCRIPTION + ACTION/TIME
           Row(
@@ -97,8 +101,8 @@ class _NotificationScreenState extends State<NotificationScreen> {
               Expanded(
                 child: Text(
                   description,
-                  style: const TextStyle(
-                    fontSize: 14,
+                  style: TextStyle(
+                    fontSize: isTablet ? 15 : isSmallPhone ? 13 : 14,
                     color: Colors.black87,
                     fontWeight: FontWeight.w400,
                   ),
@@ -111,7 +115,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
                   child: Text(
                     actionText,
                     style: TextStyle(
-                      fontSize: 10,
+                      fontSize: isTablet ? 12 : 10,
                       color: AppColors.blue,
                       fontWeight: FontWeight.w600,
                     ),
@@ -123,9 +127,9 @@ class _NotificationScreenState extends State<NotificationScreen> {
                   padding: const EdgeInsets.only(left: 8),
                   child: Text(
                     timeText,
-                    style: const TextStyle(
-                      fontSize: 10,
-                      color: Color.fromRGBO(81, 89, 120, 1),
+                    style: TextStyle(
+                      fontSize: isTablet ? 12 : 10,
+                      color: const Color.fromRGBO(81, 89, 120, 1),
                       fontWeight: FontWeight.w600,
                     ),
                   ),
@@ -136,5 +140,4 @@ class _NotificationScreenState extends State<NotificationScreen> {
       ),
     );
   }
-
 }

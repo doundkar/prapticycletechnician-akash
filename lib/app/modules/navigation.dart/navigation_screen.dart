@@ -9,14 +9,16 @@ class NavigationScreen extends StatefulWidget {
   const NavigationScreen({super.key});
 
   @override
-  State<NavigationScreen> createState() =>
-      _NavigationScreenState();
+  State<NavigationScreen> createState() => _NavigationScreenState();
 }
 
 class _NavigationScreenState extends State<NavigationScreen> {
+
+  bool hasReached = false;
+
+
   @override
   Widget build(BuildContext context) {
-
     JobDetailsModel job = Get.arguments;
 
     return LayoutBuilder(
@@ -29,7 +31,7 @@ class _NavigationScreenState extends State<NavigationScreen> {
             : maxWidth;
 
         bool isTablet = maxWidth > 600;
-
+        double switchScale = maxWidth > 600 ? 0.75 : 0.60;
         return Scaffold(
           appBar: CustomAppBar(title: "Navigation"),
           body: Center(
@@ -38,7 +40,10 @@ class _NavigationScreenState extends State<NavigationScreen> {
               child: SafeArea(
                 child: SingleChildScrollView(
                   child: Padding(
-                    padding: EdgeInsets.symmetric(horizontal: isTablet ? 24 : 15,vertical: maxWidth * 0.03),
+                    padding: EdgeInsets.symmetric(
+                      horizontal: isTablet ? 24 : 15,
+                      vertical: maxWidth * 0.03,
+                    ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -78,23 +83,48 @@ class _NavigationScreenState extends State<NavigationScreen> {
                                 ),
                                 SizedBox(height: isTablet ? 8 : 6),
                                 Row(
+                                  mainAxisAlignment: MainAxisAlignment.start,
                                   children: [
-                                    Container(
-                                      height: isTablet ? 26 : 22,
-                                      width: isTablet ? 26 : 22,
-                                      decoration: const BoxDecoration(
-                                        color: Colors.green,
-                                        shape: BoxShape.circle,
-                                      ),
-                                      child: Icon(
-                                        Icons.check,
-                                        color: Colors.white,
-                                        size: isTablet ? 18 : 16,
+                                    // Container(
+                                    //   height: isTablet ? 26 : 22,
+                                    //   width: isTablet ? 26 : 22,
+                                    //   decoration: const BoxDecoration(
+                                    //     color: Colors.green,
+                                    //     shape: BoxShape.circle,
+                                    //   ),
+                                    //   child: Icon(
+                                    //     Icons.check,
+                                    //     color: Colors.white,
+                                    //     size: isTablet ? 18 : 16,
+                                    //   ),
+                                    // ),
+                                    Transform.scale(
+                                      scale: switchScale,
+                                      child: Switch(
+                                        value: hasReached,
+                                        materialTapTargetSize:
+                                            MaterialTapTargetSize.shrinkWrap,
+                                        inactiveThumbColor: AppColors.blue,
+                                        activeThumbColor: Colors.green,
+                                        activeTrackColor: Colors.white,
+                                        trackColor:
+                                            const WidgetStatePropertyAll(
+                                              Color.fromRGBO(225, 225, 225, 1),
+                                            ),
+                                        trackOutlineColor:
+                                            const WidgetStatePropertyAll(
+                                              Color.fromRGBO(166, 166, 166, 1),
+                                            ),
+                                        onChanged: (value) {
+                                          setState(() {
+                                            hasReached = value;
+                                          });
+                                        },
                                       ),
                                     ),
-                                    const SizedBox(width: 6),
+                                    // const SizedBox(width: 2),
                                     Text(
-                                      "On the Way",
+                                      hasReached ? "Reached" : "On the Way",
                                       style: TextStyle(
                                         fontSize: isTablet ? 18 : 16,
                                         fontWeight: FontWeight.w600,
@@ -248,7 +278,10 @@ class _NavigationScreenState extends State<NavigationScreen> {
                           maxWidth: maxWidth,
                           icon: Icons.call_outlined,
                           text: "Call Customer",
-                          onPressed: () => Get.toNamed(AppRoutes.startJobOtp,arguments: job),
+                          onPressed: () => Get.toNamed(
+                            AppRoutes.startJobOtp,
+                            arguments: job,
+                          ),
                         ),
 
                         SizedBox(height: isTablet ? 20 : 15),
@@ -258,7 +291,10 @@ class _NavigationScreenState extends State<NavigationScreen> {
                           maxWidth: maxWidth,
                           icon: Icons.chat_bubble_outline,
                           text: "Message",
-                          onPressed: () => Get.toNamed(AppRoutes.startJobOtp,arguments: job),
+                          onPressed: () => Get.toNamed(
+                            AppRoutes.startJobOtp,
+                            arguments: job,
+                          ),
                         ),
                       ],
                     ),

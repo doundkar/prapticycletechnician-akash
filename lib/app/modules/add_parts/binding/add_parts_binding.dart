@@ -4,6 +4,6 @@ import 'package:get/instance_manager.dart';
 class AddPartsBinding extends Bindings {
   @override
   void dependencies() {
-    Get.lazyPut<AddPartsController>(()=>AddPartsController());
+    Get.put<AddPartsController>(AddPartsController(), permanent: true);
   }
 }

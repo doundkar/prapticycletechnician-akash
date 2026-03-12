@@ -5,8 +5,6 @@ import 'package:get/instance_manager.dart';
 class JobProgressBinding extends Bindings {
   @override
   void dependencies() {
-    Get.lazyPut<JobProgressController>(() => JobProgressController());
-    Get.lazyPut<AddPartsController>(() => AddPartsController());
-    
+    Get.put<JobProgressController>(JobProgressController(), permanent: true);
   }
 }
