@@ -1,205 +1,282 @@
+import 'package:bicycle_app_technician/app/model/support_model.dart';
+import 'package:bicycle_app_technician/app/modules/suppport/support_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:bicycle_app_technician/view/widgets/custom_app_bar.dart';
 import 'package:bicycle_app_technician/view/Colors/app_colors.dart';
+import 'package:get/get.dart';
 
-class HelpSupportScreen extends StatelessWidget {
+class HelpSupportScreen extends StatefulWidget {
   const HelpSupportScreen({super.key});
 
   @override
+  State<HelpSupportScreen> createState() => _HelpSupportScreenState();
+}
+
+class _HelpSupportScreenState extends State<HelpSupportScreen> {
+  /// FAQ Section expanded index
+  int? expandedIndex;
+
+  @override
   Widget build(BuildContext context) {
+    final width = MediaQuery.of(context).size.width;
+
+    final bool isTablet = width >= 768;
+    final bool isSmallPhone = width < 360;
+
+    final double padding = isTablet
+        ? 24
+        : isSmallPhone
+        ? 12
+        : 16;
+    final double titleFont = isTablet ? 18 : 16;
+    final double textFont = isTablet
+        ? 15
+        : isSmallPhone
+        ? 13
+        : 14;
+    final double spacingLarge = isTablet ? 24 : 20;
+    final double spacingMedium = isTablet ? 20 : 16;
+
+    SupportController controller = Get.find();
+
     return Scaffold(
       appBar: CustomAppBar(title: "Help & Support"),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-
-            /// Intro Text
-            const Text(
-              "We're here to help you with jobs, payments, and app issues.",
-              style: TextStyle(color: Colors.grey),
-            ),
-
-            const SizedBox(height: 20),
-
-            /// CALL SUPPORT CARD
-            _cardContainer(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: const [
-                  Row(
-                    children: [
-                      Icon(Icons.call_outlined),
-                      SizedBox(width: 8),
-                      Text(
-                        "Call Support",
-                        style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600),
-                      ),
-                    ],
-                  ),
-                  Divider(height: 20),
-                  Text("Talk to our support team"),
-                  SizedBox(height: 4),
-                  Text("Available: 9:00 AM - 9:00 PM",
-                      style: TextStyle(color: Colors.grey)),
-                  SizedBox(height: 10),
-                  Text(
-                    "Call: +91 99887 76655",
-                    style: TextStyle(
-                        fontWeight: FontWeight.w600),
-                  ),
-                ],
+      body: Obx(() {
+        if (controller.isLoading.value) {
+          return Center(
+            child: SizedBox(
+              height: 30,
+              width: 30,
+              child: CircularProgressIndicator(
+                strokeWidth: 2,
+                color: AppColors.blue,
               ),
             ),
+          );
+        }
 
-            const SizedBox(height: 16),
+        if (controller.hasError.value) {
+          return Center(
+            child: Text(
+              controller.errorMessage.value,
+              style: const TextStyle(color: Colors.red),
+            ),
+          );
+        }
 
-            /// CHAT SUPPORT CARD
-            _cardContainer(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Row(
-                    children: [
-                      Icon(Icons.chat_bubble_outline),
-                      SizedBox(width: 8),
-                      Text(
-                        "Chat Support",
-                        style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600),
-                      ),
-                    ],
-                  ),
-                  const Divider(height: 20),
-                  Row(
-                    mainAxisAlignment:
-                        MainAxisAlignment.spaceBetween,
-                    children: [
-                      const Expanded(
-                        child: Text(
-                          "Instant help via chat for job issues, delays, app problems",
+        return SingleChildScrollView(
+          padding: EdgeInsets.all(padding),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              /// Intro Text
+              Text(
+                "We're here to help you with jobs, payments, and app issues.",
+                style: TextStyle(color: Colors.grey, fontSize: textFont),
+              ),
+
+              SizedBox(height: spacingLarge),
+
+              /// CALL SUPPORT CARD
+              _cardContainer(
+                context,
+                isTablet: isTablet,
+                isSmallPhone: isSmallPhone,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        const Icon(Icons.call_outlined),
+                        const SizedBox(width: 8),
+                        Text(
+                          controller.support.value!.callSupport!.title!,
                           style: TextStyle(
-                              color: Colors.grey),
+                            fontSize: titleFont,
+                            fontWeight: FontWeight.w600,
+                          ),
                         ),
-                      ),
-                      ElevatedButton(
-                        onPressed: () {},
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor:
-                              Colors.grey.shade300,
-                          foregroundColor: Colors.black,
-                          elevation: 0,
-                        ),
-                        child: const Text("Start Chat"),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-
-            const SizedBox(height: 16),
-
-            /// EMAIL SUPPORT CARD
-            _cardContainer(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Row(
-                    children: [
-                      Icon(Icons.email_outlined),
-                      SizedBox(width: 8),
-                      Text(
-                        "Email Support",
-                        style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600),
-                      ),
-                    ],
-                  ),
-                  const Divider(height: 20),
-                  const Text("Support@technicianapp.com"),
-                  const SizedBox(height: 4),
-                  const Text("Response within 24 hours",
-                      style: TextStyle(color: Colors.grey)),
-                  const SizedBox(height: 12),
-                  TextField(
-                    decoration: InputDecoration(
-                      hintText: "Search help topics...",
-                      prefixIcon:
-                          const Icon(Icons.search),
-                      filled: true,
-                      fillColor:
-                          Colors.grey.shade100,
-                      border: OutlineInputBorder(
-                        borderRadius:
-                            BorderRadius.circular(12),
+                      ],
+                    ),
+                    const Divider(height: 20),
+                    Text(
+                      controller.support.value!.callSupport!.subtitle!,
+                      style: TextStyle(fontSize: textFont),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      controller.support.value!.callSupport!.availability!,
+                      style: TextStyle(color: Colors.grey, fontSize: textFont),
+                    ),
+                    const SizedBox(height: 10),
+                    Text(
+                      "Call: +91 ${controller.support.value!.callSupport!.phone}",
+                      style: TextStyle(
+                        fontWeight: FontWeight.w600,
+                        fontSize: textFont,
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
 
-            const SizedBox(height: 20),
+              SizedBox(height: spacingMedium),
 
-            /// FAQ SECTIONS
-            _faqSection(
-              title: "Job & Services Issues",
-              items: [
-                "Unable to accept job",
-                "Customer not reachable",
-                "Job cancelled by customer",
-                "Extra work request"
-              ],
-            ),
+              /// CHAT SUPPORT CARD
+              _cardContainer(
+                context,
+                isTablet: isTablet,
+                isSmallPhone: isSmallPhone,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        const Icon(Icons.chat_bubble_outline),
+                        const SizedBox(width: 8),
+                        Text(
+                          "Chat Support",
+                          style: TextStyle(
+                            fontSize: titleFont,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const Divider(height: 20),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Expanded(
+                          child: Text(
+                            "Instant help via chat for job issues, delays, app problems",
+                            style: TextStyle(
+                              color: Colors.grey,
+                              fontSize: textFont,
+                            ),
+                          ),
+                        ),
+                        SizedBox(width: isTablet ? 16 : 8),
+                        ElevatedButton(
+                          onPressed: () {},
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.grey.shade300,
+                            foregroundColor: Colors.black,
+                            elevation: 0,
+                            padding: EdgeInsets.symmetric(
+                              horizontal: isTablet ? 20 : 12,
+                              vertical: isTablet ? 12 : 8,
+                            ),
+                          ),
+                          child: Text(
+                            "Start Chat",
+                            style: TextStyle(fontSize: textFont),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
 
-            const SizedBox(height: 16),
+              SizedBox(height: spacingMedium),
 
-            _faqSection(
-              title: "Payment & Earnings",
-              items: [
-                "Payment not received",
-                "Wallet balance mismatch",
-                "Withdrawal issues",
-                "Commission queries"
-              ],
-            ),
+              /// EMAIL SUPPORT CARD
+              _cardContainer(
+                context,
+                isTablet: isTablet,
+                isSmallPhone: isSmallPhone,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        const Icon(Icons.email_outlined),
+                        const SizedBox(width: 8),
+                        Text(
+                          controller.support.value!.emailSupport!.title!,
+                          style: TextStyle(
+                            fontSize: titleFont,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const Divider(height: 20),
+                    Text(
+                      controller.support.value!.emailSupport!.email!,
+                      style: TextStyle(fontSize: textFont),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      controller.support.value!.emailSupport!.responseTime!,
+                      style: TextStyle(color: Colors.grey, fontSize: textFont),
+                    ),
+                    const SizedBox(height: 12),
+                    TextField(
+                      style: TextStyle(fontSize: textFont),
+                      decoration: InputDecoration(
+                        hintText: "Search help topics...",
+                        prefixIcon: const Icon(Icons.search),
+                        filled: true,
+                        fillColor: Colors.grey.shade100,
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(
+                            isTablet ? 16 : 12,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
 
-            const SizedBox(height: 16),
+              SizedBox(height: spacingLarge),
 
-            _faqSection(
-              title: "Location & Availability",
-              items: [
-                "App not detecting location",
-                "Unable to add work area",
-                "Online/Offline not updation"
-              ],
-            ),
-
-            const SizedBox(height: 30),
-          ],
-        ),
-      ),
+              ...controller.support.value!.faqSections!.map((e) {
+                return Column(
+                  children: [
+                    _faqSection(
+                      context,
+                      title: e.title!,
+                      items: e.items!,
+                      isTablet: isTablet,
+                      textFont: textFont,
+                    ),
+                    SizedBox(height: spacingMedium),
+                  ],
+                );
+              }),
+            ],
+          ),
+        );
+      }),
     );
   }
 
   /// Reusable Card Container
-  Widget _cardContainer({required Widget child}) {
+  Widget _cardContainer(
+    BuildContext context, {
+    required Widget child,
+    required bool isTablet,
+    required bool isSmallPhone,
+  }) {
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: EdgeInsets.all(
+        isTablet
+            ? 20
+            : isSmallPhone
+            ? 12
+            : 16,
+      ),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(isTablet ? 20 : 16),
         color: Colors.white,
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 8,
-            offset: const Offset(0, 4),
+            color: Colors.black.withOpacity(0.08),
+            blurRadius: 20,
+            offset: const Offset(0, 0),
           ),
         ],
       ),
@@ -208,34 +285,74 @@ class HelpSupportScreen extends StatelessWidget {
   }
 
   /// FAQ Section
-  Widget _faqSection({
+  Widget _faqSection(
+    BuildContext context, {
     required String title,
-    required List<String> items,
+    required List<Items> items,
+    required bool isTablet,
+    required double textFont,
   }) {
     return _cardContainer(
+      context,
+      isTablet: isTablet,
+      isSmallPhone: false,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             title,
-            style: const TextStyle(
-                fontWeight: FontWeight.w600),
+            style: TextStyle(fontWeight: FontWeight.w600, fontSize: textFont),
           ),
           const Divider(height: 20),
-          ...items.map((item) {
+          ...items.asMap().entries.map((entry) {
+            int index = entry.key;
+            Items item = entry.value;
+
+            bool isExpanded = expandedIndex == index;
+
             return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Row(
-                  mainAxisAlignment:
-                      MainAxisAlignment.spaceBetween,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(item),
-                    const Icon(
-                      Icons.arrow_forward_ios,
-                      size: 14,
-                    )
+                    Expanded(
+                      child: Text(
+                        item.question!,
+                        style: TextStyle(fontSize: textFont),
+                      ),
+                    ),
+                    GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          if (expandedIndex == index) {
+                            expandedIndex = null;
+                          } else {
+                            expandedIndex = index;
+                          }
+                        });
+                      },
+                      child: Icon(
+                        isExpanded
+                            ? Icons.keyboard_arrow_down
+                            : Icons.arrow_forward_ios,
+                        size: 14,
+                      ),
+                    ),
                   ],
                 ),
+
+                if (isExpanded) ...[
+                  const SizedBox(height: 8),
+                  Text(
+                    item.answer!,
+                    style: TextStyle(
+                      fontSize: textFont - 1,
+                      color: Colors.grey,
+                    ),
+                  ),
+                ],
+
                 const SizedBox(height: 12),
               ],
             );
