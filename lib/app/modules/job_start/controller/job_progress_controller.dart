@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:developer';
 import 'dart:io';
 
@@ -13,6 +14,31 @@ class JobProgressController extends GetxController {
 
   void calulateTimeTaken(int remainingSeconds, int totalDuration) {
     timeTakenInMins = ((totalDuration - remainingSeconds) / 60).round();
+  }
+
+  RxInt remainingSeconds = 0.obs;
+  Timer? timer;
+
+  void setRemainingSeconds(int minutes) {
+    remainingSeconds.value = minutes * 60;
+  }
+
+  void startTimer() {
+    // if (timer != null) return; // prevents multiple timers
+
+    timer = Timer.periodic(const Duration(seconds: 1), (_) {
+      if (remainingSeconds.value > 0) {
+        remainingSeconds.value--;
+      } else {
+        timer?.cancel();
+      }
+    });
+  }
+
+  @override
+  void onClose() {
+    timer?.cancel();
+    super.onClose();
   }
 
   Future<bool> verifyStartJobOtp(int jobId, int otp) async {
@@ -67,7 +93,7 @@ class JobProgressController extends GetxController {
       final response = await JobProgressService.completeJob(
         jobId,
         images,
-        timeTakenInMins*60,
+        timeTakenInMins * 60,
         otp,
         parts,
       );

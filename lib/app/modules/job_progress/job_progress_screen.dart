@@ -11,16 +11,15 @@ import 'package:get/get.dart';
 import 'package:get/state_manager.dart';
 
 class JobInProgressScreen extends StatefulWidget {
-  const JobInProgressScreen({super.key});
+  bool isInitial;
+  JobInProgressScreen({super.key,this.isInitial = true});
 
   @override
   State<JobInProgressScreen> createState() => _JobInProgressScreenState();
 }
 
 class _JobInProgressScreenState extends State<JobInProgressScreen> {
-  Timer? timer;
   JobDetailsModel job = Get.arguments;
-  late int remainingSeconds;
   bool isPaused = false;
 
   JobProgressController controller = Get.find();
@@ -28,29 +27,17 @@ class _JobInProgressScreenState extends State<JobInProgressScreen> {
   @override
   void initState() {
     super.initState();
-    setRemainingSeconds();
-    startTimer();
-  }
-
-  void setRemainingSeconds(){
-    remainingSeconds = job.durationMinutes! * 60;
-  }
-
-  void startTimer() {
-    timer = Timer.periodic(Duration(seconds: 1), (timer) {
-      if (remainingSeconds > 0) {
-        remainingSeconds--;
-        setState(() {});
-      } else {
-        timer.cancel();
-      }
-    });
+    if(widget.isInitial){
+      controller.setRemainingSeconds(job.durationMinutes!);
+      controller.startTimer();
+    }
+    
   }
 
   String get formattedTime {
-    int hours = remainingSeconds ~/ 3600;
-    int minutes = (remainingSeconds % 3600) ~/ 60;
-    int seconds = remainingSeconds % 60;
+    int hours = controller.remainingSeconds.value ~/ 3600;
+    int minutes = (controller.remainingSeconds.value % 3600) ~/ 60;
+    int seconds = controller.remainingSeconds.value % 60;
 
     return "${hours.toString().padLeft(2, '0')}:"
         "${minutes.toString().padLeft(2, '0')}:"
@@ -59,9 +46,6 @@ class _JobInProgressScreenState extends State<JobInProgressScreen> {
 
   @override
   Widget build(BuildContext context) {
-
-    
-
     return Scaffold(
       appBar: CustomAppBar(title: "Job In Progress"),
       body: SingleChildScrollView(
@@ -92,9 +76,9 @@ class _JobInProgressScreenState extends State<JobInProgressScreen> {
                   ),
                 ],
               ),
-        
+
               const SizedBox(height: 20),
-        
+
               /// TIME ELAPSED CARD
               Container(
                 width: double.infinity,
@@ -120,24 +104,28 @@ class _JobInProgressScreenState extends State<JobInProgressScreen> {
                         ),
                       ],
                     ),
-        
+
                     const SizedBox(height: 10),
-        
-                    Text(
-                      formattedTime,
-                      style: TextStyle(fontSize: 44, fontWeight: FontWeight.w600),
+
+                    Obx(
+                      ()=> Text(
+                        formattedTime,
+                        style: TextStyle(
+                          fontSize: 44,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
                     ),
-        
+
                     const SizedBox(height: 15),
-        
+
                     InkWell(
-                      onTap: (){
+                      onTap: () {
                         isPaused = !isPaused;
-                        if(isPaused){
-                          timer!.cancel();
-                        }
-                        else{
-                          startTimer();
+                        if (isPaused) {
+                          controller.timer!.cancel();
+                        } else {
+                          controller.startTimer();
                         }
                         setState(() {});
                       },
@@ -154,7 +142,10 @@ class _JobInProgressScreenState extends State<JobInProgressScreen> {
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            Icon(isPaused ? Icons.play_arrow : Icons.pause, size: 18),
+                            Icon(
+                              isPaused ? Icons.play_arrow : Icons.pause,
+                              size: 18,
+                            ),
                             SizedBox(width: 8),
                             Text(
                               isPaused ? "Resume Timer" : "Pause Timer",
@@ -170,9 +161,9 @@ class _JobInProgressScreenState extends State<JobInProgressScreen> {
                   ],
                 ),
               ),
-        
+
               const SizedBox(height: 20),
-        
+
               /// +15 / +30 Buttons
               Row(
                 children: [
@@ -181,9 +172,9 @@ class _JobInProgressScreenState extends State<JobInProgressScreen> {
                   _timeButton(30),
                 ],
               ),
-        
+
               const SizedBox(height: 30),
-        
+
               /// Service Summary
               const Text(
                 "Service Job Summary",
@@ -193,34 +184,34 @@ class _JobInProgressScreenState extends State<JobInProgressScreen> {
                   color: Color.fromRGBO(102, 112, 133, 1),
                 ),
               ),
-        
+
               const SizedBox(height: 15),
-        
+
               const Text(
                 "Orders Details",
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
               ),
-        
+
               const SizedBox(height: 10),
-        
+
               Text(
                 job.description!,
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.w400),
               ),
-        
+
               const SizedBox(height: 30),
-        
+
               /// Need Extra Parts
               const Text(
                 "Need Extra Parts?",
                 style: TextStyle(fontSize: 17, fontWeight: FontWeight.w600),
               ),
-        
+
               const SizedBox(height: 15),
-        
+
               InkWell(
-                onTap: (){
-                  Get.toNamed(AppRoutes.selectPart,arguments: job);
+                onTap: () {
+                  Get.toNamed(AppRoutes.selectPart, arguments: job);
                 },
                 child: Container(
                   width: double.infinity,
@@ -237,13 +228,16 @@ class _JobInProgressScreenState extends State<JobInProgressScreen> {
                       SizedBox(width: 8),
                       Text(
                         "Add Parts",
-                        style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15),
+                        style: TextStyle(
+                          fontWeight: FontWeight.w600,
+                          fontSize: 15,
+                        ),
                       ),
                     ],
                   ),
                 ),
               ),
-        
+
               // const Spacer(),
             ],
           ),
@@ -256,8 +250,11 @@ class _JobInProgressScreenState extends State<JobInProgressScreen> {
           padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
           child: InkWell(
             onTap: () {
-              controller.calulateTimeTaken(remainingSeconds, (job.durationMinutes!*60));
-              Get.toNamed(AppRoutes.completeJob,arguments: job);
+              controller.calulateTimeTaken(
+                controller.remainingSeconds.value,
+                (job.durationMinutes! * 60),
+              );
+              Get.toNamed(AppRoutes.completeJob, arguments: job);
             },
             child: CustomButton(
               text: "Next",
@@ -277,10 +274,9 @@ class _JobInProgressScreenState extends State<JobInProgressScreen> {
   /// Time Add Button
   Widget _timeButton(int time) {
     return InkWell(
-      onTap: (){
-        int newSeconds = time*60;
-        remainingSeconds += newSeconds;
-        setState(() {});
+      onTap: () {
+        int newSeconds = time * 60;
+        controller.remainingSeconds.value += newSeconds;
       },
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),

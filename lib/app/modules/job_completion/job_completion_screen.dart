@@ -1,5 +1,7 @@
 import 'dart:io';
+import 'package:bicycle_app_technician/app/model/component_items_model.dart';
 import 'package:bicycle_app_technician/app/model/job_details_model.dart';
+import 'package:bicycle_app_technician/app/modules/add_parts/controllers/add_parts_controller.dart';
 import 'package:bicycle_app_technician/app/modules/job_start/controller/job_progress_controller.dart';
 import 'package:bicycle_app_technician/app/routes/app_routes.dart';
 import 'package:bicycle_app_technician/view/widgets/custom_snackbar.dart';
@@ -24,9 +26,10 @@ class _CompleteJobScreenState extends State<CompleteJobScreen> {
   final ImagePicker _picker = ImagePicker();
   final List<File> _photos = [];
   final TextEditingController otpController = TextEditingController();
-  final bool showExtra = false;
+  late bool showExtra;
 
   JobProgressController controller = Get.find();
+  AddPartsController partsController = Get.find();
 
   JobDetailsModel job = Get.arguments;
 
@@ -40,36 +43,13 @@ class _CompleteJobScreenState extends State<CompleteJobScreen> {
     }
   }
 
-  final List<Map<String, dynamic>> items = [
-    {
-      "title": "Disc Caliper (160/40)",
-      "brand": "MAHAJAN/ALLWYN",
-      "size": "4",
-      "price": "549",
-      "image":
-          "https://imgs.search.brave.com/84pAQEBmF3lhuPTGoqaFSh4XNSKWij7fEnuvL1Ek4nc/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9tLm1l/ZGlhLWFtYXpvbi5j/b20vaW1hZ2VzL0kv/NDFTcjIxVHkrZUwu/anBn",
-      "qty": 0,
-    },
-    {
-      "title": "Disc Caliper (180/160)",
-      "brand": "MAHAJAN/ALLWYN",
-      "size": "4",
-      "price": "549",
-      "image":
-          "https://imgs.search.brave.com/84pAQEBmF3lhuPTGoqaFSh4XNSKWij7fEnuvL1Ek4nc/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9tLm1l/ZGlhLWFtYXpvbi5j/b20vaW1hZ2VzL0kv/NDFTcjIxVHkrZUwu/anBn",
-      "qty": 0,
-    },
-    {
-      "title": "Disc Brake Rotor",
-      "brand": "",
-      "size": "4",
-      "price": "899",
-      "image":
-          "https://imgs.search.brave.com/84pAQEBmF3lhuPTGoqaFSh4XNSKWij7fEnuvL1Ek4nc/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9tLm1l/ZGlhLWFtYXpvbi5j/b20vaW1hZ2VzL0kv/NDFTcjIxVHkrZUwu/anBn",
-      "qty": 0,
-    },
-  ];
   final double _bottomBarHeight = 90;
+
+  @override
+  void initState() {
+    showExtra = partsController.extraItems.isNotEmpty;
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -105,7 +85,7 @@ class _CompleteJobScreenState extends State<CompleteJobScreen> {
         ],
       ),
     );
-    
+
     final size = MediaQuery.of(context).size;
     final width = size.width;
     final photoBoxSize = width * 0.22;
@@ -133,11 +113,11 @@ class _CompleteJobScreenState extends State<CompleteJobScreen> {
                   //   top: 12,
                   //   bottom: 12 + _bottomBarHeight + MediaQuery.of(context).padding.bottom,
                   // ),
-                  itemCount: items.length,
+                  itemCount: partsController.extraItems.length,
                   separatorBuilder: (_, __) => const SizedBox(height: 12),
                   itemBuilder: (context, index) {
-                    final item = items[index];
-                    final qty = item["qty"] as int;
+                    ComponentItemsModel item =
+                        partsController.extraItems.value[index];
 
                     return Container(
                       padding: const EdgeInsets.all(12),
@@ -181,12 +161,18 @@ class _CompleteJobScreenState extends State<CompleteJobScreen> {
                                     ),
                                     child: ClipRRect(
                                       borderRadius: BorderRadius.circular(12),
-                                      child: Image.network(
-                                        item["image"],
-                                        height: 120,
-                                        width: 120,
-                                        fit: BoxFit.contain,
-                                      ),
+                                      child: item.image!.isEmpty
+                                          ? Icon(
+                                              Icons.image,
+                                              size: 120,
+                                              color: Colors.grey[300],
+                                            )
+                                          : Image.network(
+                                              item.image!,
+                                              height: 120,
+                                              width: 120,
+                                              fit: BoxFit.contain,
+                                            ),
                                     ),
                                   ),
                                 ),
@@ -203,7 +189,7 @@ class _CompleteJobScreenState extends State<CompleteJobScreen> {
                               children: [
                                 const SizedBox(height: 10),
                                 Text(
-                                  item["title"],
+                                  item.title!,
                                   style: const TextStyle(
                                     fontWeight: FontWeight.bold,
                                     fontSize: 16,
@@ -212,9 +198,9 @@ class _CompleteJobScreenState extends State<CompleteJobScreen> {
 
                                 const SizedBox(height: 6),
 
-                                if (item["brand"].toString().isNotEmpty)
+                                if (item.brand!.isNotEmpty)
                                   Text(
-                                    'Brand - ${item["brand"]}',
+                                    'Brand - ${item.brand}',
                                     style: TextStyle(
                                       fontSize: 14,
                                       color: Colors.grey.shade600,
@@ -223,9 +209,9 @@ class _CompleteJobScreenState extends State<CompleteJobScreen> {
 
                                 const SizedBox(height: 4),
 
-                                if (item["size"].toString().isNotEmpty)
+                                if (item.size!.isNotEmpty)
                                   Text(
-                                    'Size - ${item["size"]}',
+                                    'Size - ${item.size}',
                                     style: TextStyle(
                                       fontSize: 14,
                                       color: Colors.grey.shade600,
@@ -235,7 +221,7 @@ class _CompleteJobScreenState extends State<CompleteJobScreen> {
                                 const SizedBox(height: 10),
 
                                 Text(
-                                  '₹${item["price"]}',
+                                  '₹${item.price}',
                                   style: const TextStyle(
                                     fontWeight: FontWeight.bold,
                                     color: Colors.lightBlue,
@@ -341,48 +327,48 @@ class _CompleteJobScreenState extends State<CompleteJobScreen> {
                         //   ),
                         // ),
                         ..._photos.asMap().entries.map((entry) {
-                              int index = entry.key;
-                              File file = entry.value;
+                          int index = entry.key;
+                          File file = entry.value;
 
-                              return Stack(
-                                children: [
-                                  ClipRRect(
-                                    borderRadius: BorderRadius.circular(12),
-                                    child: Image.file(
-                                      file,
-                                      width: photoBoxSize,
-                                      height: photoBoxSize,
-                                      fit: BoxFit.cover,
+                          return Stack(
+                            children: [
+                              ClipRRect(
+                                borderRadius: BorderRadius.circular(12),
+                                child: Image.file(
+                                  file,
+                                  width: photoBoxSize,
+                                  height: photoBoxSize,
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
+
+                              /// Cancel Icon
+                              Positioned(
+                                top: 4,
+                                right: 4,
+                                child: GestureDetector(
+                                  onTap: () {
+                                    setState(() {
+                                      _photos.removeAt(index);
+                                    });
+                                  },
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      color: Colors.black.withOpacity(0.6),
+                                      shape: BoxShape.circle,
+                                    ),
+                                    padding: const EdgeInsets.all(4),
+                                    child: const Icon(
+                                      Icons.close,
+                                      color: Colors.white,
+                                      size: 16,
                                     ),
                                   ),
-
-                                  /// Cancel Icon
-                                  Positioned(
-                                    top: 4,
-                                    right: 4,
-                                    child: GestureDetector(
-                                      onTap: () {
-                                        setState(() {
-                                          _photos.removeAt(index);
-                                        });
-                                      },
-                                      child: Container(
-                                        decoration: BoxDecoration(
-                                          color: Colors.black.withOpacity(0.6),
-                                          shape: BoxShape.circle,
-                                        ),
-                                        padding: const EdgeInsets.all(4),
-                                        child: const Icon(
-                                          Icons.close,
-                                          color: Colors.white,
-                                          size: 16,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              );
-                            }),
+                                ),
+                              ),
+                            ],
+                          );
+                        }),
                       ],
                     ),
 
@@ -476,10 +462,14 @@ class _CompleteJobScreenState extends State<CompleteJobScreen> {
             padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
             child: InkWell(
               onTap: () async {
-                if(_photos.isEmpty){
-                  ScaffoldMessenger.of(context).showSnackBar(CustomSnackbar.show(title: "Please upload photos", color: Colors.red[300]!));
-                }
-                else if (otpController.text.trim().isEmpty ||
+                if (_photos.isEmpty) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    CustomSnackbar.show(
+                      title: "Please upload photos",
+                      color: Colors.red[300]!,
+                    ),
+                  );
+                } else if (otpController.text.trim().isEmpty ||
                     otpController.text.trim().length < 6) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     CustomSnackbar.show(

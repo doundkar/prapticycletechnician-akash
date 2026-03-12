@@ -148,12 +148,12 @@ class AppPages {
     GetPage(
       name:AppRoutes.selectPart,
       page: () => SelectPartsScreen(),
-      binding: AddPartsBinding()
+      // binding: AddPartsBinding()
     ),
     GetPage(
       name:AppRoutes.componentFitting,
       page: () => ComponentFittingScreen(),
-      binding: AddPartsBinding()
+      // binding: AddPartsBinding()
     ),
     GetPage(
       name:AppRoutes.approval,

@@ -4,6 +4,7 @@ import 'dart:developer';
 import 'package:bicycle_app_technician/app/model/job_details_model.dart';
 import 'package:bicycle_app_technician/app/modules/add_parts/controllers/add_parts_controller.dart';
 import 'package:bicycle_app_technician/app/modules/auth/controller/sign_up_controller.dart';
+import 'package:bicycle_app_technician/app/modules/job_progress/job_progress_screen.dart';
 import 'package:bicycle_app_technician/app/routes/app_routes.dart';
 import 'package:bicycle_app_technician/view/Colors/app_colors.dart';
 import 'package:bicycle_app_technician/view/widgets/custom_button.dart';
@@ -33,7 +34,8 @@ class _ApprovalPendingScreenState extends State<ApprovalPendingScreen> {
 
     ever(controller.approvalStatus, (status) {
       if (status == true) {
-        Get.offNamed(AppRoutes.progressJob, arguments: job);
+        approvalTimer!.cancel();
+        Get.to(JobInProgressScreen(isInitial: false,),arguments: job);
       }
     });
 
