@@ -45,7 +45,7 @@ class LeaveService {
     }
   }
 
-  static Future<ApiResponseModel<List<LeaveModel>>> getLeaves(
+  static Future<ApiResponseModel<Map<String,dynamic>>> getLeaves(
     int year,
     int month,
   ) async {
@@ -64,22 +64,20 @@ class LeaveService {
 
       final streamedResponse = await request.send();
       final response = await http.Response.fromStream(streamedResponse);
-      log("report resp: ${response.body}");
+      log("getLeaves resp: ${response.body}");
 
       if (response.statusCode == 200) {
         final jsonBody = jsonDecode(response.body);
-        final List<LeaveModel> leaves = [];
-        for (var json in jsonBody["data"]) {
-          LeaveModel l = LeaveModel.fromJson(json);
-          if(l.status! == "approved"){
-            log("leave : ${l.id}");
-            leaves.add(l);
-          }
-        }
+        final leavesMap = jsonBody['leave_balance'];
+        final respBody = {
+          "total":leavesMap['annual_leave'],
+          "balance":leavesMap['remaining_leaves'],
+          "used":leavesMap['used_leaves']
+        };
         return ApiResponseModel(
           status: true,
           message: "Leaves fetched successfully",
-          data: leaves,
+          data: respBody,
         );
       } else {
         return ApiResponseModel(

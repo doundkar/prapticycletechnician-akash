@@ -13,12 +13,16 @@ class LeaveController extends GetxController {
   var isReportLoading = false.obs;
   var isApplyLeaveLoading = false.obs;
 
+  var totalLeaves = 0.obs;
+  var leaveBalance = 0.obs;
+  var leavesUsed = 0.obs;
+
   var report = ReportModel().obs;
   RxSet<DateTime> absentDays = RxSet();
   RxSet<DateTime> presentDays = RxSet();
   RxSet<DateTime> weekOffDays = RxSet();
 
-  RxList<LeaveModel> leaves = RxList();
+  // RxList<LeaveModel> leaves = RxList();
   RxSet<DateTime> setLeaves = RxSet();
 
   @override
@@ -34,6 +38,10 @@ class LeaveController extends GetxController {
   }
 
   void getAbsentAndPresentDays() {
+    absentDays.clear();
+    presentDays.clear();
+    setLeaves.clear();
+    weekOffDays.clear();
     for (var day in report.value.days!) {
       List<String> date = day.date!.split("-");
       // log("$date");
@@ -50,17 +58,20 @@ class LeaveController extends GetxController {
         if(day.status == "weekoff"){
           weekOffDays.add(DateTime(year, month, today));
         }
+        if(day.status == "leave"){
+          setLeaves.add(DateTime(year,month,today));
+        }
       }
     }
     log("anbsent days: ${absentDays.value.toString()}");
     log("present days: ${presentDays.value.toString()}");
   }
 
-  void getSetLeaves(){
-    for(var l in leaves.value){
-      setLeaves.add(DateTime.parse(l.startDate!));
-    }
-  }
+  // void getSetLeaves(){
+  //   for(var l in leaves.value){
+  //     setLeaves.add(DateTime.parse(l.startDate!));
+  //   }
+  // }
 
   Future<void> getReport(int year, int month,{bool isInitial = false}) async {
     if(isInitial){
@@ -97,8 +108,9 @@ class LeaveController extends GetxController {
     try {
       final response = await LeaveService.getLeaves(year, month);
       if (response.status && response.data != null) {
-        leaves.value = response.data!;
-        getSetLeaves();
+        totalLeaves.value = response.data!["total"];
+        leaveBalance.value = response.data!["balance"];
+        leavesUsed.value = response.data!["used"];
         return;
       }
       hasError.value = true;

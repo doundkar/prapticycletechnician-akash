@@ -196,7 +196,7 @@ class _LeavesAttendanceScreenState extends State<LeavesAttendanceScreen> {
 
                 SizedBox(height: spacingMedium),
 
-                /// ABSENT CARD
+                /// LEAVES CARD
                 Container(
                   padding: EdgeInsets.all(padding),
                   decoration: BoxDecoration(
@@ -226,28 +226,28 @@ class _LeavesAttendanceScreenState extends State<LeavesAttendanceScreen> {
                     return Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        Row(
+                          // mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
-                              "Absent",
+                              "Leaves",
                               style: TextStyle(fontWeight: FontWeight.w600),
                             ),
-                            Icon(Icons.expand_more),
+                            SizedBox(width: 10),
+                            Text(
+                              "(${controller.leavesUsed.value} used out of ${controller.totalLeaves.value})",
+                              style: TextStyle(fontWeight: FontWeight.w400),
+                            ),
                           ],
                         ),
                         SizedBox(height: spacingSmall),
                         Text(
-                          "${controller.leaves.length} day(s) in (${DateFormat("MMM").format(focusDay)},${focusDay.year})",
+                          "${controller.setLeaves.length} day(s) in (${DateFormat("MMM").format(focusDay)},${focusDay.year})",
                           style: TextStyle(color: Colors.grey),
                         ),
                         const Divider(),
-                        ...controller.leaves.map((l) {
-                          return Text(
-                            DateFormat(
-                              'EEE, d MMM yyyy',
-                            ).format(DateTime.parse(l.startDate!)),
-                          );
+                        ...controller.setLeaves.map((l) {
+                          return Text(DateFormat('EEE, d MMM yyyy').format(l));
                         }),
                       ],
                     );
@@ -350,26 +350,36 @@ class _LeavesAttendanceScreenState extends State<LeavesAttendanceScreen> {
                         ),
                       );
                     } else {
-                      final body = {
-                        "start_date": DateFormat(
-                          'yyyy-MM-dd',
-                        ).format(startDate!),
-                        "end_date": DateFormat('yyyy-MM-dd').format(endDate!),
-                        "type": "unpaid",
-                        "reason": reasonController.text.trim(),
-                      };
-                      bool resp = await controller.applyLeave(body);
-                      if (resp) {
-                        reasonController.clear();
-                        startDate = null;
-                        endDate = null;
+                      int leaveDays = endDate!.day - startDate!.day + 1;
+                      if (leaveDays > controller.leaveBalance.value) {
                         ScaffoldMessenger.of(context).showSnackBar(
                           CustomSnackbar.show(
-                            title: "Leave Application submitted successfully",
-                            color: Colors.green[300]!,
+                            title: "You do not have sufficient leave balance",
+                            color: Colors.red[300]!,
                           ),
                         );
-                        setState(() {});
+                      } else {
+                        final body = {
+                          "start_date": DateFormat(
+                            'yyyy-MM-dd',
+                          ).format(startDate!),
+                          "end_date": DateFormat('yyyy-MM-dd').format(endDate!),
+                          "type": "unpaid",
+                          "reason": reasonController.text.trim(),
+                        };
+                        bool resp = await controller.applyLeave(body);
+                        if (resp) {
+                          reasonController.clear();
+                          startDate = null;
+                          endDate = null;
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            CustomSnackbar.show(
+                              title: "Leave Application submitted successfully",
+                              color: Colors.green[300]!,
+                            ),
+                          );
+                          setState(() {});
+                        }
                       }
                     }
                   },
