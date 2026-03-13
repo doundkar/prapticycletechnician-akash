@@ -106,8 +106,9 @@ class JobProgressService {
           await http.MultipartFile.fromPath("after_photos[]", images[i].path),
         );
       }
-      for (var part in parts) {
-        request.fields.addAll({"parts[]": part.toString()});
+      for (int i = 0; i < parts.length; i++) {
+        request.fields["parts[$i][id]"] = parts[i]["id"].toString();
+        request.fields["parts[$i][qty]"] = parts[i]["qty"].toString();
       }
       var streamedResp = await request.send();
       var response = await http.Response.fromStream(streamedResp);

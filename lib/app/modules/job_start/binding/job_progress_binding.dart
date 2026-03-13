@@ -6,5 +6,6 @@ class JobProgressBinding extends Bindings {
   @override
   void dependencies() {
     Get.put<JobProgressController>(JobProgressController(), permanent: true);
+    Get.put<AddPartsController>(AddPartsController(), permanent: true);
   }
 }

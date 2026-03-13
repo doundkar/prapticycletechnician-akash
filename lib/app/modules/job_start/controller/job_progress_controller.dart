@@ -89,6 +89,7 @@ class JobProgressController extends GetxController {
     isLoading.value = true;
     hasError = false.obs;
     errorMessage = ''.obs;
+    log("parts: $parts");
     try {
       final response = await JobProgressService.completeJob(
         jobId,
