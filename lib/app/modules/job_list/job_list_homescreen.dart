@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:bicycle_app_technician/app/model/service_item_model.dart';
 import 'package:bicycle_app_technician/app/modules/job_list/job_list_controller.dart';
+import 'package:bicycle_app_technician/app/modules/notification/notification_controller.dart';
 import 'package:bicycle_app_technician/app/routes/app_routes.dart';
 import 'package:bicycle_app_technician/utils/api_constants.dart';
 import 'package:bicycle_app_technician/utils/shared_prefs.dart';
@@ -25,6 +26,7 @@ class _JobListHomeScreenState extends State<JobListHomeScreen> {
   String userIdStr = SharedPrefs.getString("user_id");
 
   JobListController controller = Get.find();
+  NotificationController notificationController = Get.put(NotificationController());
 
   @override
   void initState() {
@@ -166,9 +168,9 @@ class _JobListHomeScreenState extends State<JobListHomeScreen> {
                           child: Container(
                             height: maxWidth > 600 ? 10 : 8,
                             width: maxWidth > 600 ? 10 : 8,
-                            decoration: const BoxDecoration(
+                            decoration: BoxDecoration(
                               shape: BoxShape.circle,
-                              color: Colors.red,
+                              color: notificationController.hasNew.value ? Colors.red : null,
                             ),
                           ),
                         ),

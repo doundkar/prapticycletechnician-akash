@@ -2,18 +2,21 @@ import 'package:bicycle_app_technician/view/Colors/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_navigation/src/extension_navigation.dart';
+import 'package:get/get_rx/src/rx_typedefs/rx_typedefs.dart';
 
 class CustomAppBar extends StatefulWidget implements PreferredSizeWidget {
   String? title;
   IconData? icon;
   bool isBackNeeded;
+  VoidCallback onTap;
 
   CustomAppBar({
     super.key,
     required this.title,
     this.isBackNeeded = true,
     this.icon = Icons.arrow_back_ios,
-  });
+    VoidCallback? onTap
+  }): onTap = onTap ?? Get.back;
 
   @override
   Size get preferredSize => const Size.fromHeight(kToolbarHeight);
@@ -39,9 +42,7 @@ class _CustomAppBarState extends State<CustomAppBar> {
       leading: widget.isBackNeeded
           ? IconButton(
               icon: Icon(widget.icon, color: Colors.white),
-              onPressed: () {
-                Get.back();
-              },
+              onPressed: widget.onTap,
             )
           : SizedBox.shrink(),
     );
