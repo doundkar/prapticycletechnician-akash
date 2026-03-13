@@ -1,3 +1,4 @@
+import 'package:bicycle_app_technician/app/model/job_details_model.dart';
 import 'package:bicycle_app_technician/app/modules/job_list/job_list_controller.dart';
 import 'package:bicycle_app_technician/app/routes/app_routes.dart';
 import 'package:bicycle_app_technician/view/Colors/app_colors.dart';
@@ -70,10 +71,26 @@ class _AllJobsScreenState extends State<AllJobsScreen> {
                           ),
                           child: Row(
                             children: [
-                              _buildFilterChip("All", true, maxWidth),
-                              _buildFilterChip("Pending", false, maxWidth),
-                              _buildFilterChip("Accepted", false, maxWidth),
-                              _buildFilterChip("Completed", false, maxWidth),
+                              _buildFilterChip(
+                                "All",
+                                controller.selectedFilter.value == "All",
+                                maxWidth,
+                              ),
+                              _buildFilterChip(
+                                "Pending",
+                                controller.selectedFilter.value == "Pending",
+                                maxWidth,
+                              ),
+                              _buildFilterChip(
+                                "Accepted",
+                                controller.selectedFilter.value == "Accepted",
+                                maxWidth,
+                              ),
+                              _buildFilterChip(
+                                "Completed",
+                                controller.selectedFilter.value == "Completed",
+                                maxWidth,
+                              ),
                             ],
                           ),
                         ),
@@ -85,9 +102,9 @@ class _AllJobsScreenState extends State<AllJobsScreen> {
                           padding: EdgeInsets.symmetric(
                             horizontal: isTablet ? 20 : 6,
                           ),
-                          itemCount: controller.newJobRequests.length,
+                          itemCount: controller.filteredJobs.length,
                           itemBuilder: (context, index) {
-                            final job = controller.newJobRequests[index];
+                            final job = controller.filteredJobs[index];
 
                             return Padding(
                               padding: EdgeInsets.only(
@@ -103,6 +120,7 @@ class _AllJobsScreenState extends State<AllJobsScreen> {
                                 price: job.charges!,
                                 status: job.status!,
                                 maxWidth: maxWidth,
+                                job: job,
                               ),
                             );
                           },
@@ -125,25 +143,30 @@ class _AllJobsScreenState extends State<AllJobsScreen> {
 
     return Padding(
       padding: EdgeInsets.only(right: isTablet ? 14 : 10),
-      child: Container(
-        padding: EdgeInsets.symmetric(
-          horizontal: isTablet ? 20 : 16,
-          vertical: isTablet ? 12 : 8,
-        ),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(isTablet ? 24 : 20),
-          border: Border.all(
-            color: Colors.grey.shade400,
-            width: isTablet ? 1.2 : 1,
+      child: InkWell(
+        onTap: () {
+          controller.setFilter(label);
+        },
+        child: Container(
+          padding: EdgeInsets.symmetric(
+            horizontal: isTablet ? 20 : 16,
+            vertical: isTablet ? 12 : 8,
           ),
-        ),
-        child: Text(
-          label,
-          style: TextStyle(
-            fontSize: isTablet ? 16 : 14,
-            fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
-            color: Colors.black87,
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(isTablet ? 24 : 20),
+            border: Border.all(
+              color: isSelected ? AppColors.blue : Colors.grey.shade400,
+              width: isTablet ? 1.2 : 1,
+            ),
+          ),
+          child: Text(
+            label,
+            style: TextStyle(
+              fontSize: isTablet ? 16 : 14,
+              fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
+              color: Colors.black87,
+            ),
           ),
         ),
       ),
@@ -161,6 +184,7 @@ class _AllJobsScreenState extends State<AllJobsScreen> {
     required String price,
     required String status,
     required double maxWidth,
+    required JobDetailsModel job,
   }) {
     bool isTablet = maxWidth > 600;
     status = status.capitalize!;
@@ -189,6 +213,9 @@ class _AllJobsScreenState extends State<AllJobsScreen> {
       onTap: () {
         if (status == "Pending") {
           Get.toNamed(AppRoutes.newJobRequest);
+        }
+        if (status == "Accepted") {
+          Get.toNamed(AppRoutes.navigation, arguments: job);
         }
       },
       child: Container(
@@ -262,17 +289,30 @@ class _AllJobsScreenState extends State<AllJobsScreen> {
               ],
             ),
 
-            if (description != null) ...[
-              SizedBox(height: isTablet ? 6 : 4),
-              Text(
-                description,
+            // if (description != null) ...[
+            //   SizedBox(height: isTablet ? 6 : 4),
+            //   Text(
+            //     description,
+            //     style: TextStyle(
+            //       fontSize: isTablet ? 16 : 14,
+            //       color: Colors.grey,
+            //       fontWeight: FontWeight.w600,
+            //     ),
+            //   ),
+            // ],
+            ...job.serviceItems!.asMap().entries.map((entry) {
+              int index = entry.key;
+              var item = entry.value;
+
+              return Text(
+                "${index + 1}. ${item.title}",
                 style: TextStyle(
-                  fontSize: isTablet ? 16 : 14,
-                  color: Colors.grey,
-                  fontWeight: FontWeight.w600,
+                  fontSize: isTablet ? 18 : 16,
+                  color: const Color.fromRGBO(75, 85, 99, 1),
+                  fontWeight: FontWeight.w400,
                 ),
-              ),
-            ],
+              );
+            }).toList(),
 
             SizedBox(height: isTablet ? 18 : 12),
 

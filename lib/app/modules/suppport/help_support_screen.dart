@@ -212,21 +212,21 @@ class _HelpSupportScreenState extends State<HelpSupportScreen> {
                       controller.support.value!.emailSupport!.responseTime!,
                       style: TextStyle(color: Colors.grey, fontSize: textFont),
                     ),
-                    const SizedBox(height: 12),
-                    TextField(
-                      style: TextStyle(fontSize: textFont),
-                      decoration: InputDecoration(
-                        hintText: "Search help topics...",
-                        prefixIcon: const Icon(Icons.search),
-                        filled: true,
-                        fillColor: Colors.grey.shade100,
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(
-                            isTablet ? 16 : 12,
-                          ),
-                        ),
-                      ),
-                    ),
+                    // const SizedBox(height: 12),
+                    // TextField(
+                    //   style: TextStyle(fontSize: textFont),
+                    //   decoration: InputDecoration(
+                    //     hintText: "Search help topics...",
+                    //     prefixIcon: const Icon(Icons.search),
+                    //     filled: true,
+                    //     fillColor: Colors.grey.shade100,
+                    //     border: OutlineInputBorder(
+                    //       borderRadius: BorderRadius.circular(
+                    //         isTablet ? 16 : 12,
+                    //       ),
+                    //     ),
+                    //   ),
+                    // ),
                   ],
                 ),
               ),

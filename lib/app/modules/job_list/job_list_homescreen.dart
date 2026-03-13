@@ -268,13 +268,15 @@ class _JobListHomeScreenState extends State<JobListHomeScreen> {
                           SizedBox(height: maxWidth * 0.05),
 
                           // if(!isOnline)...[
+                              //SizedBox(height: maxWidth * 0.5),   
                           //   noDataCard(maxWidth: maxWidth, title: "You are offline", subtitle: "Please log in to start receiving jobs!")
                           // ],
 
                           //isOnline &&
                           if ( controller.pendingJobRequests.isEmpty &&
                               controller.acceptedJobRequests.isEmpty) ...[
-                            noDataCard(maxWidth: maxWidth,title: "No jobs available yet...",subtitle: "Please wait while admin assigns you new jobs."),
+                            SizedBox(height: maxWidth * 0.5),   
+                            Center(child: noDataCard(maxWidth: maxWidth,title: "No jobs available yet...",subtitle: "Please wait while admin assigns you new jobs.")),
                           ],
 
                           if (controller.acceptedJobRequests.isNotEmpty) ...[
@@ -663,17 +665,17 @@ Widget noDataCard({required double maxWidth,required String title,required Strin
   bool isTablet = maxWidth > 600;
   return Container(
     padding: EdgeInsets.all(isTablet ? 20 : 16),
-    decoration: BoxDecoration(
-      color: Colors.white,
-      borderRadius: BorderRadius.circular(16),
-      boxShadow: [
-        BoxShadow(
-          color: Colors.black.withOpacity(0.15),
-          blurRadius: isTablet ? 20 : 15,
-          offset: const Offset(0, 4),
-        ),
-      ],
-    ),
+    // decoration: BoxDecoration(
+    //   color: Colors.white,
+    //   borderRadius: BorderRadius.circular(16),
+    //   boxShadow: [
+    //     BoxShadow(
+    //       color: Colors.black.withOpacity(0.15),
+    //       blurRadius: isTablet ? 20 : 15,
+    //       offset: const Offset(0, 4),
+    //     ),
+    //   ],
+    // ),
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       mainAxisAlignment: MainAxisAlignment.center,
@@ -682,6 +684,7 @@ Widget noDataCard({required double maxWidth,required String title,required Strin
           title,
           style: TextStyle(
             fontWeight: FontWeight.w600,
+            color: Colors.grey,
             fontSize: isTablet ? 18 : 16,
           ),
         ),
@@ -689,6 +692,7 @@ Widget noDataCard({required double maxWidth,required String title,required Strin
           subtitle,
           style: TextStyle(
             fontWeight: FontWeight.w600,
+            color: Colors.grey,
             fontSize: isTablet ? 18 : 16,
           ),
         ),

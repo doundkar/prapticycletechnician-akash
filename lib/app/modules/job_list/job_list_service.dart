@@ -16,7 +16,7 @@ class JobListService {
     log("token: $token");
     try {
       final response = await http.get(
-        Uri.parse("${baseUrl}jobslist?per_page=10"),
+        Uri.parse("${baseUrl}jobslist"),
         headers: {
           "Accept": "application/json",
           "Authorization": "Bearer $token",

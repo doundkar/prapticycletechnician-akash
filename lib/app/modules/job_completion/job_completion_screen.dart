@@ -91,7 +91,7 @@ class _CompleteJobScreenState extends State<CompleteJobScreen> {
     final photoBoxSize = width * 0.22;
 
     return Scaffold(
-      appBar: CustomAppBar(title: "Complete Job",isBackNeeded: false,),
+      appBar: CustomAppBar(title: "Complete Job", isBackNeeded: false),
       body: PopScope(
         canPop: false,
         child: SafeArea(
@@ -120,7 +120,7 @@ class _CompleteJobScreenState extends State<CompleteJobScreen> {
                     itemBuilder: (context, index) {
                       ComponentItemsModel item =
                           partsController.extraItems.value[index];
-        
+
                       return Container(
                         padding: const EdgeInsets.all(12),
                         decoration: BoxDecoration(
@@ -181,9 +181,9 @@ class _CompleteJobScreenState extends State<CompleteJobScreen> {
                                 ],
                               ),
                             ),
-        
+
                             const SizedBox(width: 16),
-        
+
                             /// RIGHT SIDE DETAILS
                             Expanded(
                               child: Column(
@@ -197,9 +197,9 @@ class _CompleteJobScreenState extends State<CompleteJobScreen> {
                                       fontSize: 16,
                                     ),
                                   ),
-        
+
                                   const SizedBox(height: 6),
-        
+
                                   if (item.brand!.isNotEmpty)
                                     Text(
                                       'Brand - ${item.brand}',
@@ -208,9 +208,9 @@ class _CompleteJobScreenState extends State<CompleteJobScreen> {
                                         color: Colors.grey.shade600,
                                       ),
                                     ),
-        
+
                                   const SizedBox(height: 4),
-        
+
                                   if (item.size!.isNotEmpty)
                                     Text(
                                       'Size - ${item.size}',
@@ -219,9 +219,9 @@ class _CompleteJobScreenState extends State<CompleteJobScreen> {
                                         color: Colors.grey.shade600,
                                       ),
                                     ),
-        
+
                                   const SizedBox(height: 10),
-        
+
                                   Text(
                                     '₹${item.price}',
                                     style: const TextStyle(
@@ -240,7 +240,7 @@ class _CompleteJobScreenState extends State<CompleteJobScreen> {
                   ),
                   const SizedBox(height: 20),
                 ],
-        
+
                 /// After Completion Photos Card
                 Container(
                   padding: const EdgeInsets.all(16),
@@ -272,9 +272,9 @@ class _CompleteJobScreenState extends State<CompleteJobScreen> {
                           ),
                         ],
                       ),
-        
+
                       const SizedBox(height: 15),
-        
+
                       /// Photos Section
                       Wrap(
                         spacing: 10,
@@ -315,7 +315,7 @@ class _CompleteJobScreenState extends State<CompleteJobScreen> {
                               ),
                             ),
                           ),
-        
+
                           /// Show Selected Photos
                           // ..._photos.map(
                           //   (file) => ClipRRect(
@@ -331,7 +331,7 @@ class _CompleteJobScreenState extends State<CompleteJobScreen> {
                           ..._photos.asMap().entries.map((entry) {
                             int index = entry.key;
                             File file = entry.value;
-        
+
                             return Stack(
                               children: [
                                 ClipRRect(
@@ -343,7 +343,7 @@ class _CompleteJobScreenState extends State<CompleteJobScreen> {
                                     fit: BoxFit.cover,
                                   ),
                                 ),
-        
+
                                 /// Cancel Icon
                                 Positioned(
                                   top: 4,
@@ -373,9 +373,9 @@ class _CompleteJobScreenState extends State<CompleteJobScreen> {
                           }),
                         ],
                       ),
-        
+
                       const SizedBox(height: 10),
-        
+
                       const Text(
                         "*Required: Photos showing completed work",
                         style: TextStyle(
@@ -387,9 +387,9 @@ class _CompleteJobScreenState extends State<CompleteJobScreen> {
                     ],
                   ),
                 ),
-        
+
                 const SizedBox(height: 20),
-        
+
                 /// Service Completed Card
                 Container(
                   padding: const EdgeInsets.all(16),
@@ -428,9 +428,9 @@ class _CompleteJobScreenState extends State<CompleteJobScreen> {
                     ],
                   ),
                 ),
-        
+
                 const SizedBox(height: 30),
-        
+
                 /// OTP Title
                 const Center(
                   child: Text(
@@ -438,9 +438,9 @@ class _CompleteJobScreenState extends State<CompleteJobScreen> {
                     style: TextStyle(fontSize: 20, fontWeight: FontWeight.w400),
                   ),
                 ),
-        
+
                 const SizedBox(height: 20),
-        
+
                 /// Pinput OTP
                 Center(
                   child: Pinput(
@@ -450,7 +450,7 @@ class _CompleteJobScreenState extends State<CompleteJobScreen> {
                     focusedPinTheme: focusedPinTheme,
                   ),
                 ),
-        
+
                 const SizedBox(height: 40),
               ],
             ),
@@ -482,14 +482,29 @@ class _CompleteJobScreenState extends State<CompleteJobScreen> {
                   );
                 } else {
                   int tempOtp = int.parse(otpController.text.trim());
-                  final isVerified = await controller.completeJob(
-                    job.id!,
-                    tempOtp,
-                    _photos,
-                    [],
-                  );
+                  bool isVerified;
+                  if (partsController.extraItems.isEmpty) {
+                    isVerified = await controller.completeJob(
+                      job.id!,
+                      tempOtp,
+                      _photos,
+                      [],
+                    );
+                  } else {
+                    final parts = [];
+                    for(var part in partsController.extraItems.value){
+                      parts.add({"id":part.id!,"qty":part.qty});
+                    }
+                    isVerified = await controller.completeJob(
+                      job.id!,
+                      tempOtp,
+                      _photos,
+                      parts
+                    );
+                  }
 
                   if (isVerified) {
+                    partsController.extraItems.clear();
                     Get.toNamed(AppRoutes.customerReview, arguments: job);
                   } else {
                     ScaffoldMessenger.of(context).showSnackBar(

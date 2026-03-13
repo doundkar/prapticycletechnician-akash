@@ -30,7 +30,7 @@ class JobProgressController extends GetxController {
       if (remainingSeconds.value > 0) {
         remainingSeconds.value--;
       } else {
-        timer?.cancel();
+        remainingSeconds.value += 15*60;
       }
     });
   }

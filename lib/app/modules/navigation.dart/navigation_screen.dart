@@ -13,9 +13,7 @@ class NavigationScreen extends StatefulWidget {
 }
 
 class _NavigationScreenState extends State<NavigationScreen> {
-
   bool hasReached = false;
-
 
   @override
   Widget build(BuildContext context) {
@@ -119,6 +117,12 @@ class _NavigationScreenState extends State<NavigationScreen> {
                                           setState(() {
                                             hasReached = value;
                                           });
+                                          if (hasReached) {
+                                            Get.toNamed(
+                                              AppRoutes.startJobOtp,
+                                              arguments: job,
+                                            );
+                                          }
                                         },
                                       ),
                                     ),
@@ -164,7 +168,7 @@ class _NavigationScreenState extends State<NavigationScreen> {
                           ],
                         ),
 
-                        SizedBox(height: isTablet ? 35 : 25),
+                        SizedBox(height: isTablet ? 25 : 15),
 
                         /// Customer Information Card
                         Container(
@@ -191,32 +195,32 @@ class _NavigationScreenState extends State<NavigationScreen> {
 
                                 SizedBox(height: isTablet ? 12 : 8),
 
-                                Row(
-                                  children: [
-                                    Text(
-                                      "Job Details",
-                                      style: TextStyle(
-                                        fontSize: isTablet ? 16 : 14,
-                                        fontWeight: FontWeight.w600,
-                                      ),
-                                    ),
-                                    const Spacer(),
-                                    Text(
-                                      "ID - #${job.id!}",
-                                      style: TextStyle(
-                                        fontSize: isTablet ? 16 : 14,
-                                        color: const Color.fromRGBO(
-                                          102,
-                                          112,
-                                          133,
-                                          1,
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
+                                // Row(
+                                //   children: [
+                                //     Text(
+                                //       "Job Details",
+                                //       style: TextStyle(
+                                //         fontSize: isTablet ? 16 : 14,
+                                //         fontWeight: FontWeight.w600,
+                                //       ),
+                                //     ),
+                                //     const Spacer(),
+                                //     Text(
+                                //       "ID - #${job.id!}",
+                                //       style: TextStyle(
+                                //         fontSize: isTablet ? 16 : 14,
+                                //         color: const Color.fromRGBO(
+                                //           102,
+                                //           112,
+                                //           133,
+                                //           1,
+                                //         ),
+                                //       ),
+                                //     ),
+                                //   ],
+                                // ),
 
-                                SizedBox(height: isTablet ? 14 : 10),
+                                // SizedBox(height: isTablet ? 14 : 10),
 
                                 Text(
                                   job.customerName!,
@@ -278,10 +282,7 @@ class _NavigationScreenState extends State<NavigationScreen> {
                           maxWidth: maxWidth,
                           icon: Icons.call_outlined,
                           text: "Call Customer",
-                          onPressed: () => Get.toNamed(
-                            AppRoutes.startJobOtp,
-                            arguments: job,
-                          ),
+                          onPressed: () => {},
                         ),
 
                         SizedBox(height: isTablet ? 20 : 15),
@@ -291,10 +292,7 @@ class _NavigationScreenState extends State<NavigationScreen> {
                           maxWidth: maxWidth,
                           icon: Icons.chat_bubble_outline,
                           text: "Message",
-                          onPressed: () => Get.toNamed(
-                            AppRoutes.startJobOtp,
-                            arguments: job,
-                          ),
+                          onPressed: () => {},
                         ),
                       ],
                     ),

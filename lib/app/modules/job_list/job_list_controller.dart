@@ -34,10 +34,29 @@ class JobListController extends GetxController {
     _loadJobs();
   }
 
+  RxString selectedFilter = "All".obs;
+
+  List<JobDetailsModel> get filteredJobs {
+    if (selectedFilter.value == "All") {
+      return newJobRequests;
+    }
+
+    return newJobRequests
+        .where(
+          (job) =>
+              job.status!.toLowerCase() == selectedFilter.value.toLowerCase(),
+        )
+        .toList();
+  }
+
+  void setFilter(String filter) {
+    selectedFilter.value = filter;
+  }
+
   Future<void> _loadJobs() async {
     await getNewJobRequests();
     await getAcceptedJobRequests();
-    Timer.periodic(Duration(minutes: 5), (_) {
+    Timer.periodic(Duration(seconds: 5), (_) {
       getNewJobRequests(isInitial: false); // silent refresh
     });
   }
