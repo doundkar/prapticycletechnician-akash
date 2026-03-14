@@ -31,6 +31,7 @@ class JobListController extends GetxController {
   @override
   void onInit() {
     super.onInit();
+    isOnline.value = SharedPrefs.getBool("is_online");
     _loadJobs();
   }
 
@@ -186,6 +187,7 @@ class JobListController extends GetxController {
       final response = await JobListService.toggleActivity(activity);
       if (response.status && response.data != null) {
         isOnline.value = response.data!;
+        debugPrint("isOnline obs : ${isOnline.value}");
         await SharedPrefs.setBool("is_online", isOnline.value);
         loginMessage.value = response.message!;
         return true;

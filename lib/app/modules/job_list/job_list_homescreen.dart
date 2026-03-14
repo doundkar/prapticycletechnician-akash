@@ -26,7 +26,9 @@ class _JobListHomeScreenState extends State<JobListHomeScreen> {
   String userIdStr = SharedPrefs.getString("user_id");
 
   JobListController controller = Get.find();
-  NotificationController notificationController = Get.put(NotificationController());
+  NotificationController notificationController = Get.put(
+    NotificationController(),
+  );
 
   @override
   void initState() {
@@ -118,67 +120,74 @@ class _JobListHomeScreenState extends State<JobListHomeScreen> {
                 ),
 
                 /// ACTIONS (kept in title to fully control responsiveness)
-                Row(
-                  children: [
-                    Transform.scale(
-                      scale: switchScale,
-                      child: Switch(
-                        value: isOnline,
-                        materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                        activeThumbColor: Colors.green,
-                        activeTrackColor: Colors.white,
-                        trackColor: const WidgetStatePropertyAll(
-                          Color.fromRGBO(225, 225, 225, 1),
-                        ),
-                        trackOutlineColor: const WidgetStatePropertyAll(
-                          Color.fromRGBO(166, 166, 166, 1),
-                        ),
-                        onChanged: (value) {
-                          _showOnlineModeSheet(value);
-                        },
-                      ),
-                    ),
-
-                    Text(
-                      isOnline ? "Online" : "Offline",
-                      style: TextStyle(
-                        fontSize: maxWidth > 600 ? 16 : 14,
-                        fontWeight: FontWeight.w500,
-                        color: isOnline ? Colors.green : Colors.grey,
-                      ),
-                    ),
-
-                    SizedBox(width: maxWidth > 600 ? 16 : 10),
-
-                    Stack(
-                      children: [
-                        InkWell(
-                          onTap: () {
-                            Get.toNamed(AppRoutes.notifications);
-                          },
-                          child: Icon(
-                            Icons.notifications,
-                            color: Colors.black,
-                            size: maxWidth > 600 ? 26 : 22,
+                Obx(
+                  () => Row(
+                    children: [
+                      Transform.scale(
+                        scale: switchScale,
+                        child: Switch(
+                          value: controller.isOnline.value,
+                          materialTapTargetSize:
+                              MaterialTapTargetSize.shrinkWrap,
+                          activeThumbColor: Colors.green,
+                          activeTrackColor: Colors.white,
+                          trackColor: const WidgetStatePropertyAll(
+                            Color.fromRGBO(225, 225, 225, 1),
                           ),
+                          trackOutlineColor: const WidgetStatePropertyAll(
+                            Color.fromRGBO(166, 166, 166, 1),
+                          ),
+                          onChanged: (value) {
+                            _showOnlineModeSheet(value);
+                          },
                         ),
-                        Positioned(
-                          top: 0,
-                          right: 3,
-                          child: Container(
-                            height: maxWidth > 600 ? 10 : 8,
-                            width: maxWidth > 600 ? 10 : 8,
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: notificationController.hasNew.value ? Colors.red : null,
+                      ),
+
+                      Text(
+                        controller.isOnline.value ? "Online" : "Offline",
+                        style: TextStyle(
+                          fontSize: maxWidth > 600 ? 16 : 14,
+                          fontWeight: FontWeight.w500,
+                          color: controller.isOnline.value
+                              ? Colors.green
+                              : Colors.grey,
+                        ),
+                      ),
+
+                      SizedBox(width: maxWidth > 600 ? 16 : 10),
+
+                      Stack(
+                        children: [
+                          InkWell(
+                            onTap: () {
+                              Get.toNamed(AppRoutes.notifications);
+                            },
+                            child: Icon(
+                              Icons.notifications,
+                              color: Colors.black,
+                              size: maxWidth > 600 ? 26 : 22,
                             ),
                           ),
-                        ),
-                      ],
-                    ),
+                          Positioned(
+                            top: 0,
+                            right: 3,
+                            child: Container(
+                              height: maxWidth > 600 ? 10 : 8,
+                              width: maxWidth > 600 ? 10 : 8,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: notificationController.hasNew.value
+                                    ? Colors.red
+                                    : null,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
 
-                    SizedBox(width: maxWidth > 600 ? 20 : 16),
-                  ],
+                      SizedBox(width: maxWidth > 600 ? 20 : 16),
+                    ],
+                  ),
                 ),
               ],
             );
@@ -267,16 +276,23 @@ class _JobListHomeScreenState extends State<JobListHomeScreen> {
 
                           SizedBox(height: maxWidth * 0.05),
 
-                          // if(!isOnline)...[
-                              //SizedBox(height: maxWidth * 0.5),   
-                          //   noDataCard(maxWidth: maxWidth, title: "You are offline", subtitle: "Please log in to start receiving jobs!")
-                          // ],
+                          if(!controller.isOnline.value)...[
+                          SizedBox(height: maxWidth * 0.5),
+                            noDataCard(maxWidth: maxWidth, title: "You are offline", subtitle: "Please log in to start receiving jobs!")
+                          ],
 
                           //isOnline &&
-                          if ( controller.pendingJobRequests.isEmpty &&
+                          if (controller.isOnline.value && controller.pendingJobRequests.isEmpty &&
                               controller.acceptedJobRequests.isEmpty) ...[
-                            SizedBox(height: maxWidth * 0.5),   
-                            Center(child: noDataCard(maxWidth: maxWidth,title: "No jobs available yet...",subtitle: "Please wait while admin assigns you new jobs.")),
+                            SizedBox(height: maxWidth * 0.5),
+                            Center(
+                              child: noDataCard(
+                                maxWidth: maxWidth,
+                                title: "No jobs available yet...",
+                                subtitle:
+                                    "Please wait while admin assigns you new jobs.",
+                              ),
+                            ),
                           ],
 
                           if (controller.acceptedJobRequests.isNotEmpty) ...[
@@ -450,11 +466,17 @@ class _JobListHomeScreenState extends State<JobListHomeScreen> {
           child: Obx(() {
             if (controller.isLoginLoading.value) {
               return SizedBox(
-                height: isTablet ? 40 : 30,
-                width: double.infinity,
-                child: CircularProgressIndicator(
-                  strokeWidth: 2,
-                  color: AppColors.blue,
+                height: isTablet ? 120 : 100,
+                child: Align(
+                  alignment: Alignment.center,
+                  child: SizedBox(
+                    height: isTablet ? 40 : 30,
+                    width: isTablet ? 40 : 30,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      color: AppColors.blue,
+                    ),
+                  ),
                 ),
               );
             }
@@ -537,12 +559,12 @@ class _JobListHomeScreenState extends State<JobListHomeScreen> {
                         ),
                         onPressed: () async {
                           final resp = await controller.toggleActivity(
-                            isOnline,
+                            controller.isOnline.value,
                           );
                           if (resp) {
-                            setState(() {
-                              isOnline = newValue;
-                            });
+                            // setState(() {
+                            //   isOnline = newValue;
+                            // });
                             ScaffoldMessenger.of(context).showSnackBar(
                               CustomSnackbar.show(
                                 title: controller.loginMessage.value,
@@ -661,7 +683,11 @@ Widget _buildStatusCard(
   );
 }
 
-Widget noDataCard({required double maxWidth,required String title,required String subtitle}) {
+Widget noDataCard({
+  required double maxWidth,
+  required String title,
+  required String subtitle,
+}) {
   bool isTablet = maxWidth > 600;
   return Container(
     padding: EdgeInsets.all(isTablet ? 20 : 16),

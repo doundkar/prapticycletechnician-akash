@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:developer';
 
 import 'package:bicycle_app_technician/app/modules/auth/controller/sign_up_controller.dart';
@@ -6,6 +7,7 @@ import 'package:bicycle_app_technician/view/Colors/app_colors.dart';
 import 'package:bicycle_app_technician/view/widgets/custom_button.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:lottie/lottie.dart';
 
 class IdentityPendingScreen extends StatefulWidget {
   const IdentityPendingScreen({super.key});
@@ -17,14 +19,19 @@ class IdentityPendingScreen extends StatefulWidget {
 class _IdentityPendingScreenState extends State<IdentityPendingScreen> {
   late final SignUpController controller;
 
+  Timer? timer;
+
   @override
   void initState() {
     super.initState();
     controller = Get.find<SignUpController>();
-    controller.getOtp();
+    timer = Timer.periodic(Duration(seconds: 5), (timer){
+      controller.getOtp();
+    });
     ever(controller.isVerified, (value) {
       log("called ever");
       if (value == true) {
+        timer!.cancel();
         Get.offAllNamed(AppRoutes.identityApproved);
       }
     });
@@ -52,9 +59,10 @@ class _IdentityPendingScreenState extends State<IdentityPendingScreen> {
               children: [
                 /// Pending Image
                 SizedBox(
-                  height: 120,
-                  width: 120,
-                  child: Image.asset("assets/pending.png", fit: BoxFit.cover),
+                  height: 140,
+                  width: 140,
+                  //child: Image.asset("assets/pending.png", fit: BoxFit.cover),
+                  child: Lottie.asset("assets/loading_gray.json",repeat: true),
                 ),
 
                 const SizedBox(height: 24),

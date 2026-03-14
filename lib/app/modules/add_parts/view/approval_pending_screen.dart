@@ -10,6 +10,7 @@ import 'package:bicycle_app_technician/view/Colors/app_colors.dart';
 import 'package:bicycle_app_technician/view/widgets/custom_button.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:lottie/lottie.dart';
 
 class ApprovalPendingScreen extends StatefulWidget {
   const ApprovalPendingScreen({super.key});
@@ -77,9 +78,9 @@ class _ApprovalPendingScreenState extends State<ApprovalPendingScreen> {
               children: [
                 /// Pending Image
                 SizedBox(
-                  height: 120,
-                  width: 120,
-                  child: Image.asset("assets/pending.png", fit: BoxFit.cover),
+                  height: 140,
+                  width: 140,
+                  child: Lottie.asset("assets/loading_gray.json",repeat: true),
                 ),
 
                 const SizedBox(height: 24),

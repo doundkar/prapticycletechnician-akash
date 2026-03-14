@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:bicycle_app_technician/app/model/notification_model.dart';
 import 'package:bicycle_app_technician/app/modules/notification/notification_service.dart';
 import 'package:get/get.dart';
@@ -10,6 +12,8 @@ class NotificationController extends GetxController {
 
   RxList<NotificationModel> notifications = <NotificationModel>[].obs;
 
+  Timer? timer;
+
   @override
   void onInit() {
     super.onInit();
@@ -18,6 +22,9 @@ class NotificationController extends GetxController {
 
   void getData() async {
     await getNotification();
+    timer = Timer.periodic(Duration(seconds: 10), (timer){
+      getNotification(isInitial: false);
+    });
   }
 
   void getHasNew(){
@@ -29,8 +36,10 @@ class NotificationController extends GetxController {
     }
   }
 
-  Future<void> getNotification() async {
-    isLoading.value = true;
+  Future<void> getNotification({bool isInitial = true}) async {
+    if(isInitial){
+      isLoading.value = true;
+    }
     hasError.value = false;
     errorMessage.value = "";
     try {
@@ -78,7 +87,7 @@ class NotificationController extends GetxController {
     try {
       final response = await NotificationService.readNotificatoins();
       if (response) {
-        await getNotification();
+        hasNew.value = false;
       } else {
         hasError.value = true;
         errorMessage.value = "Couldn't read notifications";

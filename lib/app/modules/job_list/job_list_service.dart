@@ -165,7 +165,7 @@ class JobListService {
     log("token: $token");
 
     final payload = {
-      "is_online": activity
+      "is_online": !activity
     };
 
     try {
