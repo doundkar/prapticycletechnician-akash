@@ -185,15 +185,15 @@ class _NavigationScreenState extends State<NavigationScreen> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text(
-                                  "Customer Information",
-                                  style: TextStyle(
-                                    fontSize: isTablet ? 20 : 18,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
+                                // Text(
+                                //   "Customer Information",
+                                //   style: TextStyle(
+                                //     fontSize: isTablet ? 20 : 18,
+                                //     fontWeight: FontWeight.w600,
+                                //   ),
+                                // ),
 
-                                SizedBox(height: isTablet ? 12 : 8),
+                                // SizedBox(height: isTablet ? 12 : 8),
 
                                 // Row(
                                 //   children: [
