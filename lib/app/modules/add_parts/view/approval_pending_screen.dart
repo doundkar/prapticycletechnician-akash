@@ -8,6 +8,7 @@ import 'package:bicycle_app_technician/app/modules/job_progress/job_progress_scr
 import 'package:bicycle_app_technician/app/routes/app_routes.dart';
 import 'package:bicycle_app_technician/view/Colors/app_colors.dart';
 import 'package:bicycle_app_technician/view/widgets/custom_button.dart';
+import 'package:bicycle_app_technician/view/widgets/custom_snackbar.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:lottie/lottie.dart';
@@ -110,9 +111,15 @@ class _ApprovalPendingScreenState extends State<ApprovalPendingScreen> {
         child: Padding(
           padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
           child: InkWell(
-            onTap: () {
-              if (remainingSeconds == 0) {
-                //do something
+            onTap: () async {
+              if (remainingSeconds == 0)  {
+                final resp = await controller.sendApproval(job.id!);
+                if(resp){
+                  ScaffoldMessenger.of(context).showSnackBar(CustomSnackbar.show(title: "Approval request sent!", color: Colors.red[300]!));
+                }
+                else{
+                  ScaffoldMessenger.of(context).showSnackBar(CustomSnackbar.show(title: "Couldn't send approval request, please try again later", color: Colors.red[300]!));
+                }
               }
             },
             child: CustomButton(

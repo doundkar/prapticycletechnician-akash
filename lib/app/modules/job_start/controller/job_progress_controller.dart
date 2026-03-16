@@ -12,15 +12,22 @@ class JobProgressController extends GetxController {
 
   int timeTakenInMins = 0;
 
-  void calulateTimeTaken(int remainingSeconds, int totalDuration) {
-    timeTakenInMins = ((totalDuration - remainingSeconds) / 60).round();
+  void calulateTimeTaken() {
+    log("total: ${totalSeconds.value}");
+    log("remain: ${remainingSeconds.value}");
+    timeTakenInMins = ((totalSeconds.value - remainingSeconds.value) / 60).round();
   }
 
   RxInt remainingSeconds = 0.obs;
+  RxInt totalSeconds = 0.obs;
   Timer? timer;
 
   void setRemainingSeconds(int minutes) {
     remainingSeconds.value = minutes * 60;
+  }
+
+  void setTotalSeconds(int minutes) {
+    totalSeconds.value = minutes * 60;
   }
 
   void startTimer() {

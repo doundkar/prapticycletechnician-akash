@@ -29,6 +29,7 @@ class _JobInProgressScreenState extends State<JobInProgressScreen> {
     super.initState();
     if(widget.isInitial){
       controller.setRemainingSeconds(job.durationMinutes!);
+      controller.setTotalSeconds(job.durationMinutes!);
       controller.startTimer();
     }
     
@@ -252,10 +253,7 @@ class _JobInProgressScreenState extends State<JobInProgressScreen> {
             padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
             child: InkWell(
               onTap: () {
-                controller.calulateTimeTaken(
-                  controller.remainingSeconds.value,
-                  (job.durationMinutes! * 60),
-                );
+                controller.calulateTimeTaken();
                 Get.toNamed(AppRoutes.completeJob, arguments: job);
               },
               child: CustomButton(
@@ -280,6 +278,7 @@ class _JobInProgressScreenState extends State<JobInProgressScreen> {
       onTap: () {
         int newSeconds = time * 60;
         controller.remainingSeconds.value += newSeconds;
+        controller.totalSeconds.value += newSeconds;
       },
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),

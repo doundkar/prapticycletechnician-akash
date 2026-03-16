@@ -276,13 +276,13 @@ class _JobListHomeScreenState extends State<JobListHomeScreen> {
 
                           SizedBox(height: maxWidth * 0.05),
 
-                          if(!controller.isOnline.value)...[
-                          SizedBox(height: maxWidth * 0.5),
-                            noDataCard(maxWidth: maxWidth, title: "You are offline", subtitle: "Please log in to start receiving jobs!")
-                          ],
+                          // if(!controller.isOnline.value)...[
+                          // SizedBox(height: maxWidth * 0.5),
+                          //   noDataCard(maxWidth: maxWidth, title: "You are offline", subtitle: "Please log in to start receiving jobs!")
+                          // ],
 
-                          //isOnline &&
-                          if (controller.isOnline.value && controller.pendingJobRequests.isEmpty &&
+                          //controller.isOnline.value &&
+                          if ( controller.pendingJobRequests.isEmpty &&
                               controller.acceptedJobRequests.isEmpty) ...[
                             SizedBox(height: maxWidth * 0.5),
                             Center(
