@@ -397,15 +397,20 @@ class _JobListHomeScreenState extends State<JobListHomeScreen> {
 
                                 return Column(
                                   children: [
-                                    _buildJobCard(
-                                      name: job.customerName!,
-                                      location: job.location!,
-                                      jobTitle: job.jobType!,
-                                      description: job.description!,
-                                      time: "${(job.durationMinutes)}",
-                                      price: job.charges!,
-                                      serviceItems: job.serviceItems!,
-                                      maxWidth: maxWidth,
+                                    InkWell(
+                                      onTap: (){
+                                        Get.toNamed(AppRoutes.newJobRequest);
+                                      },
+                                      child: _buildJobCard(
+                                        name: job.customerName!,
+                                        location: job.location!,
+                                        jobTitle: job.jobType!,
+                                        description: job.description!,
+                                        time: "${(job.durationMinutes)}",
+                                        price: job.charges!,
+                                        serviceItems: job.serviceItems!,
+                                        maxWidth: maxWidth,
+                                      ),
                                     ),
                                     SizedBox(height: maxWidth * 0.03),
                                   ],
@@ -414,24 +419,22 @@ class _JobListHomeScreenState extends State<JobListHomeScreen> {
                             ),
                           ],
 
-                          if (controller.newJobRequests.isEmpty)
-                            Center(
-                              child: Column(
-                                children: [
-                                  Icon(
-                                    Icons.error_outline,
-                                    size: 30,
-                                    color: Colors.grey,
-                                  ),
-                                  Expanded(
-                                    child: Text(
-                                      "No jobs are assigned to you yet...",
-                                      style: TextStyle(fontSize: 16),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
+                          // if (controller.isOnline.value && controller.newJobRequests.isEmpty)
+                          //   Center(
+                          //     child: Column(
+                          //       children: [
+                          //         Icon(
+                          //           Icons.error_outline,
+                          //           size: 30,
+                          //           color: Colors.grey,
+                          //         ),
+                          //         Text(
+                          //           "No jobs are assigned to you yet...",
+                          //           style: TextStyle(fontSize: 16),
+                          //         ),
+                          //       ],
+                          //     ),
+                          //   ),
                         ],
                       ),
                     ),

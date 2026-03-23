@@ -12,7 +12,7 @@ import 'package:get/state_manager.dart';
 
 class JobInProgressScreen extends StatefulWidget {
   bool isInitial;
-  JobInProgressScreen({super.key,this.isInitial = true});
+  JobInProgressScreen({super.key, this.isInitial = true});
 
   @override
   State<JobInProgressScreen> createState() => _JobInProgressScreenState();
@@ -23,16 +23,26 @@ class _JobInProgressScreenState extends State<JobInProgressScreen> {
   bool isPaused = false;
 
   JobProgressController controller = Get.find();
+  int remainingSecondsNext = 60;
+  Timer? nextTimer;
 
   @override
   void initState() {
     super.initState();
-    if(widget.isInitial){
+    if (widget.isInitial) {
       controller.setRemainingSeconds(job.durationMinutes!);
       controller.setTotalSeconds(job.durationMinutes!);
       controller.startTimer();
     }
-    
+    nextTimer = Timer.periodic(Duration(seconds: 1), (nextTimer) {
+      if (remainingSecondsNext > 0) {
+        setState(() {});
+        remainingSecondsNext--;
+      } else {
+        nextTimer.cancel();
+        setState(() {});
+      }
+    });
   }
 
   String get formattedTime {
@@ -50,7 +60,7 @@ class _JobInProgressScreenState extends State<JobInProgressScreen> {
     return PopScope(
       canPop: false,
       child: Scaffold(
-        appBar: CustomAppBar(title: "Job In Progress",isBackNeeded: false,),
+        appBar: CustomAppBar(title: "Job In Progress", isBackNeeded: false),
         body: SingleChildScrollView(
           child: Padding(
             padding: const EdgeInsets.all(20),
@@ -79,9 +89,9 @@ class _JobInProgressScreenState extends State<JobInProgressScreen> {
                     ),
                   ],
                 ),
-      
+
                 const SizedBox(height: 20),
-      
+
                 /// TIME ELAPSED CARD
                 Container(
                   width: double.infinity,
@@ -107,11 +117,11 @@ class _JobInProgressScreenState extends State<JobInProgressScreen> {
                           ),
                         ],
                       ),
-      
+
                       const SizedBox(height: 10),
-      
+
                       Obx(
-                        ()=> Text(
+                        () => Text(
                           formattedTime,
                           style: TextStyle(
                             fontSize: 44,
@@ -119,9 +129,9 @@ class _JobInProgressScreenState extends State<JobInProgressScreen> {
                           ),
                         ),
                       ),
-      
+
                       const SizedBox(height: 15),
-      
+
                       InkWell(
                         onTap: () {
                           isPaused = !isPaused;
@@ -164,9 +174,9 @@ class _JobInProgressScreenState extends State<JobInProgressScreen> {
                     ],
                   ),
                 ),
-      
+
                 const SizedBox(height: 20),
-      
+
                 /// +15 / +30 Buttons
                 Row(
                   children: [
@@ -175,9 +185,9 @@ class _JobInProgressScreenState extends State<JobInProgressScreen> {
                     _timeButton(30),
                   ],
                 ),
-      
+
                 const SizedBox(height: 30),
-      
+
                 /// Service Summary
                 const Text(
                   "Service Job Summary",
@@ -187,31 +197,31 @@ class _JobInProgressScreenState extends State<JobInProgressScreen> {
                     color: Color.fromRGBO(102, 112, 133, 1),
                   ),
                 ),
-      
+
                 const SizedBox(height: 15),
-      
+
                 const Text(
                   "Orders Details",
                   style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
                 ),
-      
+
                 const SizedBox(height: 10),
-      
+
                 Text(
                   job.description!,
                   style: TextStyle(fontSize: 16, fontWeight: FontWeight.w400),
                 ),
-      
+
                 const SizedBox(height: 30),
-      
+
                 /// Need Extra Parts
                 const Text(
                   "Need Extra Parts?",
                   style: TextStyle(fontSize: 17, fontWeight: FontWeight.w600),
                 ),
-      
+
                 const SizedBox(height: 15),
-      
+
                 InkWell(
                   onTap: () {
                     Get.toNamed(AppRoutes.selectPart, arguments: job);
@@ -240,28 +250,30 @@ class _JobInProgressScreenState extends State<JobInProgressScreen> {
                     ),
                   ),
                 ),
-      
+
                 // const Spacer(),
               ],
             ),
           ),
         ),
-      
+
         /// Bottom Button
         bottomNavigationBar: SafeArea(
           child: Padding(
             padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
             child: InkWell(
               onTap: () {
-                controller.calulateTimeTaken();
-                Get.toNamed(AppRoutes.completeJob, arguments: job);
+                if (remainingSecondsNext == 0) {
+                  controller.calulateTimeTaken();
+                  Get.toNamed(AppRoutes.completeJob, arguments: job);
+                }
               },
               child: CustomButton(
                 text: "Next",
                 textSize: 16,
                 textWeight: FontWeight.w600,
-                textColor: Colors.white,
-                bgColor: AppColors.blue,
+                textColor:remainingSecondsNext==0 ? Colors.white : Colors.black,
+                bgColor: remainingSecondsNext==0 ? AppColors.blue : Colors.grey[300],
                 radius: 12,
                 height: 52,
               ),

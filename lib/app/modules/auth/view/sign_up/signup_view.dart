@@ -3,8 +3,10 @@ import 'package:bicycle_app_technician/app/routes/app_routes.dart';
 import 'package:bicycle_app_technician/view/Colors/app_colors.dart';
 import 'package:bicycle_app_technician/view/widgets/custom_button.dart';
 import 'package:bicycle_app_technician/view/widgets/custom_snackbar.dart';
+import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:validate_phone_number/validation.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
@@ -59,10 +61,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
         child: LayoutBuilder(
           builder: (context, constraints) {
             double maxWidth = constraints.maxWidth;
-
+        
             // Tablet support
             double contentWidth = maxWidth > 600 ? 500 : maxWidth;
-
+        
             return Obx(
               () => Center(
                 child: SizedBox(
@@ -73,7 +75,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         SizedBox(height: maxWidth * 0.04),
-
+              
                         /// Title
                         Center(
                           child: Column(
@@ -97,9 +99,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
                             ],
                           ),
                         ),
-
+              
                         SizedBox(height: maxWidth * 0.08),
-
+              
                         /// First & Last Name
                         Row(
                           children: [
@@ -120,17 +122,17 @@ class _SignUpScreenState extends State<SignUpScreen> {
                             ),
                           ],
                         ),
-
+              
                         SizedBox(height: maxWidth * 0.05),
-
+              
                         _buildTextField(
                           "Email (Optional)",
                           "example@gmail.com",
                           controller: _emailController,
                         ),
-
+              
                         SizedBox(height: maxWidth * 0.05),
-
+              
                         _buildTextField(
                           "Birth of date",
                           "DD/MM/YYYY",
@@ -139,26 +141,57 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           suffixIcon: Icons.calendar_today_outlined,
                           onTap: _selectDate,
                         ),
-
+              
                         SizedBox(height: maxWidth * 0.05),
-
+              
                         _buildPhoneField(),
-
+              
                         SizedBox(height: maxWidth * 0.05),
-
+              
                         _buildTextField(
                           "Set Password",
                           "*******",
                           controller: _passwordController,
                           isPassword: true,
                         ),
-
+              
                         SizedBox(height: maxWidth * 0.12),
-
+              
                         /// Next Button
                         InkWell(
                           onTap: () async {
-                            if (_firstNameController.text.trim().isEmpty ||
+                            if (_emailController.text.isNotEmpty) {
+                              bool isValid = EmailValidator.validate(
+                                _emailController.text.trim(),
+                              );
+                              if (!isValid) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  CustomSnackbar.show(
+                                    title: "Please enter a valid email",
+                                    color: Colors.red[300]!,
+                                  ),
+                                );
+                                return;
+                              }
+                            } 
+                            if (_phoneController.text.isNotEmpty) {
+                              bool isValid = Validator.validatePhoneNumber(
+                                _phoneController.text.trim(),
+                                "IN",
+                              );
+                              if (!isValid) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  CustomSnackbar.show(
+                                    title: "Please enter a valid number",
+                                    color: Colors.red[300]!,
+                                  ),
+                                );
+                                return;
+                              }
+                            } 
+                            if (_firstNameController.text
+                                    .trim()
+                                    .isEmpty ||
                                 _lastNameController.text.trim().isEmpty ||
                                 _dobController.text.trim().isEmpty ||
                                 _phoneController.text.trim().isEmpty ||
@@ -169,6 +202,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                   color: Colors.red[300]!,
                                 ),
                               );
+                              return;
                             } else if (_passwordController.text.trim().length <
                                 8) {
                               ScaffoldMessenger.of(context).showSnackBar(
@@ -177,6 +211,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                   color: Colors.red[300]!,
                                 ),
                               );
+                              return;
                             } else {
                               Map<String, dynamic> body = {
                                 "first_name": _firstNameController.text.trim(),
@@ -210,9 +245,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
                             height: 48,
                           ),
                         ),
-
+              
                         SizedBox(height: maxWidth * 0.05),
-
+              
                         /// Login Text
                         Center(
                           child: InkWell(
@@ -241,7 +276,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                             ),
                           ),
                         ),
-
+              
                         SizedBox(height: maxWidth * 0.05),
                       ],
                     ),
@@ -364,13 +399,14 @@ class _SignUpScreenState extends State<SignUpScreen> {
             children: [
               const SizedBox(width: 12),
               const Text("+91", style: TextStyle(fontWeight: FontWeight.w500)),
-              const Icon(Icons.keyboard_arrow_down, size: 18),
+              // const Icon(Icons.keyboard_arrow_down, size: 18),
               const SizedBox(width: 8),
               Container(height: 24, width: 1, color: Colors.grey.shade300),
               const SizedBox(width: 10),
               Expanded(
                 child: TextField(
                   controller: _phoneController,
+                  keyboardType: TextInputType.number,
                   decoration: InputDecoration(
                     hintText: "",
                     border: InputBorder.none,

@@ -8,7 +8,7 @@ class UserDetailsModel {
   String? phone;
   String? image;
   String? token;
-  double? ratings;
+  dynamic? ratings;
   int? jobsCompleted;
 
   UserDetailsModel(

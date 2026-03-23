@@ -88,6 +88,7 @@ class SignUpController extends GetxController {
         // await SharedPrefs.setString("phone", response.data["phone"]);
         await SharedPrefs.setBool("isVerified", true);
         await SharedPrefs.setBool("isVerificationPending", false);
+        await SharedPrefs.setBool("isLoggedIn",true);
       }
       else{
         isVerified.value = false;

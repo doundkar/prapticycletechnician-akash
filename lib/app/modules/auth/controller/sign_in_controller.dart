@@ -23,6 +23,7 @@ class SignInController extends GetxController {
         await SharedPrefs.setString("user_id", "${response.data["user_id"]}");
         await SharedPrefs.setString("otp", "${response.data["otp"]}");
         await SharedPrefs.setString("phone",phone);
+        
         log("${response.data}");
       }
       else{
