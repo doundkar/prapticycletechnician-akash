@@ -22,6 +22,7 @@ dependencies:
   lottie: ^3.3.2
   email_validator: ^3.0.0
   validate_phone_number: ^1.1.1
+  url_launcher: ^6.2.4
   
 
 dev_dependencies:

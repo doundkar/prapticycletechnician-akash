@@ -184,7 +184,7 @@ class AppPages {
     GetPage(
       name:AppRoutes.referAndEarn,
       page: () => ReferAndEarnScreen(),
-      // binding: NotificationBinding()
+      binding: ProfileBinding()
     ),
     GetPage(
       name:AppRoutes.salarySlip,

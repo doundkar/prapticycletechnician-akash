@@ -10,6 +10,7 @@ class UserDetailsModel {
   String? token;
   dynamic? ratings;
   int? jobsCompleted;
+  String? promoCode;
 
   UserDetailsModel(
       {this.id,
@@ -34,6 +35,7 @@ class UserDetailsModel {
     token = json['token'];
     jobsCompleted = json['completed_jobs'];
     ratings = ratingSummary['average_rating'];
+    promoCode = user['promo_code'];
   }
 
   Map<String, dynamic> toJson() {

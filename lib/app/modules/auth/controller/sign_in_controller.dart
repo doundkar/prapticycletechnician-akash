@@ -71,6 +71,7 @@ class SignInController extends GetxController {
         await SharedPrefs.setString("token",response.data!.token!);
         await SharedPrefs.setString("jobs_completed",response.data!.jobsCompleted!.toString());
         await SharedPrefs.setString("ratings",response.data!.ratings.toString());
+        await SharedPrefs.setString("promo_code",response.data!.promoCode!);
         log("${response.data}");
       }
       else{

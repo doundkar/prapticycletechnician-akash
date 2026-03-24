@@ -309,7 +309,7 @@ class _AllJobsScreenState extends State<AllJobsScreen> {
                 style: TextStyle(
                   fontSize: isTablet ? 18 : 16,
                   color: const Color.fromRGBO(75, 85, 99, 1),
-                  fontWeight: FontWeight.w400,
+                  fontWeight: FontWeight.w600,
                 ),
               );
             }).toList(),

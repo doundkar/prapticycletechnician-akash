@@ -22,6 +22,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
   final TextEditingController _dobController = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _referralCodeController = TextEditingController();
 
   final SignUpController controller = Get.find();
 
@@ -107,7 +108,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           children: [
                             Expanded(
                               child: _buildTextField(
-                                "First Name",
+                                "First Name*",
                                 "John",
                                 controller: _firstNameController,
                               ),
@@ -115,7 +116,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                             const SizedBox(width: 12),
                             Expanded(
                               child: _buildTextField(
-                                "Last Name",
+                                "Last Name*",
                                 "Doe",
                                 controller: _lastNameController,
                               ),
@@ -126,7 +127,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         SizedBox(height: maxWidth * 0.05),
               
                         _buildTextField(
-                          "Email (Optional)",
+                          "Email*",
                           "example@gmail.com",
                           controller: _emailController,
                         ),
@@ -134,7 +135,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         SizedBox(height: maxWidth * 0.05),
               
                         _buildTextField(
-                          "Birth of date",
+                          "Birth of date*",
                           "DD/MM/YYYY",
                           controller: _dobController,
                           readOnly: true,
@@ -149,11 +150,15 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         SizedBox(height: maxWidth * 0.05),
               
                         _buildTextField(
-                          "Set Password",
+                          "Set Password*",
                           "*******",
                           controller: _passwordController,
                           isPassword: true,
                         ),
+
+                        SizedBox(height: maxWidth * 0.05),
+
+                        _buildTextField("Promo Code", "PCS00XXX",controller: _referralCodeController),
               
                         SizedBox(height: maxWidth * 0.12),
               
@@ -195,7 +200,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                 _lastNameController.text.trim().isEmpty ||
                                 _dobController.text.trim().isEmpty ||
                                 _phoneController.text.trim().isEmpty ||
-                                _passwordController.text.trim().isEmpty) {
+                                _passwordController.text.trim().isEmpty ||
+                                _emailController.text.trim().isEmpty) {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 CustomSnackbar.show(
                                   title: "Please fill all the required fields",
@@ -220,6 +226,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                 "phone": _phoneController.text.trim(),
                                 "dob": _dobController.text.trim(),
                                 "password": _passwordController.text.trim(),
+                                "promo_code":_referralCodeController.text.trim()
                               };
                               await controller.signUp(body);
                               if (controller.isStep1Completed.value) {
@@ -374,7 +381,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const Text(
-          "Phone Number",
+          "Phone Number*",
           style: TextStyle(
             fontSize: 12,
             fontWeight: FontWeight.w500,
