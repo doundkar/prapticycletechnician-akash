@@ -27,6 +27,7 @@ class JobDetailsModel {
   String? customerReview;
   String? date;
   String? time;
+  String? type;
   List<ServiceItemModel>? serviceItems;
 
   JobDetailsModel(
@@ -78,6 +79,7 @@ class JobDetailsModel {
     completedTime = json['completed_time'];
     completionOtp = json['completion_otp'];
     customerReview = json['customer_review'];
+    type = json['type'];
     DateTime parsedDate = DateTime.parse(json["jobdatetime"]);
     date = DateFormat('MMM dd').format(parsedDate);
     time = DateFormat('hh:mm a').format(parsedDate);

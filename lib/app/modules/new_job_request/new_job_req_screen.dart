@@ -36,7 +36,7 @@ class _NewJobReqScreenState extends State<NewJobReqScreen> {
                 child: SizedBox(
                   height: 30,
                   width: 30,
-                  child: CircularProgressIndicator(strokeWidth: 2),
+                  child: CircularProgressIndicator(strokeWidth: 2,color: AppColors.blue,),
                 ),
               );
             }
@@ -71,7 +71,7 @@ class _NewJobReqScreenState extends State<NewJobReqScreen> {
                           date: job.date!,
                           time: job.time!,
                           duration: job.durationMinutes!,
-                          serviceTitle: "Brake Repair",
+                          serviceTitle: job.type!.capitalize!,
                           serviceDescription: job.description!,
                           onAccept: () async {
                             await controller.acceptJob(job.id!);

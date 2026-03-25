@@ -276,13 +276,19 @@ class _JobListHomeScreenState extends State<JobListHomeScreen> {
 
                           SizedBox(height: maxWidth * 0.05),
 
-                          if(!controller.isOnline.value)...[
-                          SizedBox(height: maxWidth * 0.5),
-                            noDataCard(maxWidth: maxWidth, title: "You are offline", subtitle: "Please log in to start receiving jobs!")
+                          if (!controller.isOnline.value) ...[
+                            SizedBox(height: maxWidth * 0.5),
+                            noDataCard(
+                              maxWidth: maxWidth,
+                              title: "You are offline",
+                              subtitle:
+                                  "Please log in to start receiving jobs!",
+                            ),
                           ],
 
                           //controller.isOnline.value &&
-                          if (controller.isOnline.value && controller.pendingJobRequests.isEmpty &&
+                          if (controller.isOnline.value &&
+                              controller.pendingJobRequests.isEmpty &&
                               controller.acceptedJobRequests.isEmpty) ...[
                             SizedBox(height: maxWidth * 0.5),
                             Center(
@@ -337,6 +343,8 @@ class _JobListHomeScreenState extends State<JobListHomeScreen> {
                                         ? "In Progress"
                                         : "Completed",
                                     jobId: job.id!,
+                                    jobTitle: job.jobType!,
+                                    type: job.type!,
                                     customerName: job.customerName!,
                                     address: job.location!,
                                     distance: job.distance!,
@@ -361,7 +369,8 @@ class _JobListHomeScreenState extends State<JobListHomeScreen> {
                             SizedBox(height: maxWidth * 0.05),
                           ],
 
-                          if (controller.isOnline.value && controller.pendingJobRequests.isNotEmpty) ...[
+                          if (controller.isOnline.value &&
+                              controller.pendingJobRequests.isNotEmpty) ...[
                             /// NEW JOB HEADER
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -398,7 +407,7 @@ class _JobListHomeScreenState extends State<JobListHomeScreen> {
                                 return Column(
                                   children: [
                                     InkWell(
-                                      onTap: (){
+                                      onTap: () {
                                         Get.toNamed(AppRoutes.newJobRequest);
                                       },
                                       child: _buildJobCard(
@@ -410,6 +419,7 @@ class _JobListHomeScreenState extends State<JobListHomeScreen> {
                                         price: job.charges!,
                                         serviceItems: job.serviceItems!,
                                         maxWidth: maxWidth,
+                                        type: job.type!,
                                       ),
                                     ),
                                     SizedBox(height: maxWidth * 0.03),
@@ -736,6 +746,8 @@ Widget buildAcceptedJobCard({
   required String status,
   required String progressStatus,
   required int jobId,
+  required String jobTitle,
+  required String type,
   required String customerName,
   required String address,
   required String distance,
@@ -749,6 +761,12 @@ Widget buildAcceptedJobCard({
 }) {
   bool isTablet = maxWidth > 600;
   status = status.capitalize!;
+  if (type == "package") {
+    jobTitle = "$jobTitle Package";
+  }
+  if (type == "assembly") {
+    jobTitle = "$jobTitle Assembly";
+  }
 
   return Container(
     padding: EdgeInsets.all(isTablet ? 20 : 16),
@@ -911,20 +929,30 @@ Widget buildAcceptedJobCard({
         ),
 
         SizedBox(height: isTablet ? 12 : 8),
+        if (services.isNotEmpty)
+          ...services.asMap().entries.map((entry) {
+            int index = entry.key;
+            var item = entry.value;
 
-        ...services.asMap().entries.map((entry) {
-          int index = entry.key;
-          var item = entry.value;
+            return Text(
+              "${index + 1}. ${item.title}",
+              style: TextStyle(
+                fontSize: isTablet ? 18 : 16,
+                color: const Color.fromRGBO(75, 85, 99, 1),
+                fontWeight: FontWeight.w400,
+              ),
+            );
+          }).toList(),
 
-          return Text(
-            "${index + 1}. ${item.title}",
+        if (services.isEmpty)
+          Text(
+            jobTitle,
             style: TextStyle(
               fontSize: isTablet ? 18 : 16,
               color: const Color.fromRGBO(75, 85, 99, 1),
               fontWeight: FontWeight.w400,
             ),
-          );
-        }).toList(),
+          ),
 
         SizedBox(height: isTablet ? 20 : 16),
 
@@ -990,9 +1018,18 @@ Widget _buildJobCard({
   required String price,
   required List<ServiceItemModel> serviceItems,
   required double maxWidth,
+  required String type,
 }) {
   bool isTablet = maxWidth > 600;
-
+  if (type == "package") {
+    jobTitle = "$jobTitle Package";
+  }
+  if (type == "assembly") {
+    jobTitle = "$jobTitle Assembly";
+  }
+  if(type=="service"){
+    jobTitle = "Service";
+  }
   return Container(
     padding: EdgeInsets.all(isTablet ? 18 : 14),
     decoration: BoxDecoration(

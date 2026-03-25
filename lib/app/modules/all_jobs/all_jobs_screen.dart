@@ -113,7 +113,7 @@ class _AllJobsScreenState extends State<AllJobsScreen> {
                               child: _buildJobCard(
                                 name: job.customerName!,
                                 address: job.location!,
-                                serviceTag: "Service",
+                                serviceTag: job.type!.capitalize!,
                                 jobTitle: job.jobType!,
                                 description: job.description!,
                                 duration: job.durationMinutes!,
@@ -190,6 +190,13 @@ class _AllJobsScreenState extends State<AllJobsScreen> {
     status = status.capitalize!;
     Color statusColor;
     Color statusBg;
+
+    if (serviceTag == "Package") {
+      jobTitle = "$jobTitle Package".capitalize!;
+    }
+    if (serviceTag == "Assembly") {
+      jobTitle = "$jobTitle Assembly".capitalize!;
+    }
 
     switch (status) {
       case "Pending":
@@ -275,31 +282,34 @@ class _AllJobsScreenState extends State<AllJobsScreen> {
             SizedBox(height: isTablet ? 12 : 8),
 
             /// JOB TITLE
-            Row(
-              children: [
-                Expanded(
-                  child: Text(
-                    jobTitle,
-                    style: TextStyle(
-                      fontSize: isTablet ? 18 : 16,
-                      fontWeight: FontWeight.w600,
+            if (serviceTag != "Service") ...[
+              Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      jobTitle,
+                      style: TextStyle(
+                        fontSize: isTablet ? 18 : 16,
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
+                  ),
+                ],
+              ),
+
+              if (description != null) ...[
+                SizedBox(height: isTablet ? 6 : 4),
+                Text(
+                  description,
+                  style: TextStyle(
+                    fontSize: isTablet ? 16 : 14,
+                    color: Colors.grey,
+                    fontWeight: FontWeight.w600,
                   ),
                 ),
               ],
-            ),
+            ],
 
-            // if (description != null) ...[
-            //   SizedBox(height: isTablet ? 6 : 4),
-            //   Text(
-            //     description,
-            //     style: TextStyle(
-            //       fontSize: isTablet ? 16 : 14,
-            //       color: Colors.grey,
-            //       fontWeight: FontWeight.w600,
-            //     ),
-            //   ),
-            // ],
             ...job.serviceItems!.asMap().entries.map((entry) {
               int index = entry.key;
               var item = entry.value;
