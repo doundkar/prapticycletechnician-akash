@@ -164,7 +164,7 @@ class AppPages {
     GetPage(
       name:AppRoutes.wallet,
       page: () => WalletScreen(),
-      // binding: NotificationBinding()
+      // binding: ProfileBinding()
     ),
     GetPage(
       name:AppRoutes.editProfile,

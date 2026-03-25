@@ -35,6 +35,8 @@ class _ReferAndEarnScreenState extends State<ReferAndEarnScreen> {
     timer = Timer.periodic(Duration(seconds: 30), (timer) async {
       await controller.fetchPcsWallet(isInitial: false);
       await controller.fetchHistory(isInitial: false);
+      promoCode = SharedPrefs.getString("promo_code");
+      pcsAmt = SharedPrefs.getString("pcs_wallet");
     });
   }
 
