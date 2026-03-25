@@ -135,7 +135,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         SizedBox(height: maxWidth * 0.05),
               
                         _buildTextField(
-                          "Birth of date*",
+                          "Date of birth*",
                           "DD/MM/YYYY",
                           controller: _dobController,
                           readOnly: true,

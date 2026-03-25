@@ -28,10 +28,11 @@ class _IdentityPendingScreenState extends State<IdentityPendingScreen> {
     timer = Timer.periodic(Duration(seconds: 5), (timer){
       controller.getOtp();
     });
-    ever(controller.isVerified, (value) {
+    ever(controller.isVerified, (value) async {
       log("called ever");
       if (value == true) {
         timer!.cancel();
+        await controller.checkVerification();
         Get.offAllNamed(AppRoutes.identityApproved);
       }
     });

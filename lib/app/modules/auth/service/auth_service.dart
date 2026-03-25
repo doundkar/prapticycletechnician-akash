@@ -180,4 +180,31 @@ class AuthService {
     }
   }
 
+  static Future<ApiResponseModel<UserDetailsModel>> checkVerificationLogin(Map<String,dynamic> body) async {
+
+    try {
+      final response = await http.post(
+        Uri.parse("${baseUrl}check-verification-login"),
+        headers: const {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode(body)
+      );
+
+      if(response.statusCode==200){
+        final jsonBody = jsonDecode(response.body);
+        log("check verify resp: $jsonBody");
+        final data = jsonBody["data"];
+        return ApiResponseModel(status: jsonBody["success"],message: jsonBody["message"],data: UserDetailsModel.fromJson(data));
+      }
+      else{
+        log("check verification error");
+        return ApiResponseModel(status: false,message: "Not verified yet");
+      }
+    } catch (e) {
+      return ApiResponseModel(status: false,message: "Error $e occurred");
+    }
+  }
+
 }
