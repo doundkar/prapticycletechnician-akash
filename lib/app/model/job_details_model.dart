@@ -28,6 +28,8 @@ class JobDetailsModel {
   String? date;
   String? time;
   String? type;
+  String? mode;
+
   List<ServiceItemModel>? serviceItems;
 
   JobDetailsModel(
@@ -80,6 +82,7 @@ class JobDetailsModel {
     completionOtp = json['completion_otp'];
     customerReview = json['customer_review'];
     type = json['type'];
+    mode = json["mode"];
     DateTime parsedDate = DateTime.parse(json["jobdatetime"]);
     date = DateFormat('MMM dd').format(parsedDate);
     time = DateFormat('hh:mm a').format(parsedDate);

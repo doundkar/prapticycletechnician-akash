@@ -353,11 +353,19 @@ class _JobListHomeScreenState extends State<JobListHomeScreen> {
                                     duration: job.durationMinutes!,
                                     price: job.charges!,
                                     services: job.serviceItems!,
+                                    mode: job.mode!,
                                     onNavigate: () {
-                                      Get.toNamed(
-                                        AppRoutes.navigation,
-                                        arguments: job,
-                                      );
+                                      if (job.mode! == "home_service") {
+                                        Get.toNamed(
+                                          AppRoutes.navigation,
+                                          arguments: job,
+                                        );
+                                      } else {
+                                        Get.toNamed(
+                                          AppRoutes.startJobOtp,
+                                          arguments: job,
+                                        );
+                                      }
                                     },
                                     onCall: () {},
                                     maxWidth: maxWidth,
@@ -755,6 +763,7 @@ Widget buildAcceptedJobCard({
   required String time,
   required int duration,
   required String price,
+  required String mode,
   required List<ServiceItemModel> services,
   VoidCallback? onNavigate,
   VoidCallback? onCall,
@@ -962,9 +971,9 @@ Widget buildAcceptedJobCard({
             Expanded(
               child: ElevatedButton.icon(
                 onPressed: onNavigate,
-                icon: Icon(Icons.navigation, size: isTablet ? 20 : 18),
+                icon: Icon(mode=="home_service" ? Icons.navigation : Icons.arrow_outward_rounded, size: isTablet ? 20 : 18),
                 label: Text(
-                  "Navigate",
+                  mode=="home_service" ? "Navigate" : "Start",
                   style: TextStyle(
                     fontSize: isTablet ? 16 : 14,
                     fontWeight: FontWeight.w500,
@@ -1027,7 +1036,7 @@ Widget _buildJobCard({
   if (type == "assembly") {
     jobTitle = "$jobTitle Assembly";
   }
-  if(type=="service"){
+  if (type == "service") {
     jobTitle = "Service";
   }
   return Container(
