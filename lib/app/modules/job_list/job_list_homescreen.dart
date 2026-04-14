@@ -1,9 +1,13 @@
+import 'dart:developer';
+
 import 'package:bicycle_app_technician/app/model/service_item_model.dart';
 import 'package:bicycle_app_technician/app/modules/job_list/job_list_controller.dart';
+import 'package:bicycle_app_technician/app/modules/notification/notification_controller.dart';
 import 'package:bicycle_app_technician/app/routes/app_routes.dart';
 import 'package:bicycle_app_technician/utils/api_constants.dart';
 import 'package:bicycle_app_technician/utils/shared_prefs.dart';
 import 'package:bicycle_app_technician/view/Colors/app_colors.dart';
+import 'package:bicycle_app_technician/view/widgets/custom_snackbar.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -22,6 +26,21 @@ class _JobListHomeScreenState extends State<JobListHomeScreen> {
   String userIdStr = SharedPrefs.getString("user_id");
 
   JobListController controller = Get.find();
+  NotificationController notificationController = Get.put(
+    NotificationController(),
+  );
+
+  @override
+  void initState() {
+    super.initState();
+    log("""
+      User Details
+      Is Online: $isOnline
+      Name: $name
+      Image: $image
+      User ID: $userIdStr
+      """);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -60,16 +79,16 @@ class _JobListHomeScreenState extends State<JobListHomeScreen> {
                   radius: avatarRadius,
                   backgroundColor: Colors.grey[300],
                   child: image.isEmpty
-                            ? Icon(Icons.person, size: 40, color: Colors.white)
-                            : ClipRRect(
-                              borderRadius: BorderRadiusGeometry.circular(40),
-                              child: Image.network(
-                                  "${ApiConstants.imageBaseUrl}$image",
-                                  fit: BoxFit.cover,
-                                  height: avatarRadius*2,
-                                  width: avatarRadius*2,
-                                ),
-                            ),
+                      ? Icon(Icons.person, size: 40, color: Colors.white)
+                      : ClipRRect(
+                          borderRadius: BorderRadiusGeometry.circular(40),
+                          child: Image.network(
+                            "${ApiConstants.imageBaseUrl}$image",
+                            fit: BoxFit.cover,
+                            height: avatarRadius * 2,
+                            width: avatarRadius * 2,
+                          ),
+                        ),
                 ),
 
                 SizedBox(width: maxWidth > 600 ? 14 : 10),
@@ -101,69 +120,74 @@ class _JobListHomeScreenState extends State<JobListHomeScreen> {
                 ),
 
                 /// ACTIONS (kept in title to fully control responsiveness)
-                Row(
-                  children: [
-                    Transform.scale(
-                      scale: switchScale,
-                      child: Switch(
-                        value: isOnline,
-                        materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                        activeThumbColor: Colors.green,
-                        activeTrackColor: Colors.white,
-                        trackColor: const WidgetStatePropertyAll(
-                          Color.fromRGBO(225, 225, 225, 1),
-                        ),
-                        trackOutlineColor: const WidgetStatePropertyAll(
-                          Color.fromRGBO(166, 166, 166, 1),
-                        ),
-                        onChanged: (value) {
-                          setState(() {
-                            _showOnlineModeSheet(value);
-                          });
-                        },
-                      ),
-                    ),
-
-                    Text(
-                      isOnline ? "Online" : "Offline",
-                      style: TextStyle(
-                        fontSize: maxWidth > 600 ? 16 : 14,
-                        fontWeight: FontWeight.w500,
-                        color: isOnline ? Colors.green : Colors.grey,
-                      ),
-                    ),
-
-                    SizedBox(width: maxWidth > 600 ? 16 : 10),
-
-                    Stack(
-                      children: [
-                        InkWell(
-                          onTap: () {
-                            Get.toNamed(AppRoutes.notifications);
-                          },
-                          child: Icon(
-                            Icons.notifications,
-                            color: Colors.black,
-                            size: maxWidth > 600 ? 26 : 22,
+                Obx(
+                  () => Row(
+                    children: [
+                      Transform.scale(
+                        scale: switchScale,
+                        child: Switch(
+                          value: controller.isOnline.value,
+                          materialTapTargetSize:
+                              MaterialTapTargetSize.shrinkWrap,
+                          activeThumbColor: Colors.green,
+                          activeTrackColor: Colors.white,
+                          trackColor: const WidgetStatePropertyAll(
+                            Color.fromRGBO(225, 225, 225, 1),
                           ),
+                          trackOutlineColor: const WidgetStatePropertyAll(
+                            Color.fromRGBO(166, 166, 166, 1),
+                          ),
+                          onChanged: (value) {
+                            _showOnlineModeSheet(value);
+                          },
                         ),
-                        Positioned(
-                          top: 0,
-                          right: 3,
-                          child: Container(
-                            height: maxWidth > 600 ? 10 : 8,
-                            width: maxWidth > 600 ? 10 : 8,
-                            decoration: const BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: Colors.red,
+                      ),
+
+                      Text(
+                        controller.isOnline.value ? "Online" : "Offline",
+                        style: TextStyle(
+                          fontSize: maxWidth > 600 ? 16 : 14,
+                          fontWeight: FontWeight.w500,
+                          color: controller.isOnline.value
+                              ? Colors.green
+                              : Colors.grey,
+                        ),
+                      ),
+
+                      SizedBox(width: maxWidth > 600 ? 16 : 10),
+
+                      Stack(
+                        children: [
+                          InkWell(
+                            onTap: () {
+                              Get.toNamed(AppRoutes.notifications);
+                            },
+                            child: Icon(
+                              Icons.notifications,
+                              color: Colors.black,
+                              size: maxWidth > 600 ? 26 : 22,
                             ),
                           ),
-                        ),
-                      ],
-                    ),
+                          Positioned(
+                            top: 0,
+                            right: 3,
+                            child: Container(
+                              height: maxWidth > 600 ? 10 : 8,
+                              width: maxWidth > 600 ? 10 : 8,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: notificationController.hasNew.value
+                                    ? Colors.red
+                                    : null,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
 
-                    SizedBox(width: maxWidth > 600 ? 20 : 16),
-                  ],
+                      SizedBox(width: maxWidth > 600 ? 20 : 16),
+                    ],
+                  ),
                 ),
               ],
             );
@@ -190,18 +214,21 @@ class _JobListHomeScreenState extends State<JobListHomeScreen> {
                 child: SizedBox(
                   height: 30,
                   width: 30,
-                  child: CircularProgressIndicator(strokeWidth: 2,color: AppColors.blue,),
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2,
+                    color: AppColors.blue,
+                  ),
                 ),
               );
             }
-            if (controller.hasError.value) {
-              return Center(
-                child: Text(
-                  controller.errorMessage.value,
-                  style: TextStyle(color: Colors.red),
-                ),
-              );
-            }
+            // if (controller.hasError.value) {
+            //   return Center(
+            //     child: Text(
+            //       controller.errorMessage.value,
+            //       style: TextStyle(color: Colors.red),
+            //     ),
+            //   );
+            // }
             return Align(
               alignment: Alignment.topCenter,
               child: SizedBox(
@@ -249,6 +276,31 @@ class _JobListHomeScreenState extends State<JobListHomeScreen> {
 
                           SizedBox(height: maxWidth * 0.05),
 
+                          if (!controller.isOnline.value) ...[
+                            SizedBox(height: maxWidth * 0.5),
+                            noDataCard(
+                              maxWidth: maxWidth,
+                              title: "You are offline",
+                              subtitle:
+                                  "Please log in to start receiving jobs!",
+                            ),
+                          ],
+
+                          //controller.isOnline.value &&
+                          if (controller.isOnline.value &&
+                              controller.pendingJobRequests.isEmpty &&
+                              controller.acceptedJobRequests.isEmpty) ...[
+                            SizedBox(height: maxWidth * 0.5),
+                            Center(
+                              child: noDataCard(
+                                maxWidth: maxWidth,
+                                title: "No jobs available yet...",
+                                subtitle:
+                                    "Please wait while admin assigns you new jobs.",
+                              ),
+                            ),
+                          ],
+
                           if (controller.acceptedJobRequests.isNotEmpty) ...[
                             /// ACCEPTED HEADER
                             Row(
@@ -291,6 +343,8 @@ class _JobListHomeScreenState extends State<JobListHomeScreen> {
                                         ? "In Progress"
                                         : "Completed",
                                     jobId: job.id!,
+                                    jobTitle: job.jobType!,
+                                    type: job.type!,
                                     customerName: job.customerName!,
                                     address: job.location!,
                                     distance: job.distance!,
@@ -299,11 +353,19 @@ class _JobListHomeScreenState extends State<JobListHomeScreen> {
                                     duration: job.durationMinutes!,
                                     price: job.charges!,
                                     services: job.serviceItems!,
+                                    mode: job.mode!,
                                     onNavigate: () {
-                                      Get.toNamed(
-                                        AppRoutes.navigation,
-                                        arguments: job,
-                                      );
+                                      if (job.mode! == "home_service") {
+                                        Get.toNamed(
+                                          AppRoutes.navigation,
+                                          arguments: job,
+                                        );
+                                      } else {
+                                        Get.toNamed(
+                                          AppRoutes.startJobOtp,
+                                          arguments: job,
+                                        );
+                                      }
                                     },
                                     onCall: () {},
                                     maxWidth: maxWidth,
@@ -315,7 +377,8 @@ class _JobListHomeScreenState extends State<JobListHomeScreen> {
                             SizedBox(height: maxWidth * 0.05),
                           ],
 
-                          if (controller.pendingJobRequests.isNotEmpty) ...[
+                          if (controller.isOnline.value &&
+                              controller.pendingJobRequests.isNotEmpty) ...[
                             /// NEW JOB HEADER
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -351,15 +414,21 @@ class _JobListHomeScreenState extends State<JobListHomeScreen> {
 
                                 return Column(
                                   children: [
-                                    _buildJobCard(
-                                      name: job.customerName!,
-                                      location: job.location!,
-                                      jobTitle: job.jobType!,
-                                      description: job.description!,
-                                      time: "${(job.durationMinutes)}",
-                                      price: job.charges!,
-                                      serviceItems: job.serviceItems!,
-                                      maxWidth: maxWidth,
+                                    InkWell(
+                                      onTap: () {
+                                        Get.toNamed(AppRoutes.newJobRequest);
+                                      },
+                                      child: _buildJobCard(
+                                        name: job.customerName!,
+                                        location: job.location!,
+                                        jobTitle: job.jobType!,
+                                        description: job.description!,
+                                        time: "${(job.durationMinutes)}",
+                                        price: job.charges!,
+                                        serviceItems: job.serviceItems!,
+                                        maxWidth: maxWidth,
+                                        type: job.type!,
+                                      ),
                                     ),
                                     SizedBox(height: maxWidth * 0.03),
                                   ],
@@ -368,24 +437,22 @@ class _JobListHomeScreenState extends State<JobListHomeScreen> {
                             ),
                           ],
 
-                          if (controller.newJobRequests.isEmpty)
-                            Center(
-                              child: Column(
-                                children: [
-                                  Icon(
-                                    Icons.error_outline,
-                                    size: 30,
-                                    color: Colors.grey,
-                                  ),
-                                  Expanded(
-                                    child: Text(
-                                      "No jobs are assigned to you yet...",
-                                      style: TextStyle(fontSize: 16),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
+                          // if (controller.isOnline.value && controller.newJobRequests.isEmpty)
+                          //   Center(
+                          //     child: Column(
+                          //       children: [
+                          //         Icon(
+                          //           Icons.error_outline,
+                          //           size: 30,
+                          //           color: Colors.grey,
+                          //         ),
+                          //         Text(
+                          //           "No jobs are assigned to you yet...",
+                          //           style: TextStyle(fontSize: 16),
+                          //         ),
+                          //       ],
+                          //     ),
+                          //   ),
                         ],
                       ),
                     ),
@@ -417,105 +484,140 @@ class _JobListHomeScreenState extends State<JobListHomeScreen> {
             color: Colors.white,
             borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
           ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              /// HEADER ROW
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    "Online Mode",
-                    style: TextStyle(
-                      fontSize: isTablet ? 22 : 18,
-                      fontWeight: FontWeight.w600,
+          child: Obx(() {
+            if (controller.isLoginLoading.value) {
+              return SizedBox(
+                height: isTablet ? 120 : 100,
+                child: Align(
+                  alignment: Alignment.center,
+                  child: SizedBox(
+                    height: isTablet ? 40 : 30,
+                    width: isTablet ? 40 : 30,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      color: AppColors.blue,
                     ),
                   ),
-                  GestureDetector(
-                    onTap: () => Navigator.pop(context),
-                    child: Icon(Icons.close, size: isTablet ? 28 : 24),
-                  ),
-                ],
-              ),
-        
-              SizedBox(height: isTablet ? 20 : 16),
-        
-              /// DESCRIPTION
-              Text(
-                newValue
-                    ? "You have logged in online mode for you receive any orders"
-                    : "You are going offline. You will not receive new orders.",
-                style: TextStyle(
-                  fontSize: isTablet ? 16 : 14,
-                  color: Colors.black87,
                 ),
-              ),
-        
-              SizedBox(height: isTablet ? 28 : 20),
-        
-              /// BUTTONS
-              Row(
-                children: [
-                  Expanded(
-                    child: OutlinedButton(
-                      style: OutlinedButton.styleFrom(
-                        side: const BorderSide(color: Colors.black),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        padding: EdgeInsets.symmetric(
-                          vertical: isTablet ? 18 : 14,
-                        ),
+              );
+            }
+            return Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                /// HEADER ROW
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      "Online Mode",
+                      style: TextStyle(
+                        fontSize: isTablet ? 22 : 18,
+                        fontWeight: FontWeight.w600,
                       ),
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                      child: Text(
-                        newValue ? "Log Out" : "Cancel",
-                        style: TextStyle(
-                          color: Colors.black,
-                          fontSize: isTablet ? 16 : 14,
+                    ),
+                    GestureDetector(
+                      onTap: () => Navigator.pop(context),
+                      child: Icon(Icons.close, size: isTablet ? 28 : 24),
+                    ),
+                  ],
+                ),
+
+                SizedBox(height: isTablet ? 20 : 16),
+
+                /// DESCRIPTION
+                Text(
+                  newValue
+                      ? "You have logged in online mode for you receive any orders"
+                      : "You are going offline. You will not receive new orders.",
+                  style: TextStyle(
+                    fontSize: isTablet ? 16 : 14,
+                    color: Colors.black87,
+                  ),
+                ),
+
+                SizedBox(height: isTablet ? 28 : 20),
+
+                /// BUTTONS
+                Row(
+                  children: [
+                    Expanded(
+                      child: OutlinedButton(
+                        style: OutlinedButton.styleFrom(
+                          side: const BorderSide(color: Colors.black),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          padding: EdgeInsets.symmetric(
+                            vertical: isTablet ? 18 : 14,
+                          ),
+                        ),
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                        child: Text(
+                          newValue ? "Log Out" : "Cancel",
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontSize: isTablet ? 16 : 14,
+                          ),
                         ),
                       ),
                     ),
-                  ),
-        
-                  SizedBox(width: isTablet ? 16 : 12),
-        
-                  Expanded(
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.blue,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
+
+                    SizedBox(width: isTablet ? 16 : 12),
+
+                    Expanded(
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: AppColors.blue,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          padding: EdgeInsets.symmetric(
+                            vertical: isTablet ? 18 : 14,
+                          ),
                         ),
-                        padding: EdgeInsets.symmetric(
-                          vertical: isTablet ? 18 : 14,
-                        ),
-                      ),
-                      onPressed: () {
-                        setState(() {
-                          isOnline = newValue;
-                        });
-                        controller.toggleActivity(isOnline);
-                        Navigator.pop(context);
-                      },
-                      child: Text(
-                        newValue ? "Log In" : "Go Offline",
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: isTablet ? 16 : 14,
+                        onPressed: () async {
+                          final resp = await controller.toggleActivity(
+                            controller.isOnline.value,
+                          );
+                          if (resp) {
+                            // setState(() {
+                            //   isOnline = newValue;
+                            // });
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              CustomSnackbar.show(
+                                title: controller.loginMessage.value,
+                                color: Colors.green[300]!,
+                              ),
+                            );
+                          } else {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              CustomSnackbar.show(
+                                title: controller.loginMessage.value,
+                                color: Colors.red[300]!,
+                              ),
+                            );
+                          }
+                          Navigator.pop(context);
+                        },
+                        child: Text(
+                          newValue ? "Log In" : "Go Offline",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: isTablet ? 16 : 14,
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                ],
-              ),
-        
-              SizedBox(height: isTablet ? 40 : 30),
-            ],
-          ),
+                  ],
+                ),
+
+                SizedBox(height: isTablet ? 40 : 30),
+              ],
+            );
+          }),
         );
       },
     );
@@ -602,12 +704,58 @@ Widget _buildStatusCard(
   );
 }
 
+Widget noDataCard({
+  required double maxWidth,
+  required String title,
+  required String subtitle,
+}) {
+  bool isTablet = maxWidth > 600;
+  return Container(
+    padding: EdgeInsets.all(isTablet ? 20 : 16),
+    // decoration: BoxDecoration(
+    //   color: Colors.white,
+    //   borderRadius: BorderRadius.circular(16),
+    //   boxShadow: [
+    //     BoxShadow(
+    //       color: Colors.black.withOpacity(0.15),
+    //       blurRadius: isTablet ? 20 : 15,
+    //       offset: const Offset(0, 4),
+    //     ),
+    //   ],
+    // ),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Text(
+          title,
+          style: TextStyle(
+            fontWeight: FontWeight.w600,
+            color: Colors.grey,
+            fontSize: isTablet ? 18 : 16,
+          ),
+        ),
+        Text(
+          subtitle,
+          style: TextStyle(
+            fontWeight: FontWeight.w600,
+            color: Colors.grey,
+            fontSize: isTablet ? 18 : 16,
+          ),
+        ),
+      ],
+    ),
+  );
+}
+
 /// ================= ACCEPTED JOB CARD METHOD =================
 Widget buildAcceptedJobCard({
   required double maxWidth,
   required String status,
   required String progressStatus,
   required int jobId,
+  required String jobTitle,
+  required String type,
   required String customerName,
   required String address,
   required String distance,
@@ -615,12 +763,19 @@ Widget buildAcceptedJobCard({
   required String time,
   required int duration,
   required String price,
+  required String mode,
   required List<ServiceItemModel> services,
   VoidCallback? onNavigate,
   VoidCallback? onCall,
 }) {
   bool isTablet = maxWidth > 600;
   status = status.capitalize!;
+  if (type == "package") {
+    jobTitle = "$jobTitle Package";
+  }
+  if (type == "assembly") {
+    jobTitle = "$jobTitle Assembly";
+  }
 
   return Container(
     padding: EdgeInsets.all(isTablet ? 20 : 16),
@@ -783,20 +938,30 @@ Widget buildAcceptedJobCard({
         ),
 
         SizedBox(height: isTablet ? 12 : 8),
+        if (services.isNotEmpty)
+          ...services.asMap().entries.map((entry) {
+            int index = entry.key;
+            var item = entry.value;
 
-        ...services.asMap().entries.map((entry) {
-          int index = entry.key;
-          var item = entry.value;
+            return Text(
+              "${index + 1}. ${item.title}",
+              style: TextStyle(
+                fontSize: isTablet ? 18 : 16,
+                color: const Color.fromRGBO(75, 85, 99, 1),
+                fontWeight: FontWeight.w400,
+              ),
+            );
+          }).toList(),
 
-          return Text(
-            "${index + 1}. ${item.title}",
+        if (services.isEmpty)
+          Text(
+            jobTitle,
             style: TextStyle(
               fontSize: isTablet ? 18 : 16,
               color: const Color.fromRGBO(75, 85, 99, 1),
               fontWeight: FontWeight.w400,
             ),
-          );
-        }).toList(),
+          ),
 
         SizedBox(height: isTablet ? 20 : 16),
 
@@ -806,9 +971,9 @@ Widget buildAcceptedJobCard({
             Expanded(
               child: ElevatedButton.icon(
                 onPressed: onNavigate,
-                icon: Icon(Icons.navigation, size: isTablet ? 20 : 18),
+                icon: Icon(mode=="home_service" ? Icons.navigation : Icons.arrow_outward_rounded, size: isTablet ? 20 : 18),
                 label: Text(
-                  "Navigate",
+                  mode=="home_service" ? "Navigate" : "Start",
                   style: TextStyle(
                     fontSize: isTablet ? 16 : 14,
                     fontWeight: FontWeight.w500,
@@ -862,9 +1027,18 @@ Widget _buildJobCard({
   required String price,
   required List<ServiceItemModel> serviceItems,
   required double maxWidth,
+  required String type,
 }) {
   bool isTablet = maxWidth > 600;
-
+  if (type == "package") {
+    jobTitle = "$jobTitle Package";
+  }
+  if (type == "assembly") {
+    jobTitle = "$jobTitle Assembly";
+  }
+  if (type == "service") {
+    jobTitle = "Service";
+  }
   return Container(
     padding: EdgeInsets.all(isTablet ? 18 : 14),
     decoration: BoxDecoration(

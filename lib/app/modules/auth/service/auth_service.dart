@@ -23,9 +23,8 @@ class AuthService {
         },
         body: jsonEncode(body)
       );
-
+      final jsonBody = jsonDecode(response.body);
       if(response.statusCode==200){
-        final jsonBody = jsonDecode(response.body);
         log("signup resp: $jsonBody");
         final rawdata = jsonBody["data"];
         final data = {
@@ -35,7 +34,7 @@ class AuthService {
         return ApiResponseModel(status: jsonBody["status"],message: jsonBody["message"],data: data);
       }
       else{
-        return ApiResponseModel(status: false,message: "Statuscode ${response.statusCode}");
+        return ApiResponseModel(status: false,message: jsonBody["message"]);
       }
     } catch (e) {
       return ApiResponseModel(status: false,message: "Error $e occurred");
@@ -66,15 +65,14 @@ class AuthService {
 
       var streamedResp = await request.send();
       var response = await http.Response.fromStream(streamedResp);
-
+      final jsonBody = jsonDecode(response.body);
       if(response.statusCode==200){
-        final jsonBody = jsonDecode(response.body);
         log("upload resp: $jsonBody");
         final data = jsonBody["data"];
         return ApiResponseModel(status: jsonBody["status"],message: jsonBody["message"],data: data);
       }
       else{
-        return ApiResponseModel(status: false,message: "Statuscode ${response.statusCode}");
+        return ApiResponseModel(status: false,message: jsonBody["message"]);
       }
     } catch (e) {
       return ApiResponseModel(status: false,message: "Error $e occurred");
@@ -175,6 +173,33 @@ class AuthService {
       }
       else{
         log("verification error");
+        return ApiResponseModel(status: false,message: "Not verified yet");
+      }
+    } catch (e) {
+      return ApiResponseModel(status: false,message: "Error $e occurred");
+    }
+  }
+
+  static Future<ApiResponseModel<UserDetailsModel>> checkVerificationLogin(Map<String,dynamic> body) async {
+
+    try {
+      final response = await http.post(
+        Uri.parse("${baseUrl}check-verification-login"),
+        headers: const {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode(body)
+      );
+
+      if(response.statusCode==200){
+        final jsonBody = jsonDecode(response.body);
+        log("check verify resp: $jsonBody");
+        final data = jsonBody["data"];
+        return ApiResponseModel(status: jsonBody["success"],message: jsonBody["message"],data: UserDetailsModel.fromJson(data));
+      }
+      else{
+        log("check verification error");
         return ApiResponseModel(status: false,message: "Not verified yet");
       }
     } catch (e) {

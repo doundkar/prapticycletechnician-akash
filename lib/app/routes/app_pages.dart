@@ -1,4 +1,5 @@
 import 'package:bicycle_app_technician/app/modules/add_parts/binding/add_parts_binding.dart';
+import 'package:bicycle_app_technician/app/modules/add_parts/view/approval_pending_screen.dart';
 import 'package:bicycle_app_technician/app/modules/add_parts/view/approval_screen.dart';
 import 'package:bicycle_app_technician/app/modules/add_parts/view/component_fitting_screen.dart';
 import 'package:bicycle_app_technician/app/modules/add_parts/view/select_parts_screen.dart';
@@ -28,6 +29,7 @@ import 'package:bicycle_app_technician/app/modules/profile/view/edit_profile_scr
 import 'package:bicycle_app_technician/app/modules/profile/view/number_update_verification_screen.dart';
 import 'package:bicycle_app_technician/app/modules/profile/view/profile_screen.dart';
 import 'package:bicycle_app_technician/app/modules/refer_earn/refer_and_earn_screen.dart';
+import 'package:bicycle_app_technician/app/modules/salary_slip/salary_slip_binding.dart';
 import 'package:bicycle_app_technician/app/modules/salary_slip/salary_slip_view.dart';
 import 'package:bicycle_app_technician/app/modules/select_item/select_item_binding.dart';
 import 'package:bicycle_app_technician/app/modules/select_item/select_items_screen.dart';
@@ -36,6 +38,7 @@ import 'package:bicycle_app_technician/app/modules/navigation.dart/navigation_bi
 import 'package:bicycle_app_technician/app/modules/navigation.dart/navigation_screen.dart';
 import 'package:bicycle_app_technician/app/modules/auth/view/sign_up/identity_approved_screen.dart';
 import 'package:bicycle_app_technician/app/modules/auth/view/sign_up/verification_screen.dart';
+import 'package:bicycle_app_technician/app/modules/suppport/support_binding.dart';
 import 'package:bicycle_app_technician/app/routes/app_routes.dart';
 import 'package:bicycle_app_technician/app/modules/auth/view/sign_up/signup_view.dart';
 import 'package:bicycle_app_technician/app/modules/auth/view/sign_in/signin_screen.dart';
@@ -151,17 +154,17 @@ class AppPages {
     GetPage(
       name:AppRoutes.componentFitting,
       page: () => ComponentFittingScreen(),
-      binding: AddPartsBinding()
+      // binding: AddPartsBinding()
     ),
     GetPage(
       name:AppRoutes.approval,
       page: () => ApprovalScreen(),
-      binding: AddPartsBinding()
+      // binding: AddPartsBinding()
     ),
     GetPage(
       name:AppRoutes.wallet,
       page: () => WalletScreen(),
-      // binding: NotificationBinding()
+      // binding: ProfileBinding()
     ),
     GetPage(
       name:AppRoutes.editProfile,
@@ -181,12 +184,12 @@ class AppPages {
     GetPage(
       name:AppRoutes.referAndEarn,
       page: () => ReferAndEarnScreen(),
-      // binding: NotificationBinding()
+      binding: ProfileBinding()
     ),
     GetPage(
       name:AppRoutes.salarySlip,
       page: () => EarnIncomeScreen(),
-      // binding: NotificationBinding()
+      binding: SalarySlipBinding()
     ),
     GetPage(
       name:AppRoutes.leaveAttendance,
@@ -196,7 +199,12 @@ class AppPages {
     GetPage(
       name:AppRoutes.helpSupport,
       page: () => HelpSupportScreen(),
-      // binding: NotificationBinding()
+      binding: SupportBinding()
+    ),
+    GetPage(
+      name:AppRoutes.approvalPending,
+      page: () => ApprovalPendingScreen(),
+      // binding: AddPartsBinding()
     ),
     GetPage(
       name:AppRoutes.bottomNav,

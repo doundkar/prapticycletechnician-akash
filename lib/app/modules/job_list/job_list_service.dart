@@ -16,7 +16,7 @@ class JobListService {
     log("token: $token");
     try {
       final response = await http.get(
-        Uri.parse("${baseUrl}jobslist?per_page=10"),
+        Uri.parse("${baseUrl}jobslist"),
         headers: {
           "Accept": "application/json",
           "Authorization": "Bearer $token",
@@ -59,7 +59,7 @@ class JobListService {
           "Authorization": "Bearer $token",
         },
       );
-      log("acceptedJobList resp: ${response.body}");
+      // log("acceptedJobList resp: ${response.body}");
       if (response.statusCode == 200) {
         final jsonBody = jsonDecode(response.body);
         List<JobDetailsModel> jobList = [];
@@ -165,7 +165,7 @@ class JobListService {
     log("token: $token");
 
     final payload = {
-      "is_online": activity
+      "is_online": !activity
     };
 
     try {
@@ -179,8 +179,8 @@ class JobListService {
         body: jsonEncode(payload)
       );
       log("toogleActivity resp: ${response.body}");
+      final jsonBody = jsonDecode(response.body);
       if (response.statusCode == 200) {
-        final jsonBody = jsonDecode(response.body);
         final data = jsonBody["data"];
         return ApiResponseModel(
           status: jsonBody["success"],
@@ -190,7 +190,7 @@ class JobListService {
       } else {
         return ApiResponseModel(
           status: false,
-          message: "Statuscode ${response.statusCode}",
+          message: jsonBody["message"],
           data: false
         );
       }

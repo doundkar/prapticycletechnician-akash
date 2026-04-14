@@ -12,6 +12,9 @@ class JobListController extends GetxController {
   var hasError = false.obs;
   var errorMessage = ''.obs;
 
+  var isLoginLoading = false.obs;
+  var loginMessage = ''.obs;
+
   var isAcceptClicked = false.obs;
   var isRejectClicked = true.obs;
 
@@ -28,13 +31,33 @@ class JobListController extends GetxController {
   @override
   void onInit() {
     super.onInit();
+    isOnline.value = SharedPrefs.getBool("is_online");
     _loadJobs();
+  }
+
+  RxString selectedFilter = "All".obs;
+
+  List<JobDetailsModel> get filteredJobs {
+    if (selectedFilter.value == "All") {
+      return newJobRequests;
+    }
+
+    return newJobRequests
+        .where(
+          (job) =>
+              job.status!.toLowerCase() == selectedFilter.value.toLowerCase(),
+        )
+        .toList();
+  }
+
+  void setFilter(String filter) {
+    selectedFilter.value = filter;
   }
 
   Future<void> _loadJobs() async {
     await getNewJobRequests();
     await getAcceptedJobRequests();
-    Timer.periodic(Duration(minutes: 5), (_) {
+    Timer.periodic(Duration(seconds: 5), (_) {
       getNewJobRequests(isInitial: false); // silent refresh
     });
   }
@@ -156,24 +179,30 @@ class JobListController extends GetxController {
     }
   }
 
-  Future<void> toggleActivity(bool activity) async {
-    isLoading.value = true;
+  Future<bool> toggleActivity(bool activity) async {
+    isLoginLoading.value = true;
     hasError.value = false;
     errorMessage.value = "";
     try {
       final response = await JobListService.toggleActivity(activity);
       if (response.status && response.data != null) {
         isOnline.value = response.data!;
+        debugPrint("isOnline obs : ${isOnline.value}");
         await SharedPrefs.setBool("is_online", isOnline.value);
+        loginMessage.value = response.message!;
+        return true;
       } else {
         hasError.value = true;
         errorMessage.value = response.message!;
+        loginMessage.value = response.message!;
+        return false;
       }
     } catch (e) {
       hasError.value = true;
       errorMessage.value = "Some error $e occurred";
+      return false;
     } finally {
-      isLoading.value = false;
+      isLoginLoading.value = false;
     }
   }
 }

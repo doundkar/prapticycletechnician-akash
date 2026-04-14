@@ -77,28 +77,28 @@ class _WorkLocationDialogState extends State<WorkLocationDialog> {
                   const SizedBox(height: 20),
 
                   /// Current Location
-                  const Text(
-                    "Current Location",
-                    style: TextStyle(fontWeight: FontWeight.w600),
-                  ),
+                  // const Text(
+                  //   "Current Location",
+                  //   style: TextStyle(fontWeight: FontWeight.w600),
+                  // ),
 
-                  const SizedBox(height: 10),
+                  // const SizedBox(height: 10),
 
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: const [
-                      Row(
-                        children: [
-                          Icon(Icons.location_on_outlined),
-                          SizedBox(width: 8),
-                          Text("Kharadi, Pune"),
-                        ],
-                      ),
-                      Icon(Icons.check),
-                    ],
-                  ),
+                  // Row(
+                  //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  //   children: const [
+                  //     Row(
+                  //       children: [
+                  //         Icon(Icons.location_on_outlined),
+                  //         SizedBox(width: 8),
+                  //         Text("Kharadi, Pune"),
+                  //       ],
+                  //     ),
+                  //     Icon(Icons.check),
+                  //   ],
+                  // ),
 
-                  const SizedBox(height: 20),
+                  // const SizedBox(height: 10),
 
                   /// Added Work Areas
                   const Text(
@@ -128,7 +128,9 @@ class _WorkLocationDialogState extends State<WorkLocationDialog> {
                                     // setState(() {
                                     //   addedAreas.remove(area);
                                     // });
-                                    await controller.deleteWorkLocations(area.id!);
+                                    await controller.deleteWorkLocations(
+                                      area.id!,
+                                    );
                                   },
                                   child: const Icon(Icons.close, size: 18),
                                 ),
@@ -144,6 +146,31 @@ class _WorkLocationDialogState extends State<WorkLocationDialog> {
                   const SizedBox(height: 12),
 
                   /// Add Location Button
+
+                  // const SizedBox(height: 20),
+
+                  /// Pincode & Location
+                  Row(
+                    children: [
+                      Expanded(
+                        child: _textField(
+                          label: "Pincode",
+                          controller: pincodeController,
+                          isPincode: true,
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: _textField(
+                          label: "Location",
+                          controller: locationController,
+                        ),
+                      ),
+                    ],
+                  ),
+
+                  const SizedBox(height: 24),
+
                   InkWell(
                     onTap: () async {
                       if (pincodeController.text.trim().isEmpty ||
@@ -173,7 +200,7 @@ class _WorkLocationDialogState extends State<WorkLocationDialog> {
                             width: 30,
                             child: CircularProgressIndicator(
                               strokeWidth: 2,
-                              color: AppColors.blue,
+                              color: Colors.white,
                             ),
                           ),
                         );
@@ -182,7 +209,7 @@ class _WorkLocationDialogState extends State<WorkLocationDialog> {
                         width: double.infinity,
                         padding: const EdgeInsets.symmetric(vertical: 12),
                         decoration: BoxDecoration(
-                          color: Colors.white,
+                          color: AppColors.blue,
                           borderRadius: BorderRadius.circular(12),
                           border: Border.all(color: Colors.grey.shade300),
                           boxShadow: [
@@ -199,11 +226,11 @@ class _WorkLocationDialogState extends State<WorkLocationDialog> {
                             horizontal: 15,
                           ),
                           child: const Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Icon(Icons.add_circle_outline),
+                              Icon(Icons.add_circle_outline,color: Colors.white,),
                               SizedBox(width: 8),
-                              Text("Add Location"),
+                              Text("Add Location",style: TextStyle(color: Colors.white),),
                             ],
                           ),
                         ),
@@ -211,45 +238,52 @@ class _WorkLocationDialogState extends State<WorkLocationDialog> {
                     }),
                   ),
 
-                  const SizedBox(height: 20),
-
-                  /// Pincode & Location
-                  Row(
-                    children: [
-                      Expanded(
-                        child: _textField(
-                          label: "Pincode",
-                          controller: pincodeController,
-                          isPincode: true,
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: _textField(
-                          label: "Location",
-                          controller: locationController,
-                        ),
-                      ),
-                    ],
-                  ),
-
-                  const SizedBox(height: 24),
-
                   /// Save Button
-                  InkWell(
-                    onTap: (){
-                      Get.back();
-                    },
-                    child: CustomButton(
-                      text: "Save Changes",
-                      textSize: 16,
-                      textWeight: FontWeight.w600,
-                      textColor: Colors.white,
-                      bgColor: AppColors.blue,
-                      radius: 12,
-                      height: 50,
-                    ),
-                  ),
+                  // InkWell(
+                  //   onTap: () async {
+                  //     if (pincodeController.text.trim().isEmpty ||
+                  //         locationController.text.trim().isEmpty) {
+                  //       ScaffoldMessenger.of(context).showSnackBar(
+                  //         CustomSnackbar.show(
+                  //           title: "Please enter all the details",
+                  //           color: Colors.red[300]!,
+                  //         ),
+                  //       );
+                  //     } else {
+                  //       int pin = int.parse(pincodeController.text.trim());
+                  //       Map<String, dynamic> body = {
+                  //         "location": locationController.text.trim(),
+                  //         "pincode": pin,
+                  //       };
+                  //       await controller.addWorkLocations(body);
+                  //       pincodeController.clear();
+                  //       locationController.clear();
+                  //     }
+                  //   },
+                  //   child: Obx(() {
+                  //     if (controller.isLoading.value) {
+                  //       return Center(
+                  //         child: SizedBox(
+                  //           height: 30,
+                  //           width: 30,
+                  //           child: CircularProgressIndicator(
+                  //             strokeWidth: 2,
+                  //             color: AppColors.appBg,
+                  //           ),
+                  //         ),
+                  //       );
+                  //     }
+                  //     return CustomButton(
+                  //       text: "Save Changes",
+                  //       textSize: 16,
+                  //       textWeight: FontWeight.w600,
+                  //       textColor: Colors.white,
+                  //       bgColor: AppColors.blue,
+                  //       radius: 12,
+                  //       height: 50,
+                  //     );
+                  //   }),
+                  // ),
                 ],
               ),
             ),

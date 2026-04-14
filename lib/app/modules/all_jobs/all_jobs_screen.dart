@@ -1,3 +1,4 @@
+import 'package:bicycle_app_technician/app/model/job_details_model.dart';
 import 'package:bicycle_app_technician/app/modules/job_list/job_list_controller.dart';
 import 'package:bicycle_app_technician/app/routes/app_routes.dart';
 import 'package:bicycle_app_technician/view/Colors/app_colors.dart';
@@ -32,14 +33,17 @@ class _AllJobsScreenState extends State<AllJobsScreen> {
         bool isTablet = maxWidth > 600;
 
         return Scaffold(
-          appBar: CustomAppBar(title: "All Jobs",isBackNeeded: false,),
+          appBar: CustomAppBar(title: "All Jobs", isBackNeeded: false),
           body: Obx(() {
             if (controller.isLoading.value) {
               return Center(
                 child: SizedBox(
                   height: 30,
                   width: 30,
-                  child: CircularProgressIndicator(strokeWidth: 2,color: AppColors.blue,),
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2,
+                    color: AppColors.blue,
+                  ),
                 ),
               );
             }
@@ -67,10 +71,26 @@ class _AllJobsScreenState extends State<AllJobsScreen> {
                           ),
                           child: Row(
                             children: [
-                              _buildFilterChip("All", true, maxWidth),
-                              _buildFilterChip("Pending", false, maxWidth),
-                              _buildFilterChip("Accepted", false, maxWidth),
-                              _buildFilterChip("Completed", false, maxWidth),
+                              _buildFilterChip(
+                                "All",
+                                controller.selectedFilter.value == "All",
+                                maxWidth,
+                              ),
+                              _buildFilterChip(
+                                "Pending",
+                                controller.selectedFilter.value == "Pending",
+                                maxWidth,
+                              ),
+                              _buildFilterChip(
+                                "Accepted",
+                                controller.selectedFilter.value == "Accepted",
+                                maxWidth,
+                              ),
+                              _buildFilterChip(
+                                "Completed",
+                                controller.selectedFilter.value == "Completed",
+                                maxWidth,
+                              ),
                             ],
                           ),
                         ),
@@ -82,9 +102,9 @@ class _AllJobsScreenState extends State<AllJobsScreen> {
                           padding: EdgeInsets.symmetric(
                             horizontal: isTablet ? 20 : 6,
                           ),
-                          itemCount: controller.newJobRequests.length,
+                          itemCount: controller.filteredJobs.length,
                           itemBuilder: (context, index) {
-                            final job = controller.newJobRequests[index];
+                            final job = controller.filteredJobs[index];
 
                             return Padding(
                               padding: EdgeInsets.only(
@@ -93,13 +113,14 @@ class _AllJobsScreenState extends State<AllJobsScreen> {
                               child: _buildJobCard(
                                 name: job.customerName!,
                                 address: job.location!,
-                                serviceTag: "Service",
+                                serviceTag: job.type!.capitalize!,
                                 jobTitle: job.jobType!,
                                 description: job.description!,
                                 duration: job.durationMinutes!,
                                 price: job.charges!,
                                 status: job.status!,
-                                maxWidth: maxWidth, 
+                                maxWidth: maxWidth,
+                                job: job,
                               ),
                             );
                           },
@@ -122,25 +143,30 @@ class _AllJobsScreenState extends State<AllJobsScreen> {
 
     return Padding(
       padding: EdgeInsets.only(right: isTablet ? 14 : 10),
-      child: Container(
-        padding: EdgeInsets.symmetric(
-          horizontal: isTablet ? 20 : 16,
-          vertical: isTablet ? 12 : 8,
-        ),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(isTablet ? 24 : 20),
-          border: Border.all(
-            color: Colors.grey.shade400,
-            width: isTablet ? 1.2 : 1,
+      child: InkWell(
+        onTap: () {
+          controller.setFilter(label);
+        },
+        child: Container(
+          padding: EdgeInsets.symmetric(
+            horizontal: isTablet ? 20 : 16,
+            vertical: isTablet ? 12 : 8,
           ),
-        ),
-        child: Text(
-          label,
-          style: TextStyle(
-            fontSize: isTablet ? 16 : 14,
-            fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
-            color: Colors.black87,
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(isTablet ? 24 : 20),
+            border: Border.all(
+              color: isSelected ? AppColors.blue : Colors.grey.shade400,
+              width: isTablet ? 1.2 : 1,
+            ),
+          ),
+          child: Text(
+            label,
+            style: TextStyle(
+              fontSize: isTablet ? 16 : 14,
+              fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
+              color: Colors.black87,
+            ),
           ),
         ),
       ),
@@ -158,11 +184,19 @@ class _AllJobsScreenState extends State<AllJobsScreen> {
     required String price,
     required String status,
     required double maxWidth,
+    required JobDetailsModel job,
   }) {
     bool isTablet = maxWidth > 600;
     status = status.capitalize!;
     Color statusColor;
     Color statusBg;
+
+    if (serviceTag == "Package") {
+      jobTitle = "$jobTitle Package".capitalize!;
+    }
+    if (serviceTag == "Assembly") {
+      jobTitle = "$jobTitle Assembly".capitalize!;
+    }
 
     switch (status) {
       case "Pending":
@@ -182,135 +216,154 @@ class _AllJobsScreenState extends State<AllJobsScreen> {
         statusBg = Colors.grey.withOpacity(0.1);
     }
 
-    return Container(
-      margin: EdgeInsets.symmetric(horizontal: isTablet ? 16 : 8),
-      padding: EdgeInsets.all(isTablet ? 22 : 16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        border: const Border.fromBorderSide(
-          BorderSide(color: Color.fromRGBO(227, 227, 229, 1)),
+    return InkWell(
+      onTap: () {
+        if (status == "Pending") {
+          Get.toNamed(AppRoutes.newJobRequest);
+        }
+        if (status == "Accepted") {
+          Get.toNamed(AppRoutes.navigation, arguments: job);
+        }
+      },
+      child: Container(
+        margin: EdgeInsets.symmetric(horizontal: isTablet ? 16 : 8),
+        padding: EdgeInsets.all(isTablet ? 22 : 16),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16),
+          border: const Border.fromBorderSide(
+            BorderSide(color: Color.fromRGBO(227, 227, 229, 1)),
+          ),
+          boxShadow: const [
+            BoxShadow(
+              color: Color.fromRGBO(0, 0, 0, 0.05),
+              blurRadius: 20,
+              offset: Offset(0, 5),
+              spreadRadius: 12,
+            ),
+          ],
         ),
-        boxShadow: const [
-          BoxShadow(
-            color: Color.fromRGBO(0, 0, 0, 0.05),
-            blurRadius: 20,
-            offset: Offset(0, 5),
-            spreadRadius: 12,
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          /// NAME
-          Text(
-            name,
-            style: TextStyle(
-              fontSize: isTablet ? 18 : 16,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-
-          SizedBox(height: isTablet ? 6 : 4),
-
-          /// ADDRESS
-          Text(
-            address,
-            style: TextStyle(
-              fontSize: isTablet ? 14 : 12,
-              color: Colors.grey,
-              fontWeight: FontWeight.w400,
-            ),
-          ),
-
-          SizedBox(height: isTablet ? 12 : 8),
-
-          /// SERVICE TAG
-          Text(
-            serviceTag,
-            style: TextStyle(
-              fontSize: isTablet ? 14 : 12,
-              color: Colors.blue,
-              fontWeight: FontWeight.w700,
-            ),
-          ),
-
-          SizedBox(height: isTablet ? 12 : 8),
-
-          /// JOB TITLE
-          Row(
-            children: [
-              Expanded(
-                child: Text(
-                  jobTitle,
-                  style: TextStyle(
-                    fontSize: isTablet ? 18 : 16,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ),
-            ],
-          ),
-
-          if (description != null) ...[
-            SizedBox(height: isTablet ? 6 : 4),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            /// NAME
             Text(
-              description,
+              name,
               style: TextStyle(
-                fontSize: isTablet ? 16 : 14,
-                color: Colors.grey,
+                fontSize: isTablet ? 18 : 16,
                 fontWeight: FontWeight.w600,
               ),
             ),
-          ],
 
-          SizedBox(height: isTablet ? 18 : 12),
+            SizedBox(height: isTablet ? 6 : 4),
 
-          /// DURATION + STATUS
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
+            /// ADDRESS
+            Text(
+              address,
+              style: TextStyle(
+                fontSize: isTablet ? 14 : 12,
+                color: Colors.grey,
+                fontWeight: FontWeight.w400,
+              ),
+            ),
+
+            SizedBox(height: isTablet ? 12 : 8),
+
+            /// SERVICE TAG
+            Text(
+              serviceTag,
+              style: TextStyle(
+                fontSize: isTablet ? 14 : 12,
+                color: Colors.blue,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+
+            SizedBox(height: isTablet ? 12 : 8),
+
+            /// JOB TITLE
+            if (serviceTag != "Service") ...[
               Row(
                 children: [
-                  Icon(
-                    Icons.access_time,
-                    size: isTablet ? 22 : 18,
-                    color: Colors.grey,
-                  ),
-                  const SizedBox(width: 6),
-                  Text(
-                    "$duration mins",
-                    style: TextStyle(
-                      fontSize: isTablet ? 20 : 18,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                  Text(
-                    " - ",
-                    style: TextStyle(
-                      fontSize: isTablet ? 20 : 18,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                  Text(
-                    "₹$price",
-                    style: TextStyle(
-                      fontSize: isTablet ? 20 : 18,
-                      fontWeight: FontWeight.w600,
+                  Expanded(
+                    child: Text(
+                      jobTitle,
+                      style: TextStyle(
+                        fontSize: isTablet ? 18 : 16,
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
                   ),
                 ],
               ),
 
-              /// STATUS BADGE
-              InkWell(
-                onTap: () {
-                  if(status == "Pending"){
-                    Get.toNamed(AppRoutes.newJobRequest);
-                  }
-                },
-                child: Container(
+              if (description != null) ...[
+                SizedBox(height: isTablet ? 6 : 4),
+                Text(
+                  description,
+                  style: TextStyle(
+                    fontSize: isTablet ? 16 : 14,
+                    color: Colors.grey,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ],
+            ],
+
+            ...job.serviceItems!.asMap().entries.map((entry) {
+              int index = entry.key;
+              var item = entry.value;
+
+              return Text(
+                "${index + 1}. ${item.title}",
+                style: TextStyle(
+                  fontSize: isTablet ? 18 : 16,
+                  color: const Color.fromRGBO(75, 85, 99, 1),
+                  fontWeight: FontWeight.w600,
+                ),
+              );
+            }).toList(),
+
+            SizedBox(height: isTablet ? 18 : 12),
+
+            /// DURATION + STATUS
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Row(
+                  children: [
+                    Icon(
+                      Icons.access_time,
+                      size: isTablet ? 22 : 18,
+                      color: Colors.grey,
+                    ),
+                    const SizedBox(width: 6),
+                    Text(
+                      "$duration mins",
+                      style: TextStyle(
+                        fontSize: isTablet ? 20 : 18,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    Text(
+                      " - ",
+                      style: TextStyle(
+                        fontSize: isTablet ? 20 : 18,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    Text(
+                      "₹$price",
+                      style: TextStyle(
+                        fontSize: isTablet ? 20 : 18,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ],
+                ),
+
+                /// STATUS BADGE
+                Container(
                   padding: EdgeInsets.symmetric(
                     horizontal: isTablet ? 16 : 12,
                     vertical: isTablet ? 8 : 6,
@@ -329,10 +382,10 @@ class _AllJobsScreenState extends State<AllJobsScreen> {
                     ),
                   ),
                 ),
-              ),
-            ],
-          ),
-        ],
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }

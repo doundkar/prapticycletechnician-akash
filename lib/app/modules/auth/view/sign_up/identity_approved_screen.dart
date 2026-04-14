@@ -64,7 +64,7 @@ class IdentityApprovedScreen extends StatelessWidget {
           padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
           child: InkWell(
             onTap: () {
-              Get.toNamed(AppRoutes.signIn);
+              Get.toNamed(AppRoutes.bottomNav);
             },
             child: CustomButton(
               text: "Complete",

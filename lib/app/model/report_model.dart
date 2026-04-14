@@ -2,7 +2,7 @@ class ReportModel {
   int? year;
   int? month;
   String? monthName;
-  int? weeklyOffDay;
+  String? weeklyOffDay;
   Summary? summary;
   List<Days>? days;
 

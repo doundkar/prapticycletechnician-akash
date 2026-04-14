@@ -1,12 +1,16 @@
 class UserDetailsModel {
   int? id;
-  Null? name;
+  String? name;
   String? firstName;
   String? lastName;
-  Null? dateOfBirth;
+  String? dateOfBirth;
   String? email;
   String? phone;
+  String? image;
   String? token;
+  dynamic? ratings;
+  int? jobsCompleted;
+  String? promoCode;
 
   UserDetailsModel(
       {this.id,
@@ -20,13 +24,18 @@ class UserDetailsModel {
 
   UserDetailsModel.fromJson(Map<String, dynamic> json) {
     final user = json["user"];
+    final ratingSummary = json['rating_summary'];
     id = user['id'];
     firstName = user['first_name'];
     lastName = user['last_name'];
-    dateOfBirth = user['date_of_birth'];
+    dateOfBirth = user['date_of_birth']??"";
     email = user['email'];
     phone = user['phone'];
+    image = user['image'] ?? "";
     token = json['token'];
+    jobsCompleted = json['completed_jobs'];
+    ratings = ratingSummary['average_rating'];
+    promoCode = user['promo_code']??'';
   }
 
   Map<String, dynamic> toJson() {

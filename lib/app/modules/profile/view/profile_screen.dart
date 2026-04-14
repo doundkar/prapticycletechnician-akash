@@ -31,6 +31,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
   late String image;
   late String userIdStr;
   late String phone;
+  late String ratings;
+  late String jobsCompleted;
+  late int jobs;
+  late String tier;
 
   ProfileController controller = Get.put(ProfileController());
 
@@ -46,6 +50,22 @@ class _ProfileScreenState extends State<ProfileScreen> {
     image = SharedPrefs.getString("image");
     userIdStr = SharedPrefs.getString("user_id");
     phone = SharedPrefs.getString("phone");
+    ratings = SharedPrefs.getString("ratings");
+    jobsCompleted = SharedPrefs.getString("jobs_completed");
+    jobs = int.parse(jobsCompleted);
+
+    if (jobs <= 20) {
+      tier = "BRONZE";
+    } else if (jobs > 20 && jobs <= 50) {
+      tier = "SILVER";
+    } else if (jobs > 50 && jobs <= 100) {
+      tier = "GOLD";
+    } else if (jobs > 100 && jobs <= 200) {
+      tier = "DIAMOND";
+    } else {
+      tier = "PLATINUM";
+    }
+
     setState(() {});
   }
 
@@ -64,7 +84,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-
             /// PROFILE CARD
             Container(
               padding: EdgeInsets.all(horizontalPadding),
@@ -83,7 +102,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-
                   /// Avatar
                   Stack(
                     children: [
@@ -91,11 +109,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         radius: avatarRadius,
                         backgroundColor: Colors.grey,
                         child: image.isEmpty
-                            ? Icon(Icons.person,
+                            ? Icon(
+                                Icons.person,
                                 size: avatarRadius,
-                                color: Colors.white)
+                                color: Colors.white,
+                              )
                             : ClipRRect(
-                                borderRadius: BorderRadius.circular(avatarRadius),
+                                borderRadius: BorderRadius.circular(
+                                  avatarRadius,
+                                ),
                                 child: Image.network(
                                   "${ApiConstants.imageBaseUrl}$image",
                                   fit: BoxFit.cover,
@@ -105,20 +127,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               ),
                       ),
 
-                      Positioned(
-                        bottom: 0,
-                        right: 0,
-                        child: Container(
-                          padding: const EdgeInsets.all(4),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            shape: BoxShape.circle,
-                            border: Border.all(color: Colors.grey.shade300),
-                          ),
-                          child: Icon(Icons.camera_alt,
-                              size: iconSize * 0.7),
-                        ),
-                      ),
+                      // Positioned(
+                      //   bottom: 0,
+                      //   right: 0,
+                      //   child: Container(
+                      //     padding: const EdgeInsets.all(4),
+                      //     decoration: BoxDecoration(
+                      //       color: Colors.white,
+                      //       shape: BoxShape.circle,
+                      //       border: Border.all(color: Colors.grey.shade300),
+                      //     ),
+                      //     child: Icon(Icons.camera_alt,
+                      //         size: iconSize * 0.7),
+                      //   ),
+                      // ),
                     ],
                   ),
 
@@ -129,7 +151,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
@@ -145,14 +166,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
                             InkWell(
                               onTap: () async {
-                                bool result =
-                                    await Get.toNamed(AppRoutes.editProfile);
+                                bool result = await Get.toNamed(
+                                  AppRoutes.editProfile,
+                                );
                                 if (result) {
                                   getDetails();
                                 }
                               },
-                              child: Icon(Icons.edit,
-                                  size: iconSize),
+                              child: Icon(Icons.edit, size: iconSize),
                             ),
                           ],
                         ),
@@ -172,12 +193,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
                         Row(
                           children: [
-                            const Text("4.0"),
+                            Text(ratings),
                             const SizedBox(width: 4),
-                            const Icon(Icons.star,
-                                color: Colors.amber, size: 18),
+                            const Icon(
+                              Icons.star,
+                              color: Colors.amber,
+                              size: 18,
+                            ),
                             const SizedBox(width: 8),
-                            const Text("(2) BRONZE"),
+                            Text("($jobsCompleted) $tier"),
                           ],
                         ),
                       ],
@@ -224,8 +248,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               child: _profileTile(
                 icon: Icons.calendar_today,
                 title: "Leaves & Attendance",
-                subtitle:
-                    "1 Leave this month\nLast week attendance: 6/7 days",
+                subtitle: "1 Leave this month\nLast week attendance: 6/7 days",
                 screenWidth: screenWidth,
               ),
             ),
@@ -258,7 +281,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-
                       const Text(
                         "Settings",
                         style: TextStyle(
@@ -270,8 +292,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ListTile(
                         contentPadding: EdgeInsets.zero,
                         title: const Text("Help & Support"),
-                        trailing:
-                            const Icon(Icons.arrow_forward_ios, size: 16),
+                        trailing: const Icon(Icons.arrow_forward_ios, size: 16),
                         onTap: () {
                           Get.toNamed(AppRoutes.helpSupport);
                         },
@@ -288,9 +309,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             const Center(
               child: Text(
                 "Follow us",
-                style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600),
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
               ),
             ),
 
@@ -316,7 +335,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
             SizedBox(height: screenWidth * 0.06),
 
             InkWell(
-              onTap: () {},
+              onTap: () async {
+                await SharedPrefs.setBool("isLoggedIn", false);
+                Get.offAllNamed(AppRoutes.signIn);
+              },
               child: CustomButton(
                 text: "Logout",
                 textSize: 16,
@@ -366,19 +388,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-
                 Text(
                   title,
-                  style: const TextStyle(
-                      fontWeight: FontWeight.w600),
+                  style: const TextStyle(fontWeight: FontWeight.w600),
                 ),
 
                 const SizedBox(height: 4),
 
-                Text(
-                  subtitle,
-                  style: const TextStyle(color: Colors.grey),
-                ),
+                Text(subtitle, style: const TextStyle(color: Colors.grey)),
               ],
             ),
           ),

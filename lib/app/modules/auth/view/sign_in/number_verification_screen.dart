@@ -18,7 +18,6 @@ class NumberVerificationScreen extends StatefulWidget {
 }
 
 class _NumberVerificationScreenState extends State<NumberVerificationScreen> {
-
   Timer? timer;
   int remainingSeconds = 60;
   TextEditingController otpController = TextEditingController();
@@ -49,15 +48,13 @@ class _NumberVerificationScreenState extends State<NumberVerificationScreen> {
 
   @override
   Widget build(BuildContext context) {
-
-    String phone  = SharedPrefs.getString("phone");
+    String phone = SharedPrefs.getString("phone");
 
     return Scaffold(
       resizeToAvoidBottomInset: true,
       body: SafeArea(
         child: LayoutBuilder(
           builder: (context, constraints) {
-
             double maxWidth = constraints.maxWidth;
             double contentWidth = maxWidth > 600 ? 500 : maxWidth;
 
@@ -66,7 +63,7 @@ class _NumberVerificationScreenState extends State<NumberVerificationScreen> {
             double otpHeight = maxWidth > 400 ? 60 : 50;
 
             return Obx(
-              ()=> Center(
+              () => Center(
                 child: SizedBox(
                   width: contentWidth,
                   child: SingleChildScrollView(
@@ -74,9 +71,8 @@ class _NumberVerificationScreenState extends State<NumberVerificationScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-              
                         SizedBox(height: maxWidth * 0.08),
-              
+
                         /// Title
                         const Align(
                           alignment: Alignment.center,
@@ -88,23 +84,25 @@ class _NumberVerificationScreenState extends State<NumberVerificationScreen> {
                             ),
                           ),
                         ),
-              
+
                         SizedBox(height: maxWidth * 0.05),
-              
                         const Text(
                           "We've sent the verification code on",
                           style: TextStyle(
-                              fontSize: 14, fontWeight: FontWeight.w300),
+                            fontSize: 14,
+                            fontWeight: FontWeight.w300,
+                          ),
                         ),
-              
+
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Text(
                               "+91 $phone",
                               style: TextStyle(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w600),
+                                fontSize: 14,
+                                fontWeight: FontWeight.w600,
+                              ),
                             ),
                             const SizedBox(width: 10),
                             InkWell(
@@ -115,15 +113,17 @@ class _NumberVerificationScreenState extends State<NumberVerificationScreen> {
                             ),
                           ],
                         ),
-              
+
                         const Text(
                           "via SMS",
                           style: TextStyle(
-                              fontSize: 14, fontWeight: FontWeight.w600),
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
+                          ),
                         ),
-              
+
                         SizedBox(height: maxWidth * 0.08),
-              
+
                         /// OTP PIN INPUT (Responsive)
                         Pinput(
                           length: 6,
@@ -139,16 +139,14 @@ class _NumberVerificationScreenState extends State<NumberVerificationScreen> {
                               color: Colors.white,
                               borderRadius: BorderRadius.circular(10),
                               border: Border.all(
-                                color:
-                                    const Color.fromRGBO(229, 231, 235, 1),
+                                color: const Color.fromRGBO(229, 231, 235, 1),
                               ),
                               boxShadow: const [
                                 BoxShadow(
                                   offset: Offset(0, 4),
                                   blurRadius: 6,
-                                  color:
-                                      Color.fromRGBO(0, 0, 0, 0.05),
-                                )
+                                  color: Color.fromRGBO(0, 0, 0, 0.05),
+                                ),
                               ],
                             ),
                           ),
@@ -163,15 +161,15 @@ class _NumberVerificationScreenState extends State<NumberVerificationScreen> {
                               color: Colors.white,
                               borderRadius: BorderRadius.circular(10),
                               border: Border.all(
-                                color:AppColors.orange,
+                                color: AppColors.orange,
                                 width: 2,
                               ),
                             ),
                           ),
                         ),
-              
+
                         SizedBox(height: maxWidth * 0.06),
-              
+
                         /// Resend Row
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
@@ -179,57 +177,96 @@ class _NumberVerificationScreenState extends State<NumberVerificationScreen> {
                             const Text(
                               "Didn't receive the code?",
                               style: TextStyle(
-                                  fontSize: 13,
-                                  fontWeight: FontWeight.w700),
+                                fontSize: 13,
+                                fontWeight: FontWeight.w700,
+                              ),
                             ),
                             const SizedBox(width: 5),
                             InkWell(
-                              onTap:() async {
-                                if(remainingSeconds==0){
+                              onTap: () async {
+                                if (remainingSeconds == 0) {
                                   await controller.getOtp(phone);
+                                  remainingSeconds = 60;
+                                  startTimer();
+                                  if (controller.hasError.value) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      CustomSnackbar.show(
+                                        title: "This number does not exist",
+                                        color: Colors.red[300]!,
+                                      ),
+                                    );
+                                  } else {
+                                    String otp = SharedPrefs.getString("otp");
+                                    // ScaffoldMessenger.of(context).showSnackBar(
+                                    //   CustomSnackbar.show(
+                                    //     title: "OTP : $otp",
+                                    //     color: Colors.green[300]!,
+                                    //   ),
+                                    // );
+                                  }
                                 }
                               },
                               child: Container(
                                 decoration: BoxDecoration(
-                                  borderRadius:
-                                      BorderRadius.circular(16),
-                                  color: Colors.black,
+                                  borderRadius: BorderRadius.circular(16),
+                                  color: remainingSeconds == 0
+                                      ? Colors.black
+                                      : Colors.grey[300],
                                 ),
-                                child: const Padding(
+                                child: Padding(
                                   padding: EdgeInsets.symmetric(
-                                      horizontal: 12,
-                                      vertical: 8),
+                                    horizontal: 12,
+                                    vertical: 8,
+                                  ),
                                   child: Text(
                                     "Resend",
                                     style: TextStyle(
-                                      color: Colors.white,
+                                      color: remainingSeconds == 0
+                                          ? Colors.white
+                                          : Colors.black,
                                       fontSize: 12,
                                       fontWeight: FontWeight.w700,
                                     ),
                                   ),
                                 ),
                               ),
-                            )
+                            ),
                           ],
                         ),
-              
+
                         SizedBox(height: maxWidth * 0.15),
-              
+
                         /// Submit Button
                         InkWell(
                           onTap: () async {
-                            if(otpController.text.trim().isEmpty || otpController.text.trim().length<6){
-                              ScaffoldMessenger.of(context).showSnackBar(CustomSnackbar.show(title: "Please enter complete OTP", color: Colors.red[300]!));
-                            }
-                            else{
-                              await controller.verifyOtp(otpController.text.trim());
-                              if(controller.hasError.value){
-                                ScaffoldMessenger.of(context).showSnackBar(CustomSnackbar.show(title: "Wrong or Expired OTP", color: Colors.red[300]!));
+                            if (otpController.text.trim().isEmpty ||
+                                otpController.text.trim().length < 6) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                CustomSnackbar.show(
+                                  title: "Please enter complete OTP",
+                                  color: Colors.red[300]!,
+                                ),
+                              );
+                            } else {
+                              await controller.verifyOtp(
+                                otpController.text.trim(),
+                              );
+                              if (controller.hasError.value) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  CustomSnackbar.show(
+                                    title: controller.errorMessage.value,
+                                    color: Colors.red[300]!,
+                                  ),
+                                );
                                 otpController.clear();
-                              }
-                              else{
-                                ScaffoldMessenger.of(context).showSnackBar(CustomSnackbar.show(title: "Logged in successfully", color: Colors.green[300]!));
-                                 Get.toNamed(AppRoutes.bottomNav);
+                              } else {
+                                // ScaffoldMessenger.of(context).showSnackBar(
+                                //   CustomSnackbar.show(
+                                //     title: "Logged in successfully",
+                                //     color: Colors.green[300]!,
+                                //   ),
+                                // );
+                                Get.toNamed(AppRoutes.bottomNav);
                               }
                             }
                           },
@@ -239,15 +276,14 @@ class _NumberVerificationScreenState extends State<NumberVerificationScreen> {
                             textSize: 18,
                             textWeight: FontWeight.w600,
                             textColor: Colors.white,
-                            bgColor:
-                                const Color.fromRGBO(0, 170, 237, 1),
+                            bgColor: const Color.fromRGBO(0, 170, 237, 1),
                             radius: 10,
                             height: 50,
                           ),
                         ),
-              
+
                         const SizedBox(height: 20),
-              
+
                         /// Timer
                         RichText(
                           text: TextSpan(
@@ -255,21 +291,21 @@ class _NumberVerificationScreenState extends State<NumberVerificationScreen> {
                               const TextSpan(
                                 text: "Resend in  ",
                                 style: TextStyle(
-                                    fontSize: 15,
-                                    color: Colors.black),
+                                  fontSize: 15,
+                                  color: Colors.black,
+                                ),
                               ),
                               TextSpan(
                                 text: "$remainingSeconds s",
                                 style: const TextStyle(
                                   fontSize: 15,
-                                  color: Color.fromRGBO(
-                                      255, 137, 31, 1),
+                                  color: Color.fromRGBO(255, 137, 31, 1),
                                 ),
                               ),
                             ],
                           ),
                         ),
-              
+
                         SizedBox(height: maxWidth * 0.08),
                       ],
                     ),

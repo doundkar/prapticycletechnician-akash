@@ -1,6 +1,7 @@
 import 'package:bicycle_app_technician/app/model/job_details_model.dart';
 import 'package:bicycle_app_technician/app/modules/add_parts/controllers/add_parts_controller.dart';
 import 'package:bicycle_app_technician/app/routes/app_routes.dart';
+import 'package:bicycle_app_technician/view/widgets/custom_snackbar.dart';
 import 'package:flutter/material.dart';
 import 'package:bicycle_app_technician/view/widgets/custom_app_bar.dart';
 import 'package:bicycle_app_technician/view/widgets/custom_button.dart';
@@ -25,7 +26,7 @@ class _ApprovalScreenState extends State<ApprovalScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar(title: "Component Fitting"),
+      appBar: CustomAppBar(title: "Approval"),
 
       body: SingleChildScrollView(
         child: Column(
@@ -187,10 +188,10 @@ class _ApprovalScreenState extends State<ApprovalScreen> {
               onTap: () async {
                 bool resp = await controller.sendApproval(job.id!);
                 if(resp){
-
+                  Get.toNamed(AppRoutes.approvalPending,arguments: job);
                 }
                 else{
-                  
+                  ScaffoldMessenger.of(context).showSnackBar(CustomSnackbar.show(title: "Couldn't send approval request, please try again later", color: Colors.red[300]!));
                 }
               },
               child: CustomButton(

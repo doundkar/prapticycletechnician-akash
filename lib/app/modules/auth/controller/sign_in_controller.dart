@@ -23,6 +23,7 @@ class SignInController extends GetxController {
         await SharedPrefs.setString("user_id", "${response.data["user_id"]}");
         await SharedPrefs.setString("otp", "${response.data["otp"]}");
         await SharedPrefs.setString("phone",phone);
+        
         log("${response.data}");
       }
       else{
@@ -66,7 +67,11 @@ class SignInController extends GetxController {
         await SharedPrefs.setString("user_id","${response.data!.id!}");
         await SharedPrefs.setString("email",response.data!.email!);
         await SharedPrefs.setString("phone",response.data!.phone!);
+        await SharedPrefs.setString("image",response.data!.image!);
         await SharedPrefs.setString("token",response.data!.token!);
+        await SharedPrefs.setString("jobs_completed",response.data!.jobsCompleted!.toString());
+        await SharedPrefs.setString("ratings",response.data!.ratings.toString());
+       // await SharedPrefs.setString("promo_code",response.data!.promoCode!);
         log("${response.data}");
       }
       else{

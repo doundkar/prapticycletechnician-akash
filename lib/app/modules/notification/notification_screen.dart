@@ -1,6 +1,11 @@
+import 'package:bicycle_app_technician/app/model/notification_model.dart';
+import 'package:bicycle_app_technician/app/modules/notification/notification_controller.dart';
 import 'package:bicycle_app_technician/view/Colors/app_colors.dart';
 import 'package:bicycle_app_technician/view/widgets/custom_app_bar.dart';
+import 'package:bicycle_app_technician/view/widgets/custom_button.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:get/utils.dart';
 
 class NotificationScreen extends StatefulWidget {
   const NotificationScreen({super.key});
@@ -10,48 +15,87 @@ class NotificationScreen extends StatefulWidget {
 }
 
 class _NotificationScreenState extends State<NotificationScreen> {
+  late bool isTablet;
+  late bool isSmallPhone;
+
   @override
   Widget build(BuildContext context) {
+    double width = MediaQuery.of(context).size.width;
+
+    isTablet = width >= 768;
+    isSmallPhone = width < 360;
+
+    NotificationController controller = Get.find();
+
     return Scaffold(
-      appBar: CustomAppBar(title: "Notifications"),
-      body: ListView(
-        padding: const EdgeInsets.all(16),
-        children: [
+      appBar: CustomAppBar(
+        title: "Notifications",
+        onTap: () async {
+          await controller.readNotification();
+          Get.back();
+        },
+      ),
+      body: Obx(() {
+        if (controller.isLoading.value) {
+          return Center(
+            child: SizedBox(
+              height: 30,
+              width: 30,
+              child: CircularProgressIndicator(
+                strokeWidth: 2,
+                color: AppColors.blue,
+              ),
+            ),
+          );
+        }
 
-          _buildNotificationCard(
-            title: "New Job Assigned",
-            description:
-                "You have been assigned a new job JOB-1233 for Amit Sharma",
-            actionText: "Mark as read",
+        if (controller.hasError.value) {
+          return Center(
+            child: Text(
+              controller.errorMessage.value,
+              style: const TextStyle(color: Colors.red),
+            ),
+          );
+        }
+        return ListView.separated(
+          padding: EdgeInsets.all(
+            isTablet
+                ? 24
+                : isSmallPhone
+                ? 12
+                : 16,
           ),
+          itemCount: controller.notifications.length,
+          separatorBuilder: (context, index) =>
+              SizedBox(height: isTablet ? 20 : 16),
+          itemBuilder: (context, index) {
+            NotificationModel item = controller.notifications.value[index];
 
-          SizedBox(height: 16),
-
-          _buildNotificationCard(
-            title: "Job Reminder",
-            description:
-                "Job-1234 is scheduled to start in 1 hour",
-            actionText: "Mark as read",
-          ),
-
-          SizedBox(height: 16),
-
-          _buildNotificationCard(
-            title: "Customer Review",
-            description:
-                "Sneha P gave you 5 stars for JOB-12333",
-            timeText: "2 hrs",
-          ),
-
-          SizedBox(height: 16),
-
-          _buildNotificationCard(
-            title: "Payment Received",
-            description:
-                "1000 has been credited to your wallet for JOB-12345",
-            timeText: "2 days ago",
-          ),
-        ],
+            return _buildNotificationCard(
+              title: item.title!,
+              description: item.message!,
+              isRead: item.isRead!,
+              // actionText: item["actionText"],
+              // timeText: item["timeText"],
+            );
+          },
+        );
+      }),
+      floatingActionButton: FloatingActionButton.extended(
+        backgroundColor: AppColors.blue,
+        onPressed: () async {
+          await controller.clearNotification();
+        },
+        label: Row(
+          children: [
+            Icon(Icons.cancel, size: 25, color: Colors.white),
+            const SizedBox(width: 8),
+            Text(
+              "Clear Notifications",
+              style: TextStyle(fontSize: 18, color: Colors.white),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -59,14 +103,21 @@ class _NotificationScreenState extends State<NotificationScreen> {
   Widget _buildNotificationCard({
     required String title,
     required String description,
-    String? actionText,
-    String? timeText,
+    required bool isRead,
+    // String? actionText,
+    // String? timeText,
   }) {
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: EdgeInsets.all(
+        isTablet
+            ? 20
+            : isSmallPhone
+            ? 12
+            : 16,
+      ),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(isTablet ? 20 : 16),
         boxShadow: const [
           BoxShadow(
             color: Color.fromRGBO(0, 0, 0, 0.08),
@@ -77,64 +128,73 @@ class _NotificationScreenState extends State<NotificationScreen> {
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-
           /// TITLE
           Text(
             title,
-            style: const TextStyle(
+            style: TextStyle(
               fontWeight: FontWeight.w600,
-              fontSize: 14,
+              fontSize: isTablet
+                  ? 16
+                  : isSmallPhone
+                  ? 13
+                  : 14,
             ),
           ),
 
-          const SizedBox(height: 6),
+          SizedBox(height: isTablet ? 8 : 6),
 
-          /// DESCRIPTION + ACTION/TIME
+          /// DESCRIPTION + isRead
           Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Expanded(
                 child: Text(
                   description,
-                  style: const TextStyle(
-                    fontSize: 14,
+                  style: TextStyle(
+                    fontSize: isTablet
+                        ? 15
+                        : isSmallPhone
+                        ? 13
+                        : 14,
                     color: Colors.black87,
                     fontWeight: FontWeight.w400,
                   ),
                 ),
               ),
 
-              if (actionText != null)
-                Padding(
-                  padding: const EdgeInsets.only(left: 8),
-                  child: Text(
-                    actionText,
-                    style: TextStyle(
-                      fontSize: 10,
-                      color: AppColors.blue,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ),
+              if (!isRead) ...[Icon(Icons.circle, size: 10, color: Colors.red)],
 
-              if (timeText != null)
-                Padding(
-                  padding: const EdgeInsets.only(left: 8),
-                  child: Text(
-                    timeText,
-                    style: const TextStyle(
-                      fontSize: 10,
-                      color: Color.fromRGBO(81, 89, 120, 1),
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ),
+              // if (actionText != null)
+              //   Padding(
+              //     padding: const EdgeInsets.only(left: 8),
+              //     child: Text(
+              //       actionText,
+              //       style: TextStyle(
+              //         fontSize: isTablet ? 12 : 10,
+              //         color: AppColors.blue,
+              //         fontWeight: FontWeight.w600,
+              //       ),
+              //     ),
+              //   ),
+
+              // if (timeText != null)
+              //   Padding(
+              //     padding: const EdgeInsets.only(left: 8),
+              //     child: Text(
+              //       timeText,
+              //       style: TextStyle(
+              //         fontSize: isTablet ? 12 : 10,
+              //         color: const Color.fromRGBO(81, 89, 120, 1),
+              //         fontWeight: FontWeight.w600,
+              //       ),
+              //     ),
+              //   ),
             ],
           ),
         ],
       ),
     );
   }
-
 }
