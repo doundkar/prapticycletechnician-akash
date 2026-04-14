@@ -86,7 +86,6 @@ class _NumberVerificationScreenState extends State<NumberVerificationScreen> {
                         ),
 
                         SizedBox(height: maxWidth * 0.05),
-
                         const Text(
                           "We've sent the verification code on",
                           style: TextStyle(
@@ -198,12 +197,12 @@ class _NumberVerificationScreenState extends State<NumberVerificationScreen> {
                                     );
                                   } else {
                                     String otp = SharedPrefs.getString("otp");
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      CustomSnackbar.show(
-                                        title: "OTP : $otp",
-                                        color: Colors.green[300]!,
-                                      ),
-                                    );
+                                    // ScaffoldMessenger.of(context).showSnackBar(
+                                    //   CustomSnackbar.show(
+                                    //     title: "OTP : $otp",
+                                    //     color: Colors.green[300]!,
+                                    //   ),
+                                    // );
                                   }
                                 }
                               },
@@ -261,12 +260,12 @@ class _NumberVerificationScreenState extends State<NumberVerificationScreen> {
                                 );
                                 otpController.clear();
                               } else {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  CustomSnackbar.show(
-                                    title: "Logged in successfully",
-                                    color: Colors.green[300]!,
-                                  ),
-                                );
+                                // ScaffoldMessenger.of(context).showSnackBar(
+                                //   CustomSnackbar.show(
+                                //     title: "Logged in successfully",
+                                //     color: Colors.green[300]!,
+                                //   ),
+                                // );
                                 Get.toNamed(AppRoutes.bottomNav);
                               }
                             }

@@ -73,7 +73,7 @@ class JobProgressController extends GetxController {
     errorMessage = ''.obs;
     try {
       final response = await JobProgressService.startJob(jobId, photos);
-      log("controller: ${response.message}");
+
       if (response.status) {
         return true;
       }

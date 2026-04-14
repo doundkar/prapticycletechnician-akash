@@ -46,7 +46,7 @@ class Technician {
   int? id;
   String? name;
   String? promoCode;
-  int? pcsWallet;
+  double? pcsWallet;
 
   Technician({this.id, this.name, this.promoCode, this.pcsWallet});
 
@@ -54,7 +54,10 @@ class Technician {
     id = json['id'];
     name = json['name'];
     promoCode = json['promo_code'];
-    pcsWallet = json['pcs_wallet'];
+    pcsWallet = json['pcs_wallet'] != null
+        ? double.tryParse(json['pcs_wallet'].toString())
+        : 0.0;
+    // json['pcs_wallet'];
   }
 
   Map<String, dynamic> toJson() {

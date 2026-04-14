@@ -35,6 +35,12 @@ class _IdentityPendingScreenState extends State<IdentityPendingScreen> {
         await controller.checkVerification();
         Get.offAllNamed(AppRoutes.identityApproved);
       }
+      // else{
+      //   timer!.cancel();
+      //   Get.snackbar("Error", "Technician is not verified yet.",backgroundColor: Colors.red);
+      //   Get.back(result: 'Data from this page');
+      //
+      // }
     });
   }
 

@@ -28,14 +28,14 @@ class UserDetailsModel {
     id = user['id'];
     firstName = user['first_name'];
     lastName = user['last_name'];
-    dateOfBirth = user['date_of_birth'];
+    dateOfBirth = user['date_of_birth']??"";
     email = user['email'];
     phone = user['phone'];
     image = user['image'] ?? "";
     token = json['token'];
     jobsCompleted = json['completed_jobs'];
     ratings = ratingSummary['average_rating'];
-    promoCode = user['promo_code'];
+    promoCode = user['promo_code']??'';
   }
 
   Map<String, dynamic> toJson() {

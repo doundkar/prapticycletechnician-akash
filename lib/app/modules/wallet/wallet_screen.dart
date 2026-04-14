@@ -19,7 +19,7 @@ class _WalletScreenState extends State<WalletScreen> {
 
   ProfileController controller = Get.put(ProfileController());
   late String promoCode;
-  late String pcsAmt;
+   String pcsAmt ='';
   Timer? timer;
 
   @override

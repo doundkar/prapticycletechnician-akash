@@ -6,6 +6,7 @@ import 'package:bicycle_app_technician/view/widgets/custom_snackbar.dart';
 import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:intl_phone_field/intl_phone_field.dart';
 import 'package:validate_phone_number/validation.dart';
 
 class SignUpScreen extends StatefulWidget {
@@ -37,10 +38,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
     );
 
     if (pickedDate != null) {
+      // change / to -  by Akash Doundkar  09-04-2026
       setState(() {
         _dobController.text =
-            "${pickedDate.day.toString().padLeft(2, '0')}/"
-            "${pickedDate.month.toString().padLeft(2, '0')}/"
+            "${pickedDate.day.toString().padLeft(2, '0')}-"
+            "${pickedDate.month.toString().padLeft(2, '0')}-"
             "${pickedDate.year}";
       });
     }
@@ -144,10 +146,51 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         ),
               
                         SizedBox(height: maxWidth * 0.05),
+                        const Text(
+                          "Phone Number*",
+                          style: TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w500,
+                            color: Color.fromRGBO(108, 114, 120, 1),
+                          ),
+                        ),
+                         SizedBox(height: maxWidth * 0.02),
+                        IntlPhoneField(
+                          decoration: InputDecoration(
+                            counter: Text(''),
+                            // labelText: 'MOBILE NUMBER',
+                            labelStyle: const TextStyle(fontSize: 12, color: Colors.grey),
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12),
+                              borderSide: const BorderSide(
+                                color: Color(0xFFE0E0E0), // light grey
+
+                              ),
+                            ),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12),
+                              borderSide: const BorderSide(
+                                color: Color(0xFFE0E0E0), // light grey
+                                width: 1,
+                              ),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12),
+                              borderSide: const BorderSide(
+                                color: Color(0xFFE0E0E0), // same light grey when focused
+                                width: 1.2,
+                              ),
+                            ),
+                          ),
+
+                          initialCountryCode: 'IN',
+                          onChanged: (phone) {
+                            _phoneController.text = phone.number;
+                          },
+                        ),
+                        // _buildPhoneField(),
               
-                        _buildPhoneField(),
-              
-                        SizedBox(height: maxWidth * 0.05),
+                        // SizedBox(height: maxWidth * 0.05),
               
                         _buildTextField(
                           "Set Password*",

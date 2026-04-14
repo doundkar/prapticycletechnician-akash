@@ -59,7 +59,7 @@ class JobListService {
           "Authorization": "Bearer $token",
         },
       );
-      log("acceptedJobList resp: ${response.body}");
+      // log("acceptedJobList resp: ${response.body}");
       if (response.statusCode == 200) {
         final jsonBody = jsonDecode(response.body);
         List<JobDetailsModel> jobList = [];
