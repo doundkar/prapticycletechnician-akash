@@ -102,8 +102,10 @@ class _EarnIncomeScreenState extends State<EarnIncomeScreen> {
                         size: width * 0.05,
                       ),
                       SizedBox(width: spacingSmall * 2),
+                      // 15-04-2026 Akash Doundkar
                       Text(
-                        "Date of Joining: ${DateFormat("d MMM yyyy").format(DateTime.parse(controller.salarySlip.value!.technician!.dateOfJoining!))}",
+                        "Date of Joining: ${controller.salarySlip.value!.technician!.dateOfJoining!.toString()}",
+                            // "${DateFormat("dd MMM yyyy").format(DateTime.parse(controller.salarySlip.value!.technician!.dateOfJoining!))}",
                         style: TextStyle(fontSize: width * 0.035),
                       ),
                     ],
@@ -157,7 +159,7 @@ class _EarnIncomeScreenState extends State<EarnIncomeScreen> {
                         ),
                       );
                     }
-                    if (controller.salarySlip.value!.salarySlip == null) {
+                    if (controller.salarySlip.value?.salarySlip == null) {
                       return SizedBox(
                         height: height*0.2,
                         width: double.infinity,
@@ -201,7 +203,7 @@ class _EarnIncomeScreenState extends State<EarnIncomeScreen> {
                         // _salaryRow("Conveyance Allowance", "₹1,600.00", width),
                         _salaryRow(
                           "Gross Earnings",
-                          "₹${controller.salarySlip.value!.salarySlip!.grossEarnings}",
+                          "₹${controller.salarySlip.value!.salarySlip?.grossEarnings}",
                           width,
                           valueColor: AppColors.blue,
                           isBold: true,
@@ -209,7 +211,7 @@ class _EarnIncomeScreenState extends State<EarnIncomeScreen> {
 
                         _salaryRow(
                           "Total Deductions",
-                          "₹${controller.salarySlip.value!.salarySlip!.totalDeductions}",
+                          "₹${controller.salarySlip.value!.salarySlip?.totalDeductions}",
                           width,
                           valueColor: Colors.red,
                           isBold: true,
@@ -226,9 +228,9 @@ class _EarnIncomeScreenState extends State<EarnIncomeScreen> {
                         ),
 
                         SizedBox(height: spacingSmall * 2),
-
+// 15-04-2026 Akash Doundkar
                         Text(
-                          "₹${controller.salarySlip.value!.salarySlip!.netPay}",
+                          "₹${controller.salarySlip.value!.salarySlip?.netPay}",
                           style: TextStyle(
                             fontSize: width * 0.08,
                             fontWeight: FontWeight.w700,
@@ -237,9 +239,13 @@ class _EarnIncomeScreenState extends State<EarnIncomeScreen> {
                         ),
 
                         SizedBox(height: spacingSmall),
-
+// 15-04-2026 Akash Doundkar
                         Text(
-                          "In Words: ${(NumberToWord().convert("en-in", controller.salarySlip.value!.salarySlip!.netPay!)).capitalize} ",
+                          "In Words: ${(NumberToWord().convert(
+                            "en-in",
+                            controller.salarySlip.value?.salarySlip?.netPay?.toInt() ?? 0,
+                          )).capitalize}",
+                          // "In Words: ${(NumberToWord().convert("en-in", controller.salarySlip.value!.salarySlip?.netPay)).capitalize} ",
                           style: TextStyle(
                             fontSize: width * 0.03,
                             color: Colors.grey,
