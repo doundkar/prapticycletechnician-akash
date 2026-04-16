@@ -29,6 +29,7 @@ class JobDetailsModel {
   String? time;
   String? type;
   String? mode;
+  String? customerPhone;  // 15-04-2026 Akash Doundkar
 
   List<ServiceItemModel>? serviceItems;
 
@@ -55,11 +56,12 @@ class JobDetailsModel {
       this.totalTimeSeconds,
       this.completedTime,
       this.completionOtp,
+        this.customerPhone,  // 15-04-2026 Akash Doundkar
       this.customerReview});
 
   JobDetailsModel.fromJson(Map<String, dynamic> json) {
     id = json['id'];
-    customerName = json['customer_name'];
+    customerName = json['customer_name']?? '';
     location = json['location'];
     distance = json['distance'];
     jobType = json['job_type'];
@@ -81,6 +83,7 @@ class JobDetailsModel {
     completedTime = json['completed_time'];
     completionOtp = json['completion_otp'];
     customerReview = json['customer_review'];
+    customerPhone = json['customer_phone'];  // 15-04-2026 Akash Doundkar
     type = json['type'];
     mode = json["mode"];
     DateTime parsedDate = DateTime.parse(json["jobdatetime"]);
