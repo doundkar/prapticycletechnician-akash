@@ -6,6 +6,9 @@ import 'package:bicycle_app_technician/view/widgets/custom_button.dart';
 import 'package:get/get.dart';
 import 'package:get/get_state_manager/get_state_manager.dart';
 import 'package:intl/intl.dart';
+import 'package:pdf/pdf.dart';
+import 'package:pdf/widgets.dart' as pw;
+import 'package:printing/printing.dart';
 import 'package:number_to_words/number_to_words.dart';
 
 class EarnIncomeScreen extends StatefulWidget {
@@ -48,6 +51,105 @@ class _EarnIncomeScreenState extends State<EarnIncomeScreen> {
     selectedYear = currentYear;
 
     years = List.generate(5, (index) => currentYear - index);
+  }
+  // 16-04-2026 Akash Doundkar
+  Future<void> generateAndPrintPdf() async {
+    final pdf = pw.Document();
+
+    final data = controller.salarySlip.value;
+
+    pdf.addPage(
+      pw.Page(
+        build: (context) {
+          return pw.Padding(
+            padding: const pw.EdgeInsets.all(16),
+            child: pw.Column(
+              crossAxisAlignment: pw.CrossAxisAlignment.start,
+              children: [
+
+                /// Title
+                pw.Text("Salary Slip",
+                    style: pw.TextStyle(
+                        fontSize: 22, fontWeight: pw.FontWeight.bold)),
+
+                pw.SizedBox(height: 10),
+
+                pw.Text("Month: $selectedMonth $selectedYear"),
+                pw.Text(
+                    "Date of Joining: ${data?.technician?.dateOfJoining ?? ""}"),
+
+                pw.SizedBox(height: 20),
+
+                /// Earnings Table
+                pw.Text("Earnings",
+                    style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
+
+                pw.SizedBox(height: 10),
+
+                pw.Table(
+                  border: pw.TableBorder.all(),
+                  children: [
+                    pw.TableRow(
+                      children: [
+                        pw.Padding(
+                            padding: pw.EdgeInsets.all(5),
+                            child: pw.Text("Type")),
+                        pw.Padding(
+                            padding: pw.EdgeInsets.all(5),
+                            child: pw.Text("Amount")),
+                      ],
+                    ),
+
+                    ...data!.salarySlip!.earnings!.map((e) {
+                      return pw.TableRow(
+                        children: [
+                          pw.Padding(
+                              padding: pw.EdgeInsets.all(5),
+                              child: pw.Text(e.label ?? "")),
+                          pw.Padding(
+                              padding: pw.EdgeInsets.all(5),
+                              child: pw.Text("${e.amount}")),
+                        ],
+                      );
+                    }).toList(),
+                  ],
+                ),
+
+                pw.SizedBox(height: 20),
+
+                /// Summary
+                pw.Text(
+                    "Gross Earnings: ${data.salarySlip?.grossEarnings}"),
+                pw.Text(
+                    "Total Deductions: ${data.salarySlip?.totalDeductions}"),
+
+                pw.SizedBox(height: 10),
+
+                pw.Text(
+                  "Net Pay: ${data.salarySlip?.netPay}",
+                  style: pw.TextStyle(
+                      fontSize: 18, fontWeight: pw.FontWeight.bold),
+                ),
+
+                pw.SizedBox(height: 10),
+
+                pw.Text(
+                  "In Words: ${NumberToWord().convert(
+                    "en-in",
+                    data.salarySlip?.netPay?.toInt() ?? 0,
+                  )}",
+                ),
+              ],
+            ),
+          );
+        },
+      ),
+    );
+
+    /// Print / Save
+    await Printing.layoutPdf(
+      onLayout: (format) async => pdf.save(),
+    );
   }
 
   @override
@@ -257,16 +359,34 @@ class _EarnIncomeScreenState extends State<EarnIncomeScreen> {
                 ),
 
                 SizedBox(height: spacingLarge),
+                Container(
+                  height: 50,
+                  width: double.infinity,
+                  child: ElevatedButton(
+                      onPressed: () async {
+                        if (controller.salarySlip.value?.salarySlip == null) {
+                          Get.snackbar("Error", "No salary data found");
+                          return;
+                        }
 
-                CustomButton(
-                  text: "Download (PDF)",
-                  textSize: 16,
-                  textWeight: FontWeight.w600,
-                  textColor: Colors.white,
-                  bgColor: AppColors.blue,
-                  radius: 10,
-                  height: width * 0.12,
-                ),
+                        await generateAndPrintPdf();
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.blue,
+                        foregroundColor: Colors.white,
+                          shape: RoundedRectangleBorder( borderRadius: BorderRadiusGeometry.circular(10))
+                      ),
+                      child: Text("Download (PDF)",style: TextStyle(fontSize: 16,fontWeight: FontWeight.w600),)),
+                )
+                // CustomButton(
+                //   text: "Download (PDF)",
+                //   textSize: 16,
+                //   textWeight: FontWeight.w600,
+                //   textColor: Colors.white,
+                //   bgColor: AppColors.blue,
+                //   radius: 10,
+                //   height: width * 0.12,
+                // ),
               ],
             ),
           ),
@@ -399,7 +519,6 @@ class _EarnIncomeScreenState extends State<EarnIncomeScreen> {
       ),
     );
   }
-
   BoxDecoration _cardDecoration() {
     return BoxDecoration(
       color: Colors.white,
