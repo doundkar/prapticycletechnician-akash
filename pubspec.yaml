@@ -12,6 +12,8 @@ dependencies:
   dotted_border: ^3.1.0
   get: ^4.7.3
   pinput: ^6.0.2
+  flutter_phone_direct_caller: ^2.1.1
+  permission_handler: ^11.3.1
   intl_phone_field: ^3.2.0
   image_picker: ^1.2.1
   share_plus: ^12.0.1
