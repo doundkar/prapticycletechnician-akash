@@ -10,6 +10,9 @@ import 'package:bicycle_app_technician/view/Colors/app_colors.dart';
 import 'package:bicycle_app_technician/view/widgets/custom_snackbar.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+// 15-04-2026 Akash Doundkar
+import 'package:flutter_phone_direct_caller/flutter_phone_direct_caller.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class JobListHomeScreen extends StatefulWidget {
   const JobListHomeScreen({super.key});
@@ -40,6 +43,11 @@ class _JobListHomeScreenState extends State<JobListHomeScreen> {
       Image: $image
       User ID: $userIdStr
       """);
+  }
+  // 15-04-2026 Akash Doundkar
+  Future<bool> requestCallPermission() async {
+    var status = await Permission.phone.request();
+    return status.isGranted;
   }
 
   @override
@@ -367,7 +375,25 @@ class _JobListHomeScreenState extends State<JobListHomeScreen> {
                                         );
                                       }
                                     },
-                                    onCall: () {},
+                                    // 15-04-2026 Akash Doundkar
+                                    onCall: () async{
+                                       if(job.customerPhone!.isNotEmpty && job.customerPhone!=null ){
+                                         bool granted = await requestCallPermission();
+                                         if (granted) {
+                                           await FlutterPhoneDirectCaller.callNumber(job.customerPhone.toString());
+                                         } else {
+                                           Get.snackbar("Permission Denied", "Phone permission is required");
+                                         }
+                                       }else{
+                                         ScaffoldMessenger.of(context).showSnackBar(
+                                           SnackBar(
+                                             content: Text("Phone number is missing"),
+                                             backgroundColor: Colors.red,
+                                           ),
+                                         );
+                                       }
+
+                                    },
                                     maxWidth: maxWidth,
                                   ),
                                 );
