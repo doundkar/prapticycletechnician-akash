@@ -5,6 +5,11 @@ import 'package:bicycle_app_technician/view/widgets/custom_app_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+// 15-04-2026 Akash Doundkar
+import 'package:flutter_phone_direct_caller/flutter_phone_direct_caller.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:url_launcher/url_launcher.dart';
+
 class NavigationScreen extends StatefulWidget {
   const NavigationScreen({super.key});
 
@@ -14,7 +19,23 @@ class NavigationScreen extends StatefulWidget {
 
 class _NavigationScreenState extends State<NavigationScreen> {
   bool hasReached = false;
+  // 15-04-2026 Akash Doundkar
+  Future<bool> requestCallPermission() async {
+    var status = await Permission.phone.request();
+    return status.isGranted;
+  }
+  Future<void> openSms(String phone) async {
+    final Uri uri = Uri.parse("sms:$phone");
 
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(
+        uri,
+        mode: LaunchMode.externalApplication,
+      );
+    } else {
+      throw Exception("Could not launch SMS");
+    }
+  }
   @override
   Widget build(BuildContext context) {
     JobDetailsModel job = Get.arguments;
@@ -282,17 +303,55 @@ class _NavigationScreenState extends State<NavigationScreen> {
                           maxWidth: maxWidth,
                           icon: Icons.call_outlined,
                           text: "Call Customer",
-                          onPressed: () => {},
+                          onPressed: () async{
+                            // 15-04-2026 Akash Doundkar
+                            if(job.customerPhone!.isNotEmpty && job.customerPhone!=null ){
+                              bool granted = await requestCallPermission();
+                              if (granted) {
+                                await FlutterPhoneDirectCaller.callNumber(job.customerPhone.toString());
+                              } else {
+                                Get.snackbar("Permission Denied", "Phone permission is required");
+                              }
+                            }else{
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text("Phone number is missing"),
+                                  backgroundColor: Colors.red,
+                                ),
+                              );
+                            }
+                          },
                         ),
-
                         SizedBox(height: isTablet ? 20 : 15),
-
                         /// Message Button
                         _buildActionButton(
                           maxWidth: maxWidth,
                           icon: Icons.chat_bubble_outline,
                           text: "Message",
-                          onPressed: () => {},
+                          onPressed: ()async{
+                            // 15-04-2026 Akash Doundkar
+                            final phone = job.customerPhone;
+
+                            if (phone != null && phone.trim().isNotEmpty) {
+                              try {
+                                await openSms(phone);
+                              } catch (e) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text("Unable to open SMS"),
+                                    backgroundColor: Colors.red,
+                                  ),
+                                );
+                              }
+                            } else {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text("Phone number is missing"),
+                                  backgroundColor: Colors.red,
+                                ),
+                              );
+                            }
+                          },
                         ),
                       ],
                     ),
