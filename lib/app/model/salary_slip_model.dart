@@ -48,7 +48,7 @@ class SalarySlipModel {
       data['attendance'] = this.attendance!.toJson();
     }
     if (this.salarySlip != null) {
-      data['salary_slip'] = this.salarySlip!.toJson();
+      data['salary_slip'] = this.salarySlip?.toJson();
     }
     data['pdf_url'] = this.pdfUrl;
     return data;
@@ -69,7 +69,7 @@ class Technician {
     name = json['name'];
     phone = json['phone'];
     email = json['email'];
-    dateOfJoining = json['date_of_joining'];
+    dateOfJoining = json['date_of_joining']??'';
   }
 
   Map<String, dynamic> toJson() {
@@ -144,14 +144,14 @@ class Summary {
     return data;
   }
 }
-
+// 15-04-2026 Akash Doundkar
 class SalarySlip {
   String? title;
   String? generatedAt;
   List<Earnings>? earnings;
-  int? grossEarnings;
-  int? totalDeductions;
-  int? netPay;
+  double? grossEarnings;
+  double? totalDeductions;
+  double? netPay;
   String? notes;
 
   SalarySlip(
@@ -172,9 +172,9 @@ class SalarySlip {
         earnings!.add(new Earnings.fromJson(v));
       });
     }
-    grossEarnings = json['gross_earnings'];
-    totalDeductions = json['total_deductions'];
-    netPay = json['net_pay'];
+    grossEarnings = (json['gross_earnings'] as num?)?.toDouble();
+    totalDeductions = (json['total_deductions'] as num?)?.toDouble();
+    netPay = (json['net_pay'] as num?)?.toDouble();
     notes = json['notes'];
   }
 
@@ -196,14 +196,14 @@ class SalarySlip {
 class Earnings {
   String? key;
   String? label;
-  int? amount;
+  double? amount;
 
   Earnings({this.key, this.label, this.amount});
 
   Earnings.fromJson(Map<String, dynamic> json) {
     key = json['key'];
     label = json['label'];
-    amount = json['amount'];
+    amount = (json['amount'] as num?)?.toDouble();
   }
 
   Map<String, dynamic> toJson() {
