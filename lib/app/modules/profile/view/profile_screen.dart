@@ -8,6 +8,7 @@ import 'package:bicycle_app_technician/view/widgets/custom_button.dart';
 import 'package:bicycle_app_technician/view/Colors/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -69,6 +70,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
     setState(() {});
   }
 
+Future<void> openUrl(String url) async {
+  final Uri uri = Uri.parse(url);
+
+  if (await canLaunchUrl(uri)) {
+    await launchUrl(uri, mode: LaunchMode.externalApplication);
+  } else {
+    throw Exception("Could not launch $url");
+  }
+}
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
@@ -315,22 +325,42 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
             SizedBox(height: screenWidth * 0.03),
 
-            Container(
-              padding: const EdgeInsets.symmetric(vertical: 16),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(12),
-                color: Colors.grey.shade100,
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  Image.asset("assets/google.png", height: 30, width: 30),
-                  Image.asset("assets/linkedin.png", height: 30, width: 30),
-                  Image.asset("assets/x.png", height: 30, width: 30),
-                  Image.asset("assets/instagram.png", height: 30, width: 30),
-                ],
-              ),
-            ),
+           Container(
+  padding: const EdgeInsets.symmetric(vertical: 12),
+  decoration: BoxDecoration(
+    borderRadius: BorderRadius.circular(12),
+    color: Colors.grey.shade100,
+  ),
+  child: Row(
+    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+    children: [
+
+      /// Google
+      InkWell(
+        onTap: () => openUrl("https://accounts.google.com/signin"),
+        child: Image.asset("assets/google.png", height: 30, width: 30),
+      ),
+
+      /// LinkedIn
+      InkWell(
+        onTap: () => openUrl("https://www.linkedin.com/login"),
+        child: Image.asset("assets/linkedin.png", height: 30, width: 30),
+      ),
+
+      /// X (Twitter)
+      InkWell(
+        onTap: () => openUrl("https://twitter.com/login"),
+        child: Image.asset("assets/x.png", height: 30, width: 30),
+      ),
+
+      /// Instagram
+      InkWell(
+        onTap: () => openUrl("https://www.instagram.com/accounts/login/"),
+        child: Image.asset("assets/instagram.png", height: 30, width: 30),
+      ),
+    ],
+  ),
+),
 
             SizedBox(height: screenWidth * 0.06),
 

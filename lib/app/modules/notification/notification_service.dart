@@ -24,7 +24,7 @@ class NotificationService {
           "Authorization": "Bearer $token",
         },
       );
-      log("notification resp: ${response.body}");
+      // log("notification resp: ${response.body}");
       if (response.statusCode == 200) {
         final jsonBody = jsonDecode(response.body);
         List<NotificationModel> list = [];
@@ -61,7 +61,7 @@ class NotificationService {
         },
         body: json.encode(payload),
       );
-      log("All notifications marked as read");
+      // log("All notifications marked as read");
       if(response.statusCode==200){
         return true;
       }

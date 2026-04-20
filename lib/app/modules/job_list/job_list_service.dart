@@ -22,7 +22,7 @@ class JobListService {
           "Authorization": "Bearer $token",
         },
       );
-      log("newJobList resp: ${response.body}");
+      // log("newJobList resp: ${response.body}");
       if (response.statusCode == 200) {
         final jsonBody = jsonDecode(response.body);
         List<JobDetailsModel> jobList = [];
@@ -66,7 +66,7 @@ class JobListService {
         for (var item in jsonBody["data"]) {
           jobList.add(JobDetailsModel.fromJson(item));
         }
-        log("joblist len: ${jobList.length}");
+        // log("joblist len: ${jobList.length}");
 
         return ApiResponseModel(
           status: jsonBody["success"],

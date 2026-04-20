@@ -167,7 +167,7 @@ class AuthService {
 
       if(response.statusCode==200){
         final jsonBody = jsonDecode(response.body);
-        log("verify otp resp: $jsonBody");
+        // log("verify otp resp: $jsonBody");
         final data = jsonBody["data"];
         return ApiResponseModel(status: jsonBody["success"],message: jsonBody["message"],data: UserDetailsModel.fromJson(data));
       }
