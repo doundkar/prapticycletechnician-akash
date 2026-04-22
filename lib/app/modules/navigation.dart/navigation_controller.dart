@@ -2,10 +2,8 @@ import 'dart:convert';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:geolocator/geolocator.dart';
-
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:mappls_gl/mappls_gl.dart';
-
 
 class NavigationController extends GetxController {
 
