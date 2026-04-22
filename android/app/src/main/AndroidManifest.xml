@@ -12,6 +12,10 @@
         android:label="bicycle_app_technician"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
+        
+        <meta-data
+        android:name="com.mappls.sdk.maps.API_KEY"
+        android:value="35049988a9fc1f54a8746117b84b96c7"/>
         <activity
             android:name=".MainActivity"
             android:exported="true"

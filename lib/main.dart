@@ -6,6 +6,8 @@ import 'package:bicycle_app_technician/utils/shared_prefs.dart';
 import 'package:bicycle_app_technician/view/Colors/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get_navigation/src/root/get_material_app.dart';
+
+
  
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -17,6 +19,7 @@ void main() async {
   bool isVerified = SharedPrefs.getBool("isVerified");
   bool isLoggedIn = SharedPrefs.getBool("isLoggedIn");
   bool isVerificationPending = SharedPrefs.getBool("isVerificationPending");
+
 
   if(isLoggedIn){
     initialRoute = AppRoutes.bottomNav;

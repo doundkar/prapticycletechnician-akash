@@ -337,7 +337,7 @@ Future<void> openUrl(String url) async {
 
       /// Google
       InkWell(
-        onTap: () => openUrl("https://accounts.google.com/signin"),
+        onTap: () => openUrl("https://www.google.com/"),
         child: Image.asset("assets/google.png", height: 30, width: 30),
       ),
 

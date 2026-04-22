@@ -29,7 +29,7 @@ class JobListService {
         for (var item in jsonBody["data"]) {
           jobList.add(JobDetailsModel.fromJson(item));
         }
-        log("joblist len: ${jobList.length}");
+        // log("joblist len: ${jobList.length}");
 
         return ApiResponseModel(
           status: jsonBody["success"],
