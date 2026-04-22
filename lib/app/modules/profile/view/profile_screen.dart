@@ -70,15 +70,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
     setState(() {});
   }
 
-Future<void> openUrl(String url) async {
-  final Uri uri = Uri.parse(url);
-
-  if (await canLaunchUrl(uri)) {
-    await launchUrl(uri, mode: LaunchMode.externalApplication);
-  } else {
-    throw Exception("Could not launch $url");
+  Future<void> openUrl(String url) async {
+    final Uri uri = Uri.parse(url);
+    try {
+      if (!await launchUrl(uri, mode: LaunchMode.externalApplication)) {
+        throw Exception("Could not launch $url");
+      }
+    } catch (e) {
+      debugPrint("URL launch error: $e");
+    }
   }
-}
+
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
@@ -325,42 +327,53 @@ Future<void> openUrl(String url) async {
 
             SizedBox(height: screenWidth * 0.03),
 
-           Container(
-  padding: const EdgeInsets.symmetric(vertical: 12),
-  decoration: BoxDecoration(
-    borderRadius: BorderRadius.circular(12),
-    color: Colors.grey.shade100,
-  ),
-  child: Row(
-    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-    children: [
+            Container(
+              padding: const EdgeInsets.symmetric(vertical: 12),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(12),
+                color: Colors.grey.shade100,
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  /// Google
+                  InkWell(
+                    onTap: () => openUrl("https://www.google.com/"),
+                    child: Image.asset(
+                      "assets/google.png",
+                      height: 30,
+                      width: 30,
+                    ),
+                  ),
 
-      /// Google
-      InkWell(
-        onTap: () => openUrl("https://www.google.com/"),
-        child: Image.asset("assets/google.png", height: 30, width: 30),
-      ),
+                  /// LinkedIn
+                  InkWell(
+                    onTap: () => openUrl("https://www.linkedin.com/login"),
+                    child: Image.asset(
+                      "assets/linkedin.png",
+                      height: 30,
+                      width: 30,
+                    ),
+                  ),
 
-      /// LinkedIn
-      InkWell(
-        onTap: () => openUrl("https://www.linkedin.com/login"),
-        child: Image.asset("assets/linkedin.png", height: 30, width: 30),
-      ),
+                  /// X (Twitter)
+                  InkWell(
+                    onTap: () => openUrl("https://twitter.com/login"),
+                    child: Image.asset("assets/x.png", height: 30, width: 30),
+                  ),
 
-      /// X (Twitter)
-      InkWell(
-        onTap: () => openUrl("https://twitter.com/login"),
-        child: Image.asset("assets/x.png", height: 30, width: 30),
-      ),
-
-      /// Instagram
-      InkWell(
-        onTap: () => openUrl("https://www.instagram.com/accounts/login/"),
-        child: Image.asset("assets/instagram.png", height: 30, width: 30),
-      ),
-    ],
-  ),
-),
+                  /// Instagram
+                  InkWell(
+                    onTap: () => openUrl("https://www.instagram.com"),
+                    child: Image.asset(
+                      "assets/instagram.png",
+                      height: 30,
+                      width: 30,
+                    ),
+                  ),
+                ],
+              ),
+            ),
 
             SizedBox(height: screenWidth * 0.06),
 
