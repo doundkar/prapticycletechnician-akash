@@ -1,5 +1,5 @@
 import 'dart:convert';
-
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:geolocator/geolocator.dart';
@@ -10,8 +10,8 @@ class NavigationController extends GetxController {
   Position? currentPosition;
   List<LatLng> routePoints = [];
   String? eLoc;
-  double? destLat;
-  double? destLng;
+  double? etaInMinutes;
+  double? distanceInKm;
 
   Future<String?> getAccessToken() async {
     final response = await http.post(
@@ -48,13 +48,10 @@ class NavigationController extends GetxController {
 
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body);
-
       eLoc = data['copResults']['eLoc'];
-      print("eLoc: $eLoc");
-
       await getRouteFromELoc(); // call route after getting eLoc
     } else {
-      print("Geocode Error: ${response.body}");
+      Get.snackbar("Geocode Error", "Geocode Error: ${response.body}");
     }
   }
 
@@ -79,15 +76,13 @@ class NavigationController extends GetxController {
     currentPosition = await Geolocator.getCurrentPosition(
       desiredAccuracy: LocationAccuracy.high,
     );
-    update(); 
+    update();
   }
 
   Future<void> getRouteFromELoc() async {
     if (currentPosition == null || eLoc == null) return;
 
     try {
-      print("currentPosition!.latitude ::: ${currentPosition!.latitude}");
-      print("currentPosition!.longitude::: ${currentPosition!.longitude}");
       DirectionResponse? response = await MapplsDirection(
         origin: LatLng(currentPosition!.latitude, currentPosition!.longitude),
         destinationMapplsPin: eLoc,
@@ -98,24 +93,31 @@ class NavigationController extends GetxController {
       if (response != null &&
           response.routes != null &&
           response.routes!.isNotEmpty) {
+        final route = response.routes![0];
+
+  
+        etaInMinutes = (route.duration ?? 0) / 60;
+
+    
+        distanceInKm = (route.distance ?? 0) / 1000;
+
+        print("etaInMinutes:: ${etaInMinutes}");
+        print("distanceInKm:: ${distanceInKm}");
         String encoded = response.routes![0].geometry!;
 
         routePoints = decodePolyline(encoded);
-        if (routePoints.isNotEmpty) {
-          print("FIRST POINT: ${routePoints.first}");
-          print("LAST POINT: ${routePoints.last}");
-        }
+        if (routePoints.isNotEmpty) {}
 
-        /// print first 5 points
-        for (int i = 0; i < routePoints.length && i < 5; i++) {
-          print("POINT $i: ${routePoints[i]}");
-        }
-
-        print("========== ROUTE DEBUG END ==========");
+        for (int i = 0; i < routePoints.length && i < 5; i++) {}
         update();
       }
     } catch (e) {
-      print("Direction Error: $e");
+      Get.snackbar(
+        "Direction error",
+        "Direction Error: $e",
+        backgroundColor: Colors.red,
+        duration: Duration(seconds: 5),
+      );
     }
   }
 

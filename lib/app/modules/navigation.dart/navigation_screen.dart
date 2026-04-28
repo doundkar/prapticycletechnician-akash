@@ -64,12 +64,11 @@ class _NavigationScreenState extends State<NavigationScreen> {
     if (!isStyleLoaded ||
         mapController == null ||
         controller.routePoints.isEmpty ||
-        isRouteDrawn)
+        isRouteDrawn) {
       return;
+    }
 
     isRouteDrawn = true;
-
-    print("🔥 FINAL DRAW");
 
     await mapController!.clearLines();
     await mapController!.clearSymbols();
@@ -103,7 +102,6 @@ class _NavigationScreenState extends State<NavigationScreen> {
   // GOOGLE MAP NAVIGATION USING routePoints
   Future<void> openGoogleMapFromRoute() async {
     if (controller.routePoints.isEmpty) {
-      print("Route not ready");
       return;
     }
 
@@ -120,7 +118,12 @@ class _NavigationScreenState extends State<NavigationScreen> {
     if (await canLaunchUrl(url)) {
       await launchUrl(url, mode: LaunchMode.externalApplication);
     } else {
-      print("Could not open Google Maps");
+      Get.snackbar(
+        "Error",
+        "Could not open Google Maps",
+        backgroundColor: Colors.red,
+        duration: Duration(seconds: 5),
+      );
     }
   }
 
@@ -142,7 +145,7 @@ class _NavigationScreenState extends State<NavigationScreen> {
                 children: [
                   SizedBox(
                     width: double.infinity,
-                    height: maxWidth > 700 ? 400 : 280,
+                    height: maxWidth > 700 ? 400 : 260,
                     child: Stack(
                       children: [
                         GetBuilder<NavigationController>(
@@ -161,7 +164,10 @@ class _NavigationScreenState extends State<NavigationScreen> {
                               ),
                               onMapCreated: (map) async {
                                 mapController = map;
-                                print("🗺️ MAP CREATED");
+                              },
+
+                              onStyleLoadedCallback: () async {
+                                isStyleLoaded = true;
                                 await mapController!.addSymbol(
                                   SymbolOptions(
                                     geometry: LatLng(
@@ -171,14 +177,8 @@ class _NavigationScreenState extends State<NavigationScreen> {
                                     iconImage: "marker-15",
                                   ),
                                 );
+                                await tryDrawRoute();
                               },
-
-                              // onStyleLoadedCallback: () async {
-                              //   print("✅ STYLE READY");
-                              //   isStyleLoaded = true;
-
-                              //   await tryDrawRoute(); // 🔥 try when style ready
-                              // },
                               myLocationEnabled: true,
                               myLocationTrackingMode:
                                   MyLocationTrackingMode.tracking,
@@ -206,149 +206,163 @@ class _NavigationScreenState extends State<NavigationScreen> {
                   /// STATUS + ETA
                   Expanded(
                     child: SingleChildScrollView(
-                      child: Padding(
-                        padding: const EdgeInsets.all(15),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
+                      child: Column(
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.all(15),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                Row(
                                   children: [
-                                    Text(
-                                      "Status Update",
-                                      style: TextStyle(
-                                        fontSize: isTablet ? 16 : 14,
-                                        fontWeight: FontWeight.w600,
-                                        color: const Color.fromRGBO(
-                                          102,
-                                          112,
-                                          133,
-                                          1,
-                                        ),
-                                      ),
-                                    ),
-                                    SizedBox(height: 6),
-                                    Row(
+                                    Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
                                       children: [
-                                        Transform.scale(
-                                          scale: isTablet ? 0.75 : 0.60,
-                                          child: Switch(
-                                            value: hasReached,
-                                            onChanged: (value) {
-                                              setState(() {
-                                                hasReached = value;
-                                              });
-                                              if (value) {
-                                                Get.toNamed(
-                                                  AppRoutes.startJobOtp,
-                                                  arguments: job,
-                                                );
-                                              }
-                                            },
+                                        Text(
+                                          "Status Update",
+                                          style: TextStyle(
+                                            fontSize: isTablet ? 16 : 14,
+                                            fontWeight: FontWeight.w600,
+                                            color: const Color.fromRGBO(
+                                              102,
+                                              112,
+                                              133,
+                                              1,
+                                            ),
                                           ),
                                         ),
-                                        Text(
-                                          hasReached ? "Reached" : "On the Way",
-                                          style: TextStyle(
-                                            fontSize: isTablet ? 18 : 16,
-                                            fontWeight: FontWeight.w600,
-                                          ),
+                                        SizedBox(height: 6),
+                                        Row(
+                                          children: [
+                                            Transform.scale(
+                                              scale: isTablet ? 0.75 : 0.60,
+                                              child: Switch(
+                                                value: hasReached,
+                                                onChanged: (value) {
+                                                  setState(() {
+                                                    hasReached = value;
+                                                  });
+                                                  if (value) {
+                                                    Get.toNamed(
+                                                      AppRoutes.startJobOtp,
+                                                      arguments: job,
+                                                    );
+                                                  }
+                                                },
+                                              ),
+                                            ),
+                                            Text(
+                                              hasReached
+                                                  ? "Reached"
+                                                  : "On the Way",
+                                              style: TextStyle(
+                                                fontSize: isTablet ? 18 : 16,
+                                                fontWeight: FontWeight.w600,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
+                                    const Spacer(),
+                                    Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text("ETA"),
+                                        SizedBox(height: 6),
+                                        GetBuilder<NavigationController>(
+                                          builder: (controller) {
+                                            if (controller.etaInMinutes ==
+                                                null) {
+                                              return Text("Calculating...");
+                                            }
+
+                                            return Text(
+                                              "${controller.etaInMinutes!.toStringAsFixed(0)} mins",
+                                              style: TextStyle(
+                                                fontSize: isTablet ? 18 : 16,
+                                                fontWeight: FontWeight.w600,
+                                              ),
+                                            );
+                                          },
                                         ),
                                       ],
                                     ),
                                   ],
                                 ),
-                                const Spacer(),
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
+                              ],
+                            ),
+                          ),
+                          Container(
+                            width: double.infinity,
+                            padding: EdgeInsets.all(isTablet ? 22 : 16),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(16),
+                              border: Border.all(
+                                color: const Color.fromRGBO(227, 227, 229, 1),
+                              ),
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(job.customerName ?? ''),
+                                SizedBox(height: 4),
+                                Text(job.location ?? ''),
+                                SizedBox(height: 10),
+                                Row(
                                   children: [
-                                    Text("ETA"),
-                                    SizedBox(height: 6),
-                                    Text("15 mins"),
+                                    Icon(Icons.access_time, size: 16),
+                                    SizedBox(width: 5),
+                                    Text("${job.date}, ${job.time}"),
                                   ],
                                 ),
                               ],
                             ),
-                          ],
-                        ),
+                          ),
+
+                          SizedBox(height: 20),
+
+                          /// CALL BUTTON
+                          _buildActionButton(
+                            maxWidth: maxWidth,
+                            icon: Icons.call_outlined,
+                            text: "Call Customer",
+                            onPressed: () async {
+                              if (job.customerPhone != null &&
+                                  job.customerPhone!.isNotEmpty) {
+                                bool granted = await requestCallPermission();
+                                if (granted) {
+                                  await FlutterPhoneDirectCaller.callNumber(
+                                    job.customerPhone!,
+                                  );
+                                }
+                              }
+                            },
+                          ),
+
+                          SizedBox(height: 15),
+
+                          /// MESSAGE BUTTON
+                          _buildActionButton(
+                            maxWidth: maxWidth,
+                            icon: Icons.chat_bubble_outline,
+                            text: "Message",
+                            onPressed: () async {
+                              if (job.customerPhone != null) {
+                                await openSms(job.customerPhone!);
+                              }
+                            },
+                          ),
+                        ],
                       ),
                     ),
                   ),
 
-                  SizedBox(height: isTablet ? 25 : 15),
+                  // SizedBox(height: isTablet ? 25 : 15),
 
                   /// CUSTOMER CARD
-                  Container(
-                    width: double.infinity,
-                    padding: EdgeInsets.all(isTablet ? 22 : 16),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(16),
-                      border: Border.all(
-                        color: const Color.fromRGBO(227, 227, 229, 1),
-                      ),
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(job.customerName ?? ''),
-                        SizedBox(height: 4),
-                        Text(job.location ?? ''),
-                        SizedBox(height: 10),
-                        Row(
-                          children: [
-                            Icon(Icons.access_time, size: 16),
-                            SizedBox(width: 5),
-                            Text("${job.date}, ${job.time}"),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-
-                  SizedBox(height: 20),
-
-                  /// CALL BUTTON
-                  _buildActionButton(
-                    maxWidth: maxWidth,
-                    icon: Icons.call_outlined,
-                    text: "Call Customer",
-                    onPressed: () async {
-                      if (job.customerPhone != null &&
-                          job.customerPhone!.isNotEmpty) {
-                        bool granted = await requestCallPermission();
-                        if (granted) {
-                          await FlutterPhoneDirectCaller.callNumber(
-                            job.customerPhone!,
-                          );
-                        }
-                      }
-                    },
-                  ),
-
-                  SizedBox(height: 15),
-
-                  /// MESSAGE BUTTON
-                  _buildActionButton(
-                    maxWidth: maxWidth,
-                    icon: Icons.chat_bubble_outline,
-                    text: "Message",
-                    onPressed: () async {
-                      if (job.customerPhone != null) {
-                        await openSms(job.customerPhone!);
-                      }
-                    },
-                  ),
-                  Expanded(
-                    child: ElevatedButton.icon(
-                      icon: const Icon(Icons.navigation),
-                      label: const Text("Navigate"),
-                      onPressed: () async {
-                        await openGoogleMapFromRoute();
-                      },
-                    ),
-                  ),
                 ],
               ),
             ),
