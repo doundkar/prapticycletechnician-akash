@@ -60,7 +60,14 @@ class NavigationController extends GetxController {
     bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
 
     if (!serviceEnabled) {
-      throw "Location services are disabled";
+       Get.snackbar(
+        "Warning",
+        "Please enable the location",
+        backgroundColor: Colors.amber,
+        colorText: Colors.black,
+      );
+      return;
+      // throw "Location services are disabled";
     }
 
     LocationPermission permission = await Geolocator.checkPermission();
@@ -70,7 +77,13 @@ class NavigationController extends GetxController {
     }
 
     if (permission == LocationPermission.deniedForever) {
-      throw "Location permission permanently denied";
+     Get.snackbar(
+        "Error",
+        "Location permission permanently denied",
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+      return;
     }
 
     currentPosition = await Geolocator.getCurrentPosition(

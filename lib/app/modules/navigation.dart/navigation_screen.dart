@@ -151,9 +151,9 @@ class _NavigationScreenState extends State<NavigationScreen> {
                         GetBuilder<NavigationController>(
                           builder: (controller) {
                             if (controller.currentPosition == null) {
+                           
                               return Center(child: CircularProgressIndicator());
                             }
-
                             return MapplsMap(
                               initialCameraPosition: CameraPosition(
                                 target: LatLng(
