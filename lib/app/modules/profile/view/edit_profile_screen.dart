@@ -3,7 +3,6 @@ import 'package:bicycle_app_technician/app/modules/profile/profile_controller.da
 import 'package:bicycle_app_technician/app/routes/app_routes.dart';
 import 'package:bicycle_app_technician/utils/api_constants.dart';
 import 'package:bicycle_app_technician/utils/shared_prefs.dart';
-import 'package:bicycle_app_technician/view/widgets/custom_snackbar.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/state_manager.dart';

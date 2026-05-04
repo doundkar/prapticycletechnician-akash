@@ -57,6 +57,16 @@ class MainApp extends StatelessWidget {
       ),
       initialRoute: initialRoute,
       getPages: AppPages.routes,
+     builder: (context, child) {
+        final mediaQuery = MediaQuery.of(context);
+
+        return MediaQuery(
+          data: mediaQuery.copyWith(
+            textScaleFactor: 1.0, 
+          ),
+          child: child!,
+        );
+      },
     );
   }
 }
