@@ -139,74 +139,75 @@ class _NavigationScreenState extends State<NavigationScreen> {
         return Scaffold(
           appBar: CustomAppBar(title: "Navigation"),
           body: SafeArea(
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                children: [
-                  SizedBox(
-                    width: double.infinity,
-                    height: maxWidth > 700 ? 400 : 260,
-                    child: Stack(
-                      children: [
-                        GetBuilder<NavigationController>(
-                          builder: (controller) {
-                            if (controller.currentPosition == null) {
-                           
-                              return Center(child: CircularProgressIndicator());
-                            }
-                            return MapplsMap(
-                              initialCameraPosition: CameraPosition(
-                                target: LatLng(
-                                  controller.currentPosition!.latitude,
-                                  controller.currentPosition!.longitude,
-                                ),
-                                zoom: 14,
-                              ),
-                              onMapCreated: (map) async {
-                                mapController = map;
-                              },
-
-                              onStyleLoadedCallback: () async {
-                                isStyleLoaded = true;
-                                await mapController!.addSymbol(
-                                  SymbolOptions(
-                                    geometry: LatLng(
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+ return SingleChildScrollView(
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    children: [
+                      SizedBox(
+                        width: double.infinity,
+                        height: maxWidth > 700 ? 400 : 260,
+                        child: Stack(
+                          children: [
+                            GetBuilder<NavigationController>(
+                              builder: (controller) {
+                                if (controller.currentPosition == null) {
+                               
+                                  return Center(child: CircularProgressIndicator());
+                                }
+                                return MapplsMap(
+                                  initialCameraPosition: CameraPosition(
+                                    target: LatLng(
                                       controller.currentPosition!.latitude,
                                       controller.currentPosition!.longitude,
                                     ),
-                                    iconImage: "marker-15",
+                                    zoom: 14,
                                   ),
+                                  onMapCreated: (map) async {
+                                    mapController = map;
+                                  },
+                
+                                  onStyleLoadedCallback: () async {
+                                    isStyleLoaded = true;
+                                    await mapController!.addSymbol(
+                                      SymbolOptions(
+                                        geometry: LatLng(
+                                          controller.currentPosition!.latitude,
+                                          controller.currentPosition!.longitude,
+                                        ),
+                                        iconImage: "marker-15",
+                                      ),
+                                    );
+                                    await tryDrawRoute();
+                                  },
+                                  myLocationEnabled: true,
+                                  myLocationTrackingMode:
+                                      MyLocationTrackingMode.tracking,
                                 );
-                                await tryDrawRoute();
                               },
-                              myLocationEnabled: true,
-                              myLocationTrackingMode:
-                                  MyLocationTrackingMode.tracking,
-                            );
-                          },
+                            ),
+                
+                            Positioned(
+                              bottom: 15,
+                              right: 15,
+                              child: FloatingActionButton(
+                                onPressed: () async {
+                                  await openGoogleMapFromRoute();
+                                },
+                                backgroundColor: Colors.blue,
+                                child: const Icon(Icons.navigation),
+                              ),
+                            ),
+                          ],
                         ),
-
-                        Positioned(
-                          bottom: 15,
-                          right: 15,
-                          child: FloatingActionButton(
-                            onPressed: () async {
-                              await openGoogleMapFromRoute();
-                            },
-                            backgroundColor: Colors.blue,
-                            child: const Icon(Icons.navigation),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-
-                  SizedBox(height: isTablet ? 28 : 20),
-
-                  /// STATUS + ETA
-                  Expanded(
-                    child: SingleChildScrollView(
-                      child: Column(
+                      ),
+                
+                      SizedBox(height: isTablet ? 28 : 20),
+                
+                      /// STATUS + ETA
+                      Column(
                         children: [
                           Padding(
                             padding: const EdgeInsets.all(15),
@@ -278,7 +279,7 @@ class _NavigationScreenState extends State<NavigationScreen> {
                                                 null) {
                                               return Text("Calculating...");
                                             }
-
+                                    
                                             return Text(
                                               "${controller.etaInMinutes!.toStringAsFixed(0)} mins",
                                               style: TextStyle(
@@ -321,9 +322,9 @@ class _NavigationScreenState extends State<NavigationScreen> {
                               ],
                             ),
                           ),
-
+                                    
                           SizedBox(height: 20),
-
+                                    
                           /// CALL BUTTON
                           _buildActionButton(
                             maxWidth: maxWidth,
@@ -341,9 +342,9 @@ class _NavigationScreenState extends State<NavigationScreen> {
                               }
                             },
                           ),
-
+                                    
                           SizedBox(height: 15),
-
+                                    
                           /// MESSAGE BUTTON
                           _buildActionButton(
                             maxWidth: maxWidth,
@@ -357,14 +358,20 @@ class _NavigationScreenState extends State<NavigationScreen> {
                           ),
                         ],
                       ),
-                    ),
+                
+                      // SizedBox(height: isTablet ? 25 : 15),
+                
+                      /// CUSTOMER CARD
+                    ],
                   ),
-
-                  // SizedBox(height: isTablet ? 25 : 15),
-
-                  /// CUSTOMER CARD
-                ],
-              ),
+                ),
+              );
+           
+              },
+              
+             
+           
+           
             ),
           ),
         );

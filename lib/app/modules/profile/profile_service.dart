@@ -51,8 +51,9 @@ class ProfileService {
       var streamedResp = await request.send();
       var response = await http.Response.fromStream(streamedResp);
       log("updateProfile resp: ${response.body}");
+         final jsonBody = jsonDecode(response.body);
       if (response.statusCode == 200) {
-        final jsonBody = jsonDecode(response.body);
+     
         return ApiResponseModel(
           status: true,
           message: jsonBody["message"],
@@ -61,7 +62,7 @@ class ProfileService {
       } else {
         return ApiResponseModel(
           status: false,
-          message: "Statuscode ${response.statusCode}",
+          message: jsonBody["message"],
         );
       }
     } catch (e) {

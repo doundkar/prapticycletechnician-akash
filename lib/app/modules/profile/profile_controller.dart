@@ -2,6 +2,8 @@ import 'dart:developer';
 import 'dart:io';
 import 'package:bicycle_app_technician/app/model/referral_history_model.dart';
 import 'package:bicycle_app_technician/app/model/work_location_model.dart';
+import 'package:flutter/material.dart';
+import 'package:get/route_manager.dart';
 import 'package:http/http.dart' as http;
 import 'package:bicycle_app_technician/app/model/api_response_model.dart';
 import 'package:bicycle_app_technician/app/modules/profile/profile_service.dart';
@@ -44,11 +46,13 @@ class ProfileController extends GetxController {
       }
       hasError.value = true;
       errorMessage.value = response.message!;
+       Get.snackbar("Error", response.message.toString(),backgroundColor: Colors.red,duration: Duration(seconds: 5));
       return false;
     }
     catch(e){
       hasError.value = true;
       errorMessage.value = "Error $e occurred";
+      
       return false;
     }
     finally{

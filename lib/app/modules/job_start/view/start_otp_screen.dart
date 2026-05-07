@@ -154,15 +154,15 @@ class _StartJobOtpScreenState extends State<StartJobOtpScreen> {
 
                         SizedBox(height: isTablet ? 20 : 15),
 
-                        Text(
-                          "Orders Details",
-                          style: TextStyle(
-                            fontSize: isTablet ? 20 : 18,
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
+                        // Text(
+                        //   "Orders Details",
+                        //   style: TextStyle(
+                        //     fontSize: isTablet ? 20 : 18,
+                        //     fontWeight: FontWeight.w700,
+                        //   ),
+                        // ),
 
-                        SizedBox(height: isTablet ? 14 : 10),
+                        // SizedBox(height: isTablet ? 14 : 10),
 
                         ...job.serviceItems!.asMap().entries.map((entry) {
                           int index = entry.key;
@@ -226,6 +226,7 @@ class _StartJobOtpScreenState extends State<StartJobOtpScreen> {
                             focusedPinTheme: focusedPinTheme,
                           ),
                         ),
+                         SizedBox(height: isTablet ? 35 : 25),
                       ],
                     ),
                   ),

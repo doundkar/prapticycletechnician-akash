@@ -31,7 +31,7 @@ class _AllJobsScreenState extends State<AllJobsScreen> {
             : maxWidth;
 
         bool isTablet = maxWidth > 600;
-
+// print("maxwidth:: ${maxWidth}");
         return Scaffold(
           appBar: CustomAppBar(title: "All Jobs", isBackNeeded: false),
           body: Obx(() {
@@ -341,21 +341,21 @@ class _AllJobsScreenState extends State<AllJobsScreen> {
                     Text(
                       "$duration mins",
                       style: TextStyle(
-                        fontSize: isTablet ? 20 : 18,
+                        fontSize: isTablet ? 20 : 16,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
                     Text(
                       " - ",
                       style: TextStyle(
-                        fontSize: isTablet ? 20 : 18,
+                        fontSize: isTablet ? 20 : 16,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
                     Text(
                       "₹$price",
                       style: TextStyle(
-                        fontSize: isTablet ? 20 : 18,
+                        fontSize: isTablet ? 20 : 16,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
