@@ -22,7 +22,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   final ImagePicker _picker = ImagePicker();
   File? _image;
 
-  
   String image = SharedPrefs.getString("image");
   String email = SharedPrefs.getString("email");
   String phone = SharedPrefs.getString("phone");
@@ -104,14 +103,16 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                         ? image.isEmpty
                               ? Icon(Icons.person, size: 50, color: Colors.grey)
                               : ClipRRect(
-                                borderRadius: BorderRadiusGeometry.circular(55),
-                                child: Image.network(
+                                  borderRadius: BorderRadiusGeometry.circular(
+                                    55,
+                                  ),
+                                  child: Image.network(
                                     "${ApiConstants.imageBaseUrl}$image",
                                     fit: BoxFit.cover,
                                     height: 110,
                                     width: 110,
                                   ),
-                              )
+                                )
                         : SizedBox.shrink(),
                   ),
 
@@ -174,7 +175,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 ),
               ),
             ),
-            const SizedBox(height: 20,),
+            const SizedBox(height: 20),
 
             const Text(
               "Email",
@@ -219,14 +220,31 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
       /// BOTTOM BUTTON
       bottomNavigationBar: Obx(
-        ()=> SafeArea(
+        () => SafeArea(
           child: Padding(
             padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
             child: InkWell(
               onTap: () async {
-                bool resp = await controller.updateProfileReq(phoneController.text.trim(), email:emailController.text.trim(),image: _image);
-                if(resp){
-                  Get.toNamed(AppRoutes.updateNumberVerification,arguments: phoneController.text.trim());
+                if ((ApiConstants.imageBaseUrl.isEmpty || image.isEmpty) &&
+                    _image == null) {
+                  Get.snackbar(
+                    "Profile Image",
+                    "Please select profile image",
+                    snackPosition: SnackPosition.BOTTOM,
+                  );
+                  return;
+                }
+
+                bool resp = await controller.updateProfileReq(
+                  phoneController.text.trim(),
+                  email: emailController.text.trim(),
+                  image: _image,
+                );
+                if (resp) {
+                  Get.toNamed(
+                    AppRoutes.updateNumberVerification,
+                    arguments: phoneController.text.trim(),
+                  );
                 }
               },
               child: CustomButton(

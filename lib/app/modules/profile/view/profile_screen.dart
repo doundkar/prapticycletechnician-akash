@@ -284,7 +284,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
             /// SETTINGS
             Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start, 
               children: [
                 Icon(Icons.settings, size: iconSize * 1.2),
                 const SizedBox(width: 8),
