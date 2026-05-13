@@ -57,7 +57,7 @@ class _VerificationScreenState extends State<VerificationScreen> {
                         Text(
                           "Verification",
                           style: TextStyle(
-                              fontSize: maxWidth * 0.07,
+                              fontSize: maxWidth * 0.06,
                               fontWeight: FontWeight.w800),
                         ),
               
