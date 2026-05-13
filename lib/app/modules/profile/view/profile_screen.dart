@@ -205,7 +205,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
                         Row(
                           children: [
-                            Text(ratings),
+                            Text(ratings.toString()),
                             const SizedBox(width: 4),
                             const Icon(
                               Icons.star,

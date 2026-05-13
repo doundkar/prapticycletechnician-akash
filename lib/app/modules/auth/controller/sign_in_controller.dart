@@ -44,7 +44,6 @@ class SignInController extends GetxController {
   }
 
   Future<void> verifyOtp(String otp) async {
-
     isLoading.value = true;
     hasError.value = false;
     errorMessage.value = '';
