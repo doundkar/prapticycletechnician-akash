@@ -188,17 +188,17 @@ class _JobInProgressScreenState extends State<JobInProgressScreen> {
 
                 const SizedBox(height: 30),
 
-                /// Service Summary
-                const Text(
-                  "Service Job Summary",
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                    color: Color.fromRGBO(102, 112, 133, 1),
-                  ),
-                ),
+                // /// Service Summary
+                // const Text(
+                //   "Service Job Summary",
+                //   style: TextStyle(
+                //     fontSize: 16,
+                //     fontWeight: FontWeight.w600,
+                //     color: Color.fromRGBO(102, 112, 133, 1),
+                //   ),
+                // ),
 
-                const SizedBox(height: 15),
+                // const SizedBox(height: 15),
 
                 const Text(
                   "Orders Details",
