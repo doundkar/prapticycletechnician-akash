@@ -243,7 +243,11 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 if (resp) {
                   Get.toNamed(
                     AppRoutes.updateNumberVerification,
-                    arguments: phoneController.text.trim(),
+                    arguments: {
+                      "phone": phoneController.text.trim(),
+                      "email": emailController.text.trim(),
+                      "image": _image?.path ?? image,
+                    },
                   );
                 }
               },

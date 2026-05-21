@@ -50,10 +50,11 @@ class ProfileService {
 
       var streamedResp = await request.send();
       var response = await http.Response.fromStream(streamedResp);
-      log("updateProfile resp: ${response.body}");
+     
          final jsonBody = jsonDecode(response.body);
       if (response.statusCode == 200) {
-     
+     String otp = jsonBody["data"]['otp'];
+     await SharedPrefs.setString("otp", "$otp");
         return ApiResponseModel(
           status: true,
           message: jsonBody["message"],

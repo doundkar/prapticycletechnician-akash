@@ -143,4 +143,5 @@ class SignUpController extends GetxController {
       isLoading.value = false;
     }
   }
+
 }

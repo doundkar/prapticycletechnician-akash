@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:bicycle_app_technician/app/modules/auth/service/auth_service.dart';
+import 'package:bicycle_app_technician/appflush_bar.dart';
 import 'package:bicycle_app_technician/utils/shared_prefs.dart';
 import 'package:get/get.dart';
 
@@ -23,7 +24,7 @@ class SignInController extends GetxController {
         await SharedPrefs.setString("user_id", "${response.data["user_id"]}");
         await SharedPrefs.setString("otp", "${response.data["otp"]}");
         await SharedPrefs.setString("phone",phone);
-        
+         AppFlushBar.success(Get.context!, message: "OTP sent on WhatsApp\n${response.data["otp"].toString()}");
         log("${response.data}");
       }
       else{
@@ -70,7 +71,7 @@ class SignInController extends GetxController {
         await SharedPrefs.setString("token",response.data!.token!);
         await SharedPrefs.setString("jobs_completed",response.data!.jobsCompleted!.toString());
         await SharedPrefs.setString("ratings",response.data!.ratings.toString());
-       // await SharedPrefs.setString("promo_code",response.data!.promoCode!);
+        await SharedPrefs.setString("promo_code",response.data!.promoCode.toString());
         log("${response.data}");
       }
       else{

@@ -28,6 +28,11 @@ class _NumberVerificationScreenState extends State<NumberVerificationScreen> {
   void initState() {
     super.initState();
     startTimer();
+    String otp = SharedPrefs.getString("otp");
+
+    if (otp.isNotEmpty) {
+      otpController.text = otp;
+    }
   }
 
   void startTimer() {
@@ -187,6 +192,7 @@ class _NumberVerificationScreenState extends State<NumberVerificationScreen> {
                                 if (remainingSeconds == 0) {
                                   await controller.getOtp(phone);
                                   remainingSeconds = 60;
+
                                   startTimer();
                                   if (controller.hasError.value) {
                                     ScaffoldMessenger.of(context).showSnackBar(
@@ -197,12 +203,11 @@ class _NumberVerificationScreenState extends State<NumberVerificationScreen> {
                                     );
                                   } else {
                                     String otp = SharedPrefs.getString("otp");
-                                    // ScaffoldMessenger.of(context).showSnackBar(
-                                    //   CustomSnackbar.show(
-                                    //     title: "OTP : $otp",
-                                    //     color: Colors.green[300]!,
-                                    //   ),
-                                    // );
+                                    setState(() {
+                                      otpController.text =
+                                          otp; // autofill new OTP
+                                    });
+                                    
                                   }
                                 }
                               },
