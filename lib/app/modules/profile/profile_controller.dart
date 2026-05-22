@@ -22,9 +22,10 @@ class ProfileController extends GetxController {
   Rxn<ReferralHistoryModel> referral = Rxn();
 
   @override
-  void onInit(){
+  void onInit()async{
     super.onInit();
     getData();
+    await getRefferalAmount();
   }
 
   void getData() async {
@@ -225,5 +226,11 @@ class ProfileController extends GetxController {
     } finally {
       isLoading.value = false;
     }
+  }
+
+
+ 
+  Future<void>getRefferalAmount()async{
+    final response = await ProfileService.getReferralAmount();
   }
 }

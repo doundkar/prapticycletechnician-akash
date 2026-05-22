@@ -242,7 +242,30 @@ class ProfileService {
       return ApiResponseModel(status: false, message: "Error $e occurred");
     }
   }
-
+// Get Referral amount Api
+  static Future<void> getReferralAmount()async{
+    try {
+      final url = Uri.parse(
+        "https://thebicyclestore.in/api/app-fees",
+      );
+    
+      final response = await http.get(
+        url,
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+        },
+      );
+ 
+      final data = json.decode(response.body);
+      if (response.statusCode == 200) {
+       final technicanRefferalAmount = data['technician_referral_amount'];
+       await SharedPrefs.setString('technician_referral',technicanRefferalAmount.toString() );
+      } 
+    } catch (e) {
+     
+    }
+  }
   static Future<ApiResponseModel<ReferralHistoryModel>>
   getReferralHistory() async {
     String token = SharedPrefs.getString("token");

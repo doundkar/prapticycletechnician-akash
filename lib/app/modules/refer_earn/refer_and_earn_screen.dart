@@ -23,9 +23,11 @@ class ReferAndEarnScreen extends StatefulWidget {
 class _ReferAndEarnScreenState extends State<ReferAndEarnScreen> {
   bool isExpanded = true;
 
-  ProfileController controller = Get.find();
+  // ProfileController controller = Get.find();
+   final ProfileController controller = Get.put(ProfileController());
   late String promoCode;
   late String pcsAmt;
+  String technicianRefferal ='0';
   Timer? timer;
 
   @override
@@ -45,6 +47,7 @@ class _ReferAndEarnScreenState extends State<ReferAndEarnScreen> {
     await controller.fetchHistory();
     promoCode = SharedPrefs.getString("promo_code");
     pcsAmt = SharedPrefs.getString("pcs_wallet");
+    technicianRefferal =SharedPrefs.getString('technician_referral');
   }
 
   @override
@@ -119,7 +122,7 @@ class _ReferAndEarnScreenState extends State<ReferAndEarnScreen> {
                                 ),
                               ),
                               TextSpan(
-                                text: " ₹50",
+                                text: " ₹$technicianRefferal",
                                 style: TextStyle(
                                   color: Colors.white,
                                   fontSize: 15,
