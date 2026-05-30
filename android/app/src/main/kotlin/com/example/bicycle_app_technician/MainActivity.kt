@@ -1,4 +1,4 @@
-package com.example.bicycle_app_technician
+package com.prapti.bicycleapptechnician
 
 import io.flutter.embedding.android.FlutterActivity
 
