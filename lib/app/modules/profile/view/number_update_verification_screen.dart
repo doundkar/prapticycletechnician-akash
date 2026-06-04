@@ -22,7 +22,9 @@ class NumberUpdateVerificationScreen extends StatefulWidget {
 class _NumberUpdateVerificationScreenState
     extends State<NumberUpdateVerificationScreen> {
   Timer? timer;
-  int remainingSeconds = 60; /// 
+  int remainingSeconds = 60;
+
+  ///
   TextEditingController otpController = TextEditingController();
 
   ProfileController controller = Get.find();
@@ -31,11 +33,11 @@ class _NumberUpdateVerificationScreenState
   void initState() {
     super.initState();
     startTimer();
-    String otp = SharedPrefs.getString("otp");
+    // String otp = SharedPrefs.getString("otp");
 
-    if (otp.isNotEmpty) {
-      otpController.text = otp;
-    }
+    // if (otp.isNotEmpty) {
+    //   otpController.text = otp;
+    // }
   }
 
   void startTimer() {
@@ -182,7 +184,6 @@ class _NumberUpdateVerificationScreenState
 
                         SizedBox(height: maxWidth * 0.06),
 
-
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
@@ -207,14 +208,21 @@ class _NumberUpdateVerificationScreenState
                                   );
 
                                   if (resp) {
-                                    String otp = SharedPrefs.getString("otp");
+                                    // String otp = SharedPrefs.getString("otp");
 
                                     setState(() {
-                                      otpController.text =
-                                          otp; // autofill new otp
-                                      remainingSeconds = 60;  ///
-                                    });
+                                      // otpController.text =
+                                      //     otp; // autofill new otp
+                                      remainingSeconds = 60;
 
+                                      ///
+                                    });
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      CustomSnackbar.show(
+                                        title: "OTP sent on WhatsApp Number",
+                                        color: Colors.green[300]!,
+                                      ),
+                                    );
                                     timer?.cancel();
                                     startTimer();
                                   }
@@ -247,7 +255,8 @@ class _NumberUpdateVerificationScreenState
                             ),
                           ],
                         ),
-                          SizedBox(height: maxWidth * 0.06),
+                        SizedBox(height: maxWidth * 0.06),
+
                         /// Submit Button
                         InkWell(
                           onTap: () async {
@@ -294,7 +303,6 @@ class _NumberUpdateVerificationScreenState
                         ),
 
                         const SizedBox(height: 20),
-                       
 
                         /// Timer
                         RichText(

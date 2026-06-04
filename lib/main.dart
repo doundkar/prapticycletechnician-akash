@@ -7,8 +7,6 @@ import 'package:bicycle_app_technician/view/Colors/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get_navigation/src/root/get_material_app.dart';
 
-
- 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 

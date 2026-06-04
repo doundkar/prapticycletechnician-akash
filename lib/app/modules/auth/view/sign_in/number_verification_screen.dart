@@ -28,11 +28,11 @@ class _NumberVerificationScreenState extends State<NumberVerificationScreen> {
   void initState() {
     super.initState();
     startTimer();
-    String otp = SharedPrefs.getString("otp");
+    // String otp = SharedPrefs.getString("otp");
 
-    if (otp.isNotEmpty) {
-      otpController.text = otp;
-    }
+    // if (otp.isNotEmpty) {
+    //   otpController.text = otp;
+    // }
   }
 
   void startTimer() {
@@ -202,12 +202,12 @@ class _NumberVerificationScreenState extends State<NumberVerificationScreen> {
                                       ),
                                     );
                                   } else {
-                                    String otp = SharedPrefs.getString("otp");
-                                    setState(() {
-                                      otpController.text =
-                                          otp; // autofill new OTP
-                                    });
-                                    
+                                    // String otp = SharedPrefs.getString("otp");
+                                    // setState(() {
+                                    //   otpController.text =
+                                    //       otp; // autofill new OTP
+                                    // });
+                                     ScaffoldMessenger.of(context).showSnackBar(CustomSnackbar.show(title: "OTP sent on WhatsApp Number", color: Colors.green[300]!),);
                                   }
                                 }
                               },

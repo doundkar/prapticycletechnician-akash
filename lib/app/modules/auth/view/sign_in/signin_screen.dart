@@ -6,6 +6,7 @@ import 'package:bicycle_app_technician/view/widgets/custom_button.dart';
 import 'package:bicycle_app_technician/view/widgets/custom_snackbar.dart';
 import 'package:flutter/material.dart';
 import 'package:intl_phone_field/intl_phone_field.dart';
+import 'package:bicycle_app_technician/appflush_bar.dart';
 import 'package:get/get.dart';
 
 class SignInScreen extends StatefulWidget {
@@ -178,7 +179,8 @@ class _SignInScreenState extends State<SignInScreen> {
                               } else {
                                 String otp = SharedPrefs.getString("otp");
                                 // Commented by Akash Doundkar  09-04-2026
-                                // ScaffoldMessenger.of(context).showSnackBar(CustomSnackbar.show(title: "OTP : $otp", color: Colors.green[300]!));
+                                 ScaffoldMessenger.of(context).showSnackBar(CustomSnackbar.show(title: "OTP sent on WhatsApp Number", color: Colors.green[300]!),);
+                                  // AppFlushBar.success(Get.context!, message: "OTP sent on WhatsApp Number");
                                 Get.toNamed(AppRoutes.numbileVerification);
                               }
                             }

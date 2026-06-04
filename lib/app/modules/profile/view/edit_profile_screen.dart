@@ -3,6 +3,7 @@ import 'package:bicycle_app_technician/app/modules/profile/profile_controller.da
 import 'package:bicycle_app_technician/app/routes/app_routes.dart';
 import 'package:bicycle_app_technician/utils/api_constants.dart';
 import 'package:bicycle_app_technician/utils/shared_prefs.dart';
+import 'package:bicycle_app_technician/view/widgets/custom_snackbar.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/state_manager.dart';
@@ -241,6 +242,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                   image: _image,
                 );
                 if (resp) {
+                  ScaffoldMessenger.of(context).showSnackBar(CustomSnackbar.show(title: "OTP sent on WhatsApp Number", color: Colors.green[300]!),);
                   Get.toNamed(
                     AppRoutes.updateNumberVerification,
                     arguments: {

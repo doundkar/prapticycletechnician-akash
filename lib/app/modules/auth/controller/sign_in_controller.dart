@@ -24,8 +24,8 @@ class SignInController extends GetxController {
         await SharedPrefs.setString("user_id", "${response.data["user_id"]}");
         await SharedPrefs.setString("otp", "${response.data["otp"]}");
         await SharedPrefs.setString("phone",phone);
-        //  AppFlushBar.success(Get.context!, message: "OTP sent on WhatsApp\n${response.data["otp"].toString()}");
-        log("${response.data}");
+      
+        // log("${response.data}");
       }
       else{
         hasError.value = true;
