@@ -45,5 +45,33 @@
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+	<!-- LOCATION PERMISSIONS -->
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>This app needs your location to show navigation routes.</string>
+
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>This app needs your location to provide navigation services.</string>
+
+	<key>NSLocationAlwaysUsageDescription</key>
+	<string>This app needs your location to provide navigation services.</string>
+
+	<!-- CAMERA -->
+	<key>NSCameraUsageDescription</key>
+	<string>This app needs access to the camera to capture photos.</string>
+
+	<!-- PHOTO LIBRARY -->
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>This app needs access to your photo library to select images.</string>
+
+	<!-- OPTIONAL -->
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>This app needs permission to save images to your photo library.</string>
+
+	<!-- PHONE & SMS -->
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+		<string>tel</string>
+		<string>sms</string>
+	</array>
 </dict>
 </plist>

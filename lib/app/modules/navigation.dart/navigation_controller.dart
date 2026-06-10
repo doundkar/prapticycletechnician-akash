@@ -29,7 +29,7 @@ class NavigationController extends GetxController {
       final data = jsonDecode(response.body);
       return data["access_token"];
     } else {
-      print("Token Error: ${response.body}");
+      // print("Token Error: ${response.body}");
       return null;
     }
   }
@@ -114,8 +114,8 @@ class NavigationController extends GetxController {
     
         distanceInKm = (route.distance ?? 0) / 1000;
 
-        print("etaInMinutes:: ${etaInMinutes}");
-        print("distanceInKm:: ${distanceInKm}");
+        // print("etaInMinutes:: ${etaInMinutes}");
+        // print("distanceInKm:: ${distanceInKm}");
         String encoded = response.routes![0].geometry!;
 
         routePoints = decodePolyline(encoded);
