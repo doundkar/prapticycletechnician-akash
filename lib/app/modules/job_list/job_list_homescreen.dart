@@ -1,5 +1,5 @@
 import 'dart:developer';
-
+import 'dart:io';
 import 'package:bicycle_app_technician/app/model/service_item_model.dart';
 import 'package:bicycle_app_technician/app/modules/job_list/job_list_controller.dart';
 import 'package:bicycle_app_technician/app/modules/notification/notification_controller.dart';
@@ -13,6 +13,7 @@ import 'package:get/get.dart';
 // 15-04-2026 Akash Doundkar
 import 'package:flutter_phone_direct_caller/flutter_phone_direct_caller.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class JobListHomeScreen extends StatefulWidget {
   const JobListHomeScreen({super.key});
@@ -44,10 +45,19 @@ class _JobListHomeScreenState extends State<JobListHomeScreen> {
       User ID: $userIdStr
       """);
   }
+
   // 15-04-2026 Akash Doundkar
   Future<bool> requestCallPermission() async {
     var status = await Permission.phone.request();
     return status.isGranted;
+  }
+
+  Future<void> makeCall(String phone) async {
+    final Uri phoneUri = Uri(scheme: 'tel', path: phone);
+
+    if (await canLaunchUrl(phoneUri)) {
+      await launchUrl(phoneUri);
+    }
   }
 
   @override
@@ -376,23 +386,42 @@ class _JobListHomeScreenState extends State<JobListHomeScreen> {
                                       }
                                     },
                                     // 15-04-2026 Akash Doundkar
-                                    onCall: () async{
-                                       if(job.customerPhone!.isNotEmpty && job.customerPhone!=null ){
-                                         bool granted = await requestCallPermission();
-                                         if (granted) {
-                                           await FlutterPhoneDirectCaller.callNumber(job.customerPhone.toString());
-                                         } else {
-                                           Get.snackbar("Permission Denied", "Phone permission is required");
-                                         }
-                                       }else{
-                                         ScaffoldMessenger.of(context).showSnackBar(
-                                           SnackBar(
-                                             content: Text("Phone number is missing"),
-                                             backgroundColor: Colors.red,
-                                           ),
-                                         );
-                                       }
-
+                                    onCall: () async {
+                                      if (job.customerPhone!.isNotEmpty &&
+                                          job.customerPhone != null) {
+                                        if (Platform.isIOS) {
+                                          await makeCall(
+                                            job.customerPhone.toString(),
+                                          );
+                                          // await FlutterPhoneDirectCaller.callNumber(
+                                          //   job.customerPhone.toString(),
+                                          // );
+                                          return;
+                                        }
+                                        bool granted =
+                                            await requestCallPermission();
+                                        if (granted) {
+                                          await FlutterPhoneDirectCaller.callNumber(
+                                            job.customerPhone.toString(),
+                                          );
+                                        } else {
+                                          Get.snackbar(
+                                            "Permission Denied",
+                                            "Phone permission is required",
+                                          );
+                                        }
+                                      } else {
+                                        ScaffoldMessenger.of(
+                                          context,
+                                        ).showSnackBar(
+                                          SnackBar(
+                                            content: Text(
+                                              "Phone number is missing",
+                                            ),
+                                            backgroundColor: Colors.red,
+                                          ),
+                                        );
+                                      }
                                     },
                                     maxWidth: maxWidth,
                                   ),
@@ -997,9 +1026,14 @@ Widget buildAcceptedJobCard({
             Expanded(
               child: ElevatedButton.icon(
                 onPressed: onNavigate,
-                icon: Icon(mode=="home_service" ? Icons.navigation : Icons.arrow_outward_rounded, size: isTablet ? 20 : 18),
+                icon: Icon(
+                  mode == "home_service"
+                      ? Icons.navigation
+                      : Icons.arrow_outward_rounded,
+                  size: isTablet ? 20 : 18,
+                ),
                 label: Text(
-                  mode=="home_service" ? "Navigate" : "Start",
+                  mode == "home_service" ? "Navigate" : "Start",
                   style: TextStyle(
                     fontSize: isTablet ? 16 : 14,
                     fontWeight: FontWeight.w500,

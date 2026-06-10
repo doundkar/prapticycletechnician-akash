@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:bicycle_app_technician/app/model/job_details_model.dart';
 import 'package:bicycle_app_technician/app/routes/app_routes.dart';
 import 'package:bicycle_app_technician/view/Colors/app_colors.dart';
@@ -338,13 +339,37 @@ class _NavigationScreenState extends State<NavigationScreen> {
                               onPressed: () async {
                                 if (job.customerPhone != null &&
                                     job.customerPhone!.isNotEmpty) {
+                                       if (Platform.isIOS) {
+                                          await FlutterPhoneDirectCaller.callNumber(
+                                            job.customerPhone.toString(),
+                                          );
+                                          return;
+                                        }
                                   bool granted = await requestCallPermission();
                                   if (granted) {
                                     await FlutterPhoneDirectCaller.callNumber(
                                       job.customerPhone!,
                                     );
-                                  }
-                                }
+                                  }else{
+                                    
+                                          Get.snackbar(
+                                            "Permission Denied",
+                                            "Phone permission is required",
+                                          );
+                                        }
+                                  
+                                }else {
+                                        ScaffoldMessenger.of(
+                                          context,
+                                        ).showSnackBar(
+                                          SnackBar(
+                                            content: Text(
+                                              "Phone number is missing",
+                                            ),
+                                            backgroundColor: Colors.red,
+                                          ),
+                                        );
+                                      }
                               },
                             ),
 
