@@ -23,6 +23,7 @@ class SignUpController extends GetxController {
     try {
       final response = await AuthService.signup(body);
       if (response.status) {
+         await SharedPrefs.setString("promo_code", "");
         isStep1Completed.value = true;
         await SharedPrefs.setString("user_id", "${response.data["user_id"]}");
         await SharedPrefs.setString("phone", response.data["phone"]);

@@ -448,7 +448,9 @@ class _ReferAndEarnScreenState extends State<ReferAndEarnScreen> {
           );
         } else {
           final referralLink =
-              "https://thebicyclestore.in/refer/?code=$promoCode";
+        //  https://thebicyclestore.in/technician/refer/?code=AKA0712
+
+              "https://thebicyclestore.in/technician/refer/?code=$promoCode";
           if (title == "Facebook") {
             controller.shareOnFacebook(referralLink);
           }

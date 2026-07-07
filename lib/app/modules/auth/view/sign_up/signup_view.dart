@@ -1,5 +1,6 @@
 import 'package:bicycle_app_technician/app/modules/auth/controller/sign_up_controller.dart';
 import 'package:bicycle_app_technician/app/routes/app_routes.dart';
+import 'package:bicycle_app_technician/utils/shared_prefs.dart';
 import 'package:bicycle_app_technician/view/Colors/app_colors.dart';
 import 'package:bicycle_app_technician/view/widgets/custom_button.dart';
 import 'package:bicycle_app_technician/view/widgets/custom_snackbar.dart';
@@ -28,6 +29,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
   final SignUpController controller = Get.find();
 
   bool _isPasswordVisible = false;
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _referralCodeController.text = SharedPrefs.getString("promo_code");
+    });
+  }
 
   Future<void> _selectDate() async {
     DateTime? pickedDate = await showDatePicker(
@@ -64,10 +72,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
         child: LayoutBuilder(
           builder: (context, constraints) {
             double maxWidth = constraints.maxWidth;
-        
+
             // Tablet support
             double contentWidth = maxWidth > 600 ? 500 : maxWidth;
-        
+
             return Obx(
               () => Center(
                 child: SizedBox(
@@ -78,7 +86,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         SizedBox(height: maxWidth * 0.04),
-              
+
                         /// Title
                         Center(
                           child: Column(
@@ -102,9 +110,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
                             ],
                           ),
                         ),
-              
+
                         SizedBox(height: maxWidth * 0.08),
-              
+
                         /// First & Last Name
                         Row(
                           children: [
@@ -125,17 +133,17 @@ class _SignUpScreenState extends State<SignUpScreen> {
                             ),
                           ],
                         ),
-              
+
                         SizedBox(height: maxWidth * 0.05),
-              
+
                         _buildTextField(
                           "Email*",
                           "example@gmail.com",
                           controller: _emailController,
                         ),
-              
+
                         SizedBox(height: maxWidth * 0.05),
-              
+
                         _buildTextField(
                           "Date of birth*",
                           "DD/MM/YYYY",
@@ -144,7 +152,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           suffixIcon: Icons.calendar_today_outlined,
                           onTap: _selectDate,
                         ),
-              
+
                         SizedBox(height: maxWidth * 0.05),
                         const Text(
                           "Phone Number*",
@@ -154,17 +162,19 @@ class _SignUpScreenState extends State<SignUpScreen> {
                             color: Color.fromRGBO(108, 114, 120, 1),
                           ),
                         ),
-                         SizedBox(height: maxWidth * 0.02),
+                        SizedBox(height: maxWidth * 0.02),
                         IntlPhoneField(
                           decoration: InputDecoration(
                             counter: Text(''),
                             // labelText: 'MOBILE NUMBER',
-                            labelStyle: const TextStyle(fontSize: 12, color: Colors.grey),
+                            labelStyle: const TextStyle(
+                              fontSize: 12,
+                              color: Colors.grey,
+                            ),
                             enabledBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(12),
                               borderSide: const BorderSide(
                                 color: Color(0xFFE0E0E0), // light grey
-
                               ),
                             ),
                             border: OutlineInputBorder(
@@ -177,7 +187,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
                             focusedBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(12),
                               borderSide: const BorderSide(
-                                color: Color(0xFFE0E0E0), // same light grey when focused
+                                color: Color(
+                                  0xFFE0E0E0,
+                                ), // same light grey when focused
                                 width: 1.2,
                               ),
                             ),
@@ -188,10 +200,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
                             _phoneController.text = phone.number;
                           },
                         ),
+
                         // _buildPhoneField(),
-              
+
                         // SizedBox(height: maxWidth * 0.05),
-              
                         _buildTextField(
                           "Set Password*",
                           "*******",
@@ -201,10 +213,14 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
                         SizedBox(height: maxWidth * 0.05),
 
-                        _buildTextField("Promo Code", "PCS00XXX",controller: _referralCodeController),
-              
+                        _buildTextField(
+                          "Promo Code",
+                          "PCS00XXX",
+                          controller: _referralCodeController,
+                        ),
+
                         SizedBox(height: maxWidth * 0.12),
-              
+
                         /// Next Button
                         InkWell(
                           onTap: () async {
@@ -221,7 +237,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                 );
                                 return;
                               }
-                            } 
+                            }
                             if (_phoneController.text.isNotEmpty) {
                               bool isValid = Validator.validatePhoneNumber(
                                 _phoneController.text.trim(),
@@ -236,10 +252,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                 );
                                 return;
                               }
-                            } 
-                            if (_firstNameController.text
-                                    .trim()
-                                    .isEmpty ||
+                            }
+                            if (_firstNameController.text.trim().isEmpty ||
                                 _lastNameController.text.trim().isEmpty ||
                                 _dobController.text.trim().isEmpty ||
                                 _phoneController.text.trim().isEmpty ||
@@ -269,7 +283,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                 "phone": _phoneController.text.trim(),
                                 "dob": _dobController.text.trim(),
                                 "password": _passwordController.text.trim(),
-                                "promo_code":_referralCodeController.text.trim()
+                                "promo_code": _referralCodeController.text
+                                    .trim(),
                               };
                               await controller.signUp(body);
                               if (controller.isStep1Completed.value) {
@@ -295,9 +310,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
                             height: 48,
                           ),
                         ),
-              
+
                         SizedBox(height: maxWidth * 0.05),
-              
+
                         /// Login Text
                         Center(
                           child: InkWell(
@@ -326,7 +341,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                             ),
                           ),
                         ),
-              
+
                         SizedBox(height: maxWidth * 0.05),
                       ],
                     ),

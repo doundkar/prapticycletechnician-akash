@@ -64,6 +64,11 @@ class AppPages {
       page: () => SignUpScreen(),
       binding: SignUpBinding(),
     ),
+     GetPage(
+      name:AppRoutes.bottomNav,
+      page: () => CustomBottomNav(),
+      binding: BottomNavBinding()
+    ),
     GetPage(
       name: AppRoutes.numbileVerification,
       page: () => NumberVerificationScreen(),
@@ -206,10 +211,6 @@ class AppPages {
       page: () => ApprovalPendingScreen(),
       // binding: AddPartsBinding()
     ),
-    GetPage(
-      name:AppRoutes.bottomNav,
-      page: () => CustomBottomNav(),
-      binding: BottomNavBinding()
-    )
+   
   ];
 }

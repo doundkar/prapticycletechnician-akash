@@ -1,12 +1,10 @@
 import 'package:bicycle_app_technician/app/modules/auth/controller/sign_in_controller.dart';
 import 'package:bicycle_app_technician/app/routes/app_routes.dart';
 import 'package:bicycle_app_technician/utils/shared_prefs.dart';
-import 'package:bicycle_app_technician/view/Colors/app_colors.dart';
 import 'package:bicycle_app_technician/view/widgets/custom_button.dart';
 import 'package:bicycle_app_technician/view/widgets/custom_snackbar.dart';
 import 'package:flutter/material.dart';
 import 'package:intl_phone_field/intl_phone_field.dart';
-import 'package:bicycle_app_technician/appflush_bar.dart';
 import 'package:get/get.dart';
 
 class SignInScreen extends StatefulWidget {
